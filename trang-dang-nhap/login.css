@@ -476,6 +476,11 @@ img {
   padding: 0;
 }
 
+.input-shell input::placeholder {
+  color: #1b2535;
+  opacity: 1;
+}
+
 .input-shine {
   background: linear-gradient(90deg, transparent, rgba(184, 145, 74, .22), transparent);
   height: 100%;
@@ -521,6 +526,10 @@ img {
 
 .field-message:empty {
   display: none;
+}
+
+.field-message {
+  color: var(--error);
 }
 
 .error-message {
@@ -710,6 +719,10 @@ img {
   border-radius: 50%;
   height: 5px;
   width: 5px;
+}
+
+.ux-note.is-hidden {
+  display: none;
 }
 
 .login-form.shake {

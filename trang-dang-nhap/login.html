@@ -58,13 +58,13 @@
 
           <div class="field reveal-item">
             <label for="identity">Email hoặc số điện thoại</label>
-            <div class="input-shell">
+            <div class="input-shell" id="identity-shell">
               <img src="./assets/ebb71.svg" alt="" />
               <input
                 id="identity"
                 name="identity"
                 type="text"
-                value="thuha.nguyen@email.com"
+                placeholder="thuha.nguyen@email.com"
                 autocomplete="username"
                 aria-describedby="identity-message"
               />
@@ -78,14 +78,14 @@
               <label for="password">Mật khẩu</label>
               <a href="#" id="forgot-password">Quên mật khẩu?</a>
             </div>
-            <div class="input-shell input-shell--error" id="password-shell">
+            <div class="input-shell" id="password-shell">
               <input
                 id="password"
                 name="password"
                 type="password"
-                value="stayflow10"
+                placeholder="••••••••••"
                 autocomplete="current-password"
-                aria-invalid="true"
+                aria-invalid="false"
                 aria-describedby="password-message"
               />
               <button
@@ -98,7 +98,7 @@
               </button>
               <span class="input-shine" aria-hidden="true"></span>
             </div>
-            <p class="error-message" id="password-message">
+            <p class="error-message is-hidden" id="password-message">
               <img src="./assets/5a87b.svg" alt="" />
               <span>Mật khẩu không đúng. Bạn còn 4 lần thử.</span>
             </p>
@@ -123,7 +123,7 @@
             <a href="#">Tạo tài khoản</a>
           </p>
 
-          <div class="ux-note reveal-item">
+          <div class="ux-note reveal-item is-hidden" id="ux-note">
             <span></span>
             Trạng thái lỗi: email hoặc mật khẩu không hợp lệ!
           </div>
