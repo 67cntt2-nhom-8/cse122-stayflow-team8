@@ -40,13 +40,6 @@
   font-weight: 600;
 }
 
-@font-face {
-  font-family: "Noto Sans:Regular";
-  src: url("https://static.figma.com/font/NotoSans-VF_3") format("woff2");
-  font-style: normal;
-  font-weight: 400;
-}
-
 :root {
   color: #101d33;
   background: #f7f3ea;
