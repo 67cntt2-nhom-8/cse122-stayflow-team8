@@ -1,0 +1,39 @@
+{
+  "serviceTypes": [
+    {
+      "id": "ST001",
+      "categoryName": "Vệ sinh phòng",
+      "description": "Dịch vụ dọn dẹp, thay đồ giường, cung cấp đồ dùng phòng tắm",
+      "expectedSLA": 30,
+      "department": "Buồng phòng"
+    },
+    {
+      "id": "ST002",
+      "categoryName": "Bảo trì kỹ thuật",
+      "description": "Sửa chữa, bảo dưỡng hệ thống điện, nước, điều hòa, thiết bị phòng",
+      "expectedSLA": 60,
+      "department": "Kỹ thuật"
+    },
+    {
+      "id": "ST003",
+      "categoryName": "Ăn uống & Phòng ăn",
+      "description": "Dịch vụ giao đồ ăn, nước uống tại phòng hoặc phục vụ tại nhà hàng khách sạn",
+      "expectedSLA": 45,
+      "department": "F&B"
+    },
+    {
+      "id": "ST004",
+      "categoryName": "Hỗ trợ lễ tân",
+      "description": "Yêu cầu liên quan đến nhận phòng, trả phòng, lưu trữ hành lý, in ấn",
+      "expectedSLA": 15,
+      "department": "Lễ tân"
+    },
+    {
+      "id": "ST005",
+      "categoryName": "Spa & Thư giãn",
+      "description": "Đặt lịch massage, phòng xông hơi, dịch vụ spa tại khách sạn",
+      "expectedSLA": 120,
+      "department": "Spa"
+    }
+  ]
+}

@@ -1,0 +1,54 @@
+{
+  "tasks": [
+    {
+      "id": "TSK001",
+      "requestId": "REQ001",
+      "staffId": "STF003",
+      "status": "Đang làm",
+      "priority": "Cao",
+      "ai_priority_reason": "Điều hòa hỏng ảnh hưởng nghiêm trọng đến trải nghiệm nghỉ ngơi trong thời tiết nóng → Ưu tiên xử lý ngay. Nhân viên kỹ thuật đang trực ca chiều nên có thể tiếp cận nhanh.",
+      "assignedAt": "2026-10-04T10:35:00",
+      "completedAt": null
+    },
+    {
+      "id": "TSK002",
+      "requestId": "REQ002",
+      "staffId": "STF002",
+      "status": "Chờ nhận",
+      "priority": "Cao",
+      "ai_priority_reason": "Vấn đề vệ sinh ga giường là tiêu chuẩn cơ bản, cần xử lý ngay để duy trì chất lượng dịch vụ → Ưu tiên Cao. Nhân viên buồng phòng đang trực ca sáng có thể tiếp cận ngay.",
+      "assignedAt": "2026-10-06T14:20:00",
+      "completedAt": null
+    },
+    {
+      "id": "TSK003",
+      "requestId": "REQ003",
+      "staffId": "STF005",
+      "status": "Chờ nhận",
+      "priority": "Trung bình",
+      "ai_priority_reason": "Yêu cầu đặt ăn đã được lên kế hoạch trước, không mang tính khẩn cấp nhưng cần chuẩn bị sớm để đảm bảo đúng giờ → Ưu tiên Trung bình.",
+      "assignedAt": "2026-10-06T20:10:00",
+      "completedAt": null
+    },
+    {
+      "id": "TSK004",
+      "requestId": "REQ004",
+      "staffId": "STF001",
+      "status": "Hoàn tất",
+      "priority": "Thấp",
+      "ai_priority_reason": "Cho mượn dụng cụ tập thể dục là yêu cầu đơn giản, không rủi ro → Ưu tiên Thấp. Hoàn thành nhanh chóng trong ca sáng.",
+      "assignedAt": "2026-10-07T09:05:00",
+      "completedAt": "2026-10-07T09:25:00"
+    },
+    {
+      "id": "TSK005",
+      "requestId": "REQ005",
+      "staffId": "STF004",
+      "status": "Hoàn tất",
+      "priority": "Thấp",
+      "ai_priority_reason": "Yêu cầu đã bị hủy nên task không cần tiếp tục xử lý. Đánh dấu hoàn tất để giải phóng nhân lực → Ưu tiên Thấp (đã đóng).",
+      "assignedAt": "2026-10-04T16:50:00",
+      "completedAt": "2026-10-04T17:00:00"
+    }
+  ]
+}

@@ -1,0 +1,289 @@
+{
+  "staff": [
+    {
+      "id": "STF001",
+      "name": "Nguyễn Thị Mai Anh",
+      "role": "Lễ tân",
+      "status": "Đang trực",
+      "shift": "Ca sáng",
+      "phone": "0901234567",
+      "email": "maianh.n@stayflow.vn"
+    },
+    {
+      "id": "STF002",
+      "name": "Trần Văn Bình",
+      "role": "Buồng phòng",
+      "status": "Đang trực",
+      "shift": "Ca sáng",
+      "phone": "0902345678",
+      "email": "binh.tr@stayflow.vn"
+    },
+    {
+      "id": "STF003",
+      "name": "Lê Hoàng Phúc",
+      "role": "Kỹ thuật",
+      "status": "Đang trực",
+      "shift": "Ca chiều",
+      "phone": "0903456789",
+      "email": "phuc.le@stayflow.vn"
+    },
+    {
+      "id": "STF004",
+      "name": "Phạm Thị Hương",
+      "role": "Lễ tân",
+      "status": "Nghỉ",
+      "shift": "Ca đêm",
+      "phone": "0904567890",
+      "email": "huong.p@stayflow.vn"
+    },
+    {
+      "id": "STF005",
+      "name": "Vũ Đức Thành",
+      "role": "Buồng phòng",
+      "status": "Đang trực",
+      "shift": "Ca chiều",
+      "phone": "0905678901",
+      "email": "thanh.vu@stayflow.vn"
+    }
+  ],
+  "serviceTypes": [
+    {
+      "id": "ST001",
+      "categoryName": "Vệ sinh phòng",
+      "description": "Dịch vụ dọn dẹp, thay đồ giường, cung cấp đồ dùng phòng tắm",
+      "expectedSLA": 30,
+      "department": "Buồng phòng"
+    },
+    {
+      "id": "ST002",
+      "categoryName": "Bảo trì kỹ thuật",
+      "description": "Sửa chữa, bảo dưỡng hệ thống điện, nước, điều hòa, thiết bị phòng",
+      "expectedSLA": 60,
+      "department": "Kỹ thuật"
+    },
+    {
+      "id": "ST003",
+      "categoryName": "Ăn uống & Phòng ăn",
+      "description": "Dịch vụ giao đồ ăn, nước uống tại phòng hoặc phục vụ tại nhà hàng khách sạn",
+      "expectedSLA": 45,
+      "department": "F&B"
+    },
+    {
+      "id": "ST004",
+      "categoryName": "Hỗ trợ lễ tân",
+      "description": "Yêu cầu liên quan đến nhận phòng, trả phòng, lưu trữ hành lý, in ấn",
+      "expectedSLA": 15,
+      "department": "Lễ tân"
+    },
+    {
+      "id": "ST005",
+      "categoryName": "Spa & Thư giãn",
+      "description": "Đặt lịch massage, phòng xông hơi, dịch vụ spa tại khách sạn",
+      "expectedSLA": 120,
+      "department": "Spa"
+    }
+  ],
+  "stays": [
+    {
+      "id": "STR001",
+      "guestName": "Ông Nguyễn Hoàng Long",
+      "roomNumber": "305",
+      "checkInDate": "2026-10-01",
+      "checkOutDate": "2026-10-07",
+      "status": "Đang lưu trú",
+      "guestPhone": "0912345678",
+      "specialRequests": "Tầng cao, không hút thuốc"
+    },
+    {
+      "id": "STR002",
+      "guestName": "Cô Trần Thị Hạnh",
+      "roomNumber": "218",
+      "checkInDate": "2026-10-05",
+      "checkOutDate": "2026-10-08",
+      "status": "Đang lưu trú",
+      "guestPhone": "0923456789",
+      "specialRequests": "Muốn thêm gối mềm"
+    },
+    {
+      "id": "STR003",
+      "guestName": "Gia đình anh Phạm Minh Tuấn",
+      "roomNumber": "412",
+      "checkInDate": "2026-10-03",
+      "checkOutDate": "2026-10-10",
+      "status": "Đang lưu trú",
+      "guestPhone": "0934567890",
+      "specialRequests": "Gia đình có trẻ em, cần cũi"
+    },
+    {
+      "id": "STR004",
+      "guestName": "Anh Đỗ Quang Huy",
+      "roomNumber": "110",
+      "checkInDate": "2026-09-25",
+      "checkOutDate": "2026-09-30",
+      "status": "Đã trả phòng",
+      "guestPhone": "0945678901",
+      "specialRequests": "Không có"
+    },
+    {
+      "id": "STR005",
+      "guestName": "Chị Lê Thủy Tiên",
+      "roomNumber": "501",
+      "checkInDate": "2026-10-06",
+      "checkOutDate": "2026-10-09",
+      "status": "Đang lưu trú",
+      "guestPhone": "0956789012",
+      "specialRequests": "Phòng view biển, tầng cao"
+    }
+  ],
+  "requests": [
+    {
+      "id": "REQ001",
+      "stayId": "STR001",
+      "serviceTypeId": "ST002",
+      "content": "Điều hòa phòng 305 không lạnh, quạt chạy nhưng không làm mát. Khách cần sửa gấp vì đang rất nóng.",
+      "status": "Đang thực hiện",
+      "createdAt": "2026-10-04T10:30:00",
+      "ai_classification": "Kỹ thuật",
+      "ai_priority_reason": "Yêu cầu về điều hòa vào ban ngày, ảnh hưởng trực tiếp đến trải nghiệm nghỉ ngơi của khách → Ưu tiên Cao.",
+      "priority": "Cao"
+    },
+    {
+      "id": "REQ002",
+      "stayId": "STR002",
+      "serviceTypeId": "ST001",
+      "content": "Vui lòng thay giúp tôi bộ ga giường mới, bộ hiện tại có vết bẩn và mùi ẩm.",
+      "status": "Chờ xử lý",
+      "createdAt": "2026-10-06T14:15:00",
+      "ai_classification": "Buồng phòng",
+      "ai_priority_reason": "Vấn đề vệ sinh ga giường liên quan trực tiếp đến tiêu chuẩn vệ sinh cơ bản → Ưu tiên Cao.",
+      "priority": "Cao"
+    },
+    {
+      "id": "REQ003",
+      "stayId": "STR003",
+      "serviceTypeId": "ST003",
+      "content": "Đặt 3 suất ăn sáng giao tận phòng cho gia đình lúc 8h30 sáng mai, có 1 suất cho trẻ em.",
+      "status": "Chờ xử lý",
+      "createdAt": "2026-10-06T20:00:00",
+      "ai_classification": "F&B",
+      "ai_priority_reason": "Yêu cầu đặt ăn đã được lên kế hoạch trước → Ưu tiên Trung bình.",
+      "priority": "Trung bình"
+    },
+    {
+      "id": "REQ004",
+      "stayId": "STR005",
+      "serviceTypeId": "ST004",
+      "content": "Cho tôi mượn thêm 2 quả tạ tay và 1 tấm thảm yoga để tập thể dục trong phòng.",
+      "status": "Hoàn thành",
+      "createdAt": "2026-10-07T09:00:00",
+      "ai_classification": "Lễ tân",
+      "ai_priority_reason": "Yêu cầu đơn giản, không ảnh hưởng an toàn hoặc trải nghiệm cơ bản → Ưu tiên Thấp.",
+      "priority": "Thấp"
+    },
+    {
+      "id": "REQ005",
+      "stayId": "STR001",
+      "serviceTypeId": "ST005",
+      "content": "Đặt lịch massage phòng 305 lúc 15h ngày mai cho 2 người.",
+      "status": "Đã hủy",
+      "createdAt": "2026-10-04T16:45:00",
+      "ai_classification": "Spa",
+      "ai_priority_reason": "Đặt lịch dịch vụ không khẩn cấp → Ưu tiên Thấp.",
+      "priority": "Thấp"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TSK001",
+      "requestId": "REQ001",
+      "staffId": "STF003",
+      "status": "Đang làm",
+      "priority": "Cao",
+      "ai_priority_reason": "Điều hòa hỏng ảnh hưởng nghiêm trọng đến trải nghiệm nghỉ ngơi trong thời tiết nóng → Ưu tiên xử lý ngay. Nhân viên kỹ thuật đang trực ca chiều nên có thể tiếp cận nhanh.",
+      "assignedAt": "2026-10-04T10:35:00",
+      "completedAt": null
+    },
+    {
+      "id": "TSK002",
+      "requestId": "REQ002",
+      "staffId": "STF002",
+      "status": "Chờ nhận",
+      "priority": "Cao",
+      "ai_priority_reason": "Vấn đề vệ sinh ga giường là tiêu chuẩn cơ bản, cần xử lý ngay để duy trì chất lượng dịch vụ → Ưu tiên Cao. Nhân viên buồng phòng đang trực ca sáng có thể tiếp cận ngay.",
+      "assignedAt": "2026-10-06T14:20:00",
+      "completedAt": null
+    },
+    {
+      "id": "TSK003",
+      "requestId": "REQ003",
+      "staffId": "STF005",
+      "status": "Chờ nhận",
+      "priority": "Trung bình",
+      "ai_priority_reason": "Yêu cầu đặt ăn đã được lên kế hoạch trước, không mang tính khẩn cấp nhưng cần chuẩn bị sớm để đảm bảo đúng giờ → Ưu tiên Trung bình.",
+      "assignedAt": "2026-10-06T20:10:00",
+      "completedAt": null
+    },
+    {
+      "id": "TSK004",
+      "requestId": "REQ004",
+      "staffId": "STF001",
+      "status": "Hoàn tất",
+      "priority": "Thấp",
+      "ai_priority_reason": "Cho mượn dụng cụ tập thể dục là yêu cầu đơn giản, không rủi ro → Ưu tiên Thấp. Hoàn thành nhanh chóng trong ca sáng.",
+      "assignedAt": "2026-10-07T09:05:00",
+      "completedAt": "2026-10-07T09:25:00"
+    },
+    {
+      "id": "TSK005",
+      "requestId": "REQ005",
+      "staffId": "STF004",
+      "status": "Hoàn tất",
+      "priority": "Thấp",
+      "ai_priority_reason": "Yêu cầu đã bị hủy nên task không cần tiếp tục xử lý. Đánh dấu hoàn tất để giải phóng nhân lực → Ưu tiên Thấp (đã đóng).",
+      "assignedAt": "2026-10-04T16:50:00",
+      "completedAt": "2026-10-04T17:00:00"
+    }
+  ],
+  "feedback": [
+    {
+      "id": "FB001",
+      "stayId": "STR004",
+      "rating": 4,
+      "comment": "Phòng sạch sẽ, nhân viên thân thiện. Nhưng điều hòa hơi ồn vào ban đêm, khiến mình khó ngủ. Nhìn chung vẫn hài lòng với kỳ nghỉ.",
+      "ai_summary": "Chủ đề: Vệ sinh (+), Nhân viên (+), Điều hòa (-). Đánh giá tích cực về cơ sở vật chất và thái độ phục vụ, góp ý về độ ồn điều hòa.",
+      "createdAt": "2026-10-01T11:00:00"
+    },
+    {
+      "id": "FB002",
+      "stayId": "STR001",
+      "rating": 5,
+      "comment": "Dịch vụ tuyệt vời! Đội ngũ lễ tân rất nhiệt tình, phòng ăn ngon và đa dạng. Sẽ quay lại lần sau.",
+      "ai_summary": "Chủ đề: Lễ tân (+), Ăn uống (+). Phản hồi rất tích cực, khách hài lòng về thái độ phục vụ và chất lượng ẩm thực.",
+      "createdAt": "2026-10-07T08:30:00"
+    },
+    {
+      "id": "FB003",
+      "stayId": "STR005",
+      "rating": 3,
+      "comment": "View phòng rất đẹp, nhưng dịch vụ spa đặt trước bị chậm giờ. Nhân viên spa cũng không đúng giờ hẹn.",
+      "ai_summary": "Chủ đề: View phòng (+), Spa (-). Đánh giá trung bình, view phòng được khen nhưng chất lượng dịch vụ spa chưa đảm bảo đúng giờ.",
+      "createdAt": "2026-10-09T10:15:00"
+    },
+    {
+      "id": "FB004",
+      "stayId": "STR003",
+      "rating": 5,
+      "comment": "Gia đình mình rất vui khi ở khách sạn. Nhân viên quan tâm trẻ em rất chu đáo, có khu vui chơi cho con. Cảm ơn khách sạn nhiều!",
+      "ai_summary": "Chủ đề: Dịch vụ gia đình (+), Trẻ em (+), Nhân viên (+). Phản hồi rất tích cực, đặc biệt khen ngợi sự quan tâm đến khách gia đình và trẻ em.",
+      "createdAt": "2026-10-10T09:00:00"
+    },
+    {
+      "id": "FB005",
+      "stayId": "STR002",
+      "rating": 2,
+      "comment": "Phòng có mùi ẩm, ga giường không sạch. Gọi điện yêu cầu thay nhưng mất quá lâu nhân viên mới đến. Rất thất vọng.",
+      "ai_summary": "Chủ đề: Vệ sinh (-), Thời gian phục vụ (-). Đánh giá tiêu cực về chất lượng phòng và tốc độ phản hồi của nhân viên.",
+      "createdAt": "2026-10-08T14:30:00"
+    }
+  ]
+}
