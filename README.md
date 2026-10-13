@@ -68,7 +68,7 @@ Quy trình làm việc nhóm tuân thủ nghiêm ngặt qua các bước:
 `Công việc trên Trello` → `Tạo nhánh` → `Viết mã` → `Ghi nhận thay đổi` → `Đẩy lên máy chủ` → `Yêu cầu hợp nhất` → `Đánh giá chéo` → `Merge vào dev` → `Test tích hợp` → `Merge main`
 
 ## Figma / Canva
-* `[link figma](https://www.figma.com/design/WyFbVAgrJPYtl8MpHxJd6m/Untitled?node-id=0-1&p=f)`
+* [link figma](https://www.figma.com/design/WyFbVAgrJPYtl8MpHxJd6m/Untitled?node-id=0-1&p=f)
 
 ## Demo
 * `[Thêm liên kết trang web đã được triển khai (nếu có)]`
