@@ -1,0 +1,411 @@
+{
+  "meta": {
+    "app": "StayFlow",
+    "version": 1,
+    "description": "Mock data for hotel stay service coordination",
+    "updatedAt": "2026-10-14T08:00:00+07:00",
+    "currency": "VND",
+    "timeZone": "Asia/Ho_Chi_Minh"
+  },
+  "stays": [
+    {
+      "id": "STY-2026-1042",
+      "guestId": "GST-001",
+      "guestName": "Nguyen Minh Anh",
+      "guestEmail": "minhanh@example.com",
+      "guestPhone": "+84 912 345 678",
+      "roomNumber": "1208",
+      "roomType": "Deluxe King",
+      "checkInAt": "2026-10-12T14:00:00+07:00",
+      "checkOutAt": "2026-10-16T12:00:00+07:00",
+      "status": "checked_in",
+      "isVip": true
+    },
+    {
+      "id": "STY-2026-1043",
+      "guestId": "GST-002",
+      "guestName": "Tran Quoc Bao",
+      "guestEmail": "quocbao@example.com",
+      "guestPhone": "+84 903 111 204",
+      "roomNumber": "0815",
+      "roomType": "Superior Twin",
+      "checkInAt": "2026-10-13T15:30:00+07:00",
+      "checkOutAt": "2026-10-17T12:00:00+07:00",
+      "status": "checked_in",
+      "isVip": false
+    },
+    {
+      "id": "STY-2026-1044",
+      "guestId": "GST-003",
+      "guestName": "Le Thu Ha",
+      "guestEmail": "thuha@example.com",
+      "guestPhone": "+84 987 450 112",
+      "roomNumber": "1502",
+      "roomType": "Executive Suite",
+      "checkInAt": "2026-10-14T13:00:00+07:00",
+      "checkOutAt": "2026-10-18T11:00:00+07:00",
+      "status": "checked_in",
+      "isVip": true
+    },
+    {
+      "id": "STY-2026-1045",
+      "guestId": "GST-004",
+      "guestName": "Pham Duc Long",
+      "guestEmail": "duclong@example.com",
+      "guestPhone": "+84 936 222 815",
+      "roomNumber": "0603",
+      "roomType": "Standard Queen",
+      "checkInAt": "2026-10-11T14:00:00+07:00",
+      "checkOutAt": "2026-10-14T12:00:00+07:00",
+      "status": "checked_out",
+      "isVip": false
+    }
+  ],
+  "requests": [
+    {
+      "id": "REQ-2026-3001",
+      "stayId": "STY-2026-1042",
+      "serviceTypeId": "SVC-ROOM-SERVICE",
+      "title": "Bring two bottles of drinking water",
+      "description": "Please bring two bottles of mineral water to the room.",
+      "status": "in_progress",
+      "priority": "normal",
+      "source": "guest_portal",
+      "createdAt": "2026-10-14T08:12:00+07:00",
+      "updatedAt": "2026-10-14T08:20:00+07:00",
+      "dueAt": "2026-10-14T08:42:00+07:00",
+      "assignedStaffId": "STF-002",
+      "notes": "Guest prefers contactless delivery."
+    },
+    {
+      "id": "REQ-2026-3002",
+      "stayId": "STY-2026-1043",
+      "serviceTypeId": "SVC-HOUSEKEEPING",
+      "title": "Extra towels",
+      "description": "Requesting three clean bath towels.",
+      "status": "assigned",
+      "priority": "normal",
+      "source": "guest_portal",
+      "createdAt": "2026-10-14T08:26:00+07:00",
+      "updatedAt": "2026-10-14T08:31:00+07:00",
+      "dueAt": "2026-10-14T09:01:00+07:00",
+      "assignedStaffId": "STF-001",
+      "notes": ""
+    },
+    {
+      "id": "REQ-2026-3003",
+      "stayId": "STY-2026-1044",
+      "serviceTypeId": "SVC-MAINTENANCE",
+      "title": "Air conditioner is not cooling",
+      "description": "The room is warm even at the lowest temperature setting.",
+      "status": "new",
+      "priority": "high",
+      "source": "guest_portal",
+      "createdAt": "2026-10-14T08:34:00+07:00",
+      "updatedAt": "2026-10-14T08:34:00+07:00",
+      "dueAt": "2026-10-14T09:04:00+07:00",
+      "assignedStaffId": null,
+      "notes": "VIP stay; prioritize dispatch."
+    },
+    {
+      "id": "REQ-2026-3004",
+      "stayId": "STY-2026-1042",
+      "serviceTypeId": "SVC-ROOM-SERVICE",
+      "title": "Breakfast for tomorrow",
+      "description": "Please confirm breakfast delivery for two at 07:30.",
+      "status": "completed",
+      "priority": "normal",
+      "source": "guest_portal",
+      "createdAt": "2026-10-13T19:10:00+07:00",
+      "updatedAt": "2026-10-13T19:28:00+07:00",
+      "dueAt": "2026-10-13T19:40:00+07:00",
+      "assignedStaffId": "STF-003",
+      "notes": "Confirmed with the restaurant."
+    },
+    {
+      "id": "REQ-2026-3005",
+      "stayId": "STY-2026-1043",
+      "serviceTypeId": "SVC-TRANSPORT",
+      "title": "Book airport transfer",
+      "description": "Need a sedan to the airport at 05:30 on checkout day.",
+      "status": "waiting_guest",
+      "priority": "normal",
+      "source": "guest_portal",
+      "createdAt": "2026-10-14T07:50:00+07:00",
+      "updatedAt": "2026-10-14T08:05:00+07:00",
+      "dueAt": "2026-10-14T08:50:00+07:00",
+      "assignedStaffId": "STF-003",
+      "notes": "Waiting for the guest to confirm the fare."
+    },
+    {
+      "id": "REQ-2026-3006",
+      "stayId": "STY-2026-1045",
+      "serviceTypeId": "SVC-HOUSEKEEPING",
+      "title": "Late checkout request",
+      "description": "Could I check out at 14:00 instead of 12:00?",
+      "status": "cancelled",
+      "priority": "low",
+      "source": "front_desk",
+      "createdAt": "2026-10-14T07:15:00+07:00",
+      "updatedAt": "2026-10-14T07:32:00+07:00",
+      "dueAt": null,
+      "assignedStaffId": "STF-003",
+      "notes": "Guest checked out at the original time."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "TSK-2026-5001",
+      "requestId": "REQ-2026-3001",
+      "assignedTo": "STF-002",
+      "status": "in_progress",
+      "createdAt": "2026-10-14T08:18:00+07:00",
+      "startedAt": "2026-10-14T08:20:00+07:00",
+      "completedAt": null,
+      "checklist": [
+        { "label": "Collect requested items", "isDone": true },
+        { "label": "Deliver to room", "isDone": false }
+      ],
+      "internalNote": "Contactless delivery requested."
+    },
+    {
+      "id": "TSK-2026-5002",
+      "requestId": "REQ-2026-3002",
+      "assignedTo": "STF-001",
+      "status": "assigned",
+      "createdAt": "2026-10-14T08:31:00+07:00",
+      "startedAt": null,
+      "completedAt": null,
+      "checklist": [
+        { "label": "Prepare clean towels", "isDone": false },
+        { "label": "Deliver to room", "isDone": false }
+      ],
+      "internalNote": ""
+    },
+    {
+      "id": "TSK-2026-5003",
+      "requestId": "REQ-2026-3004",
+      "assignedTo": "STF-003",
+      "status": "completed",
+      "createdAt": "2026-10-13T19:12:00+07:00",
+      "startedAt": "2026-10-13T19:15:00+07:00",
+      "completedAt": "2026-10-13T19:28:00+07:00",
+      "checklist": [
+        { "label": "Confirm breakfast order", "isDone": true },
+        { "label": "Notify restaurant", "isDone": true },
+        { "label": "Send confirmation to guest", "isDone": true }
+      ],
+      "internalNote": "Order confirmed for two guests at 07:30."
+    },
+    {
+      "id": "TSK-2026-5004",
+      "requestId": "REQ-2026-3005",
+      "assignedTo": "STF-003",
+      "status": "waiting_guest",
+      "createdAt": "2026-10-14T08:02:00+07:00",
+      "startedAt": "2026-10-14T08:05:00+07:00",
+      "completedAt": null,
+      "checklist": [
+        { "label": "Check vehicle availability", "isDone": true },
+        { "label": "Share fare with guest", "isDone": true },
+        { "label": "Confirm booking", "isDone": false }
+      ],
+      "internalNote": "Guest confirmation is required before booking."
+    }
+  ],
+  "serviceTypes": [
+    {
+      "id": "SVC-ROOM-SERVICE",
+      "name": "Room Service",
+      "department": "Food & Beverage",
+      "description": "Food, drinks, and in-room amenity requests.",
+      "icon": "utensils",
+      "defaultSlaMinutes": 30,
+      "isActive": true
+    },
+    {
+      "id": "SVC-HOUSEKEEPING",
+      "name": "Housekeeping",
+      "department": "Housekeeping",
+      "description": "Cleaning, towels, linens, and room setup.",
+      "icon": "sparkles",
+      "defaultSlaMinutes": 30,
+      "isActive": true
+    },
+    {
+      "id": "SVC-MAINTENANCE",
+      "name": "Maintenance",
+      "department": "Engineering",
+      "description": "Room equipment, fixtures, and facility issues.",
+      "icon": "wrench",
+      "defaultSlaMinutes": 45,
+      "isActive": true
+    },
+    {
+      "id": "SVC-TRANSPORT",
+      "name": "Transportation",
+      "department": "Front Desk",
+      "description": "Airport transfers, taxis, and local transportation.",
+      "icon": "car",
+      "defaultSlaMinutes": 60,
+      "isActive": true
+    },
+    {
+      "id": "SVC-FRONT-DESK",
+      "name": "Front Desk",
+      "department": "Front Desk",
+      "description": "General questions and stay assistance.",
+      "icon": "concierge-bell",
+      "defaultSlaMinutes": 20,
+      "isActive": true
+    }
+  ],
+  "feedback": [
+    {
+      "id": "FDB-2026-7001",
+      "requestId": "REQ-2026-3004",
+      "stayId": "STY-2026-1042",
+      "rating": 5,
+      "comment": "Breakfast arrived on time and was still warm. Thank you!",
+      "themes": ["timeliness", "food_quality", "staff_service"],
+      "sentiment": "positive",
+      "createdAt": "2026-10-14T07:45:00+07:00",
+      "isPublished": true
+    },
+    {
+      "id": "FDB-2026-7002",
+      "requestId": "REQ-2026-3005",
+      "stayId": "STY-2026-1043",
+      "rating": 3,
+      "comment": "The transfer quote took a little longer than expected, but the team was helpful.",
+      "themes": ["response_time", "staff_service"],
+      "sentiment": "mixed",
+      "createdAt": "2026-10-13T16:20:00+07:00",
+      "isPublished": true
+    },
+    {
+      "id": "FDB-2026-7003",
+      "requestId": "REQ-2026-3002",
+      "stayId": "STY-2026-1043",
+      "rating": 2,
+      "comment": "I had to follow up twice before the towels arrived.",
+      "themes": ["response_time", "request_tracking"],
+      "sentiment": "negative",
+      "createdAt": "2026-10-12T18:05:00+07:00",
+      "isPublished": true
+    }
+  ],
+  "staff": [
+    {
+      "id": "STF-001",
+      "name": "Vo Thanh Mai",
+      "email": "thanhmai@stayflow.example",
+      "phone": "+84 908 100 201",
+      "role": "staff",
+      "department": "Housekeeping",
+      "skills": ["housekeeping", "room_setup"],
+      "shift": "morning",
+      "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-002",
+      "name": "Nguyen Hoang Nam",
+      "email": "hoangnam@stayflow.example",
+      "phone": "+84 909 210 302",
+      "role": "staff",
+      "department": "Room Service",
+      "skills": ["amenities", "food_delivery"],
+      "shift": "morning",
+      "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-003",
+      "name": "Bui Gia Huy",
+      "email": "giahuy@stayflow.example",
+      "phone": "+84 907 330 403",
+      "role": "staff",
+      "department": "Front Desk",
+      "skills": ["guest_support", "transportation"],
+      "shift": "morning",
+      "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-004",
+      "name": "Pham Ngoc Linh",
+      "email": "ngoclinh@stayflow.example",
+      "phone": "+84 906 440 504",
+      "role": "manager",
+      "department": "Operations",
+      "skills": ["dispatch", "sla_monitoring", "reporting"],
+      "shift": "morning",
+      "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-005",
+      "name": "Do Minh Chau",
+      "email": "minhchau@stayflow.example",
+      "phone": "+84 905 550 605",
+      "role": "admin",
+      "department": "Administration",
+      "skills": ["user_management", "service_configuration"],
+      "shift": "day",
+      "status": "on_duty",
+      "avatar": ""
+    }
+  ],
+  "aiMocks": {
+    "requestClassifier": [
+      {
+        "input": "The air conditioner is not cooling and the room is getting warm.",
+        "serviceTypeId": "SVC-MAINTENANCE",
+        "confidence": 0.96,
+        "reason": "The request describes a room equipment problem that requires the Engineering team.",
+        "alternatives": ["SVC-FRONT-DESK"],
+        "state": "suggested"
+      },
+      {
+        "input": "I need someone to help with this, but I am not sure what service to choose.",
+        "serviceTypeId": null,
+        "confidence": 0.38,
+        "reason": "There is not enough detail to identify the right department.",
+        "alternatives": [],
+        "state": "uncertain",
+        "fallbackMessage": "Not enough information to make a reliable suggestion. Please add details or choose a service manually."
+      }
+    ],
+    "priorityAssistant": [
+      {
+        "requestId": "REQ-2026-3003",
+        "priority": "high",
+        "confidence": 0.91,
+        "reason": "The issue affects room comfort, and this is a VIP stay.",
+        "state": "suggested"
+      },
+      {
+        "requestId": "REQ-2026-3002",
+        "priority": "normal",
+        "confidence": 0.54,
+        "reason": "The request is routine, but no urgency details were provided.",
+        "state": "uncertain",
+        "fallbackMessage": "Priority is uncertain. Review the due time and current team workload before dispatching."
+      }
+    ],
+    "feedbackSummarizer": {
+      "generatedAt": "2026-10-14T08:00:00+07:00",
+      "feedbackIds": ["FDB-2026-7001", "FDB-2026-7002", "FDB-2026-7003"],
+      "summary": "Guests appreciate friendly service and on-time delivery. Delays and the need to follow up are recurring sources of dissatisfaction.",
+      "themes": [
+        { "name": "Timeliness", "count": 2, "sentiment": "mixed" },
+        { "name": "Staff service", "count": 2, "sentiment": "positive" },
+        { "name": "Request tracking", "count": 1, "sentiment": "negative" }
+      ],
+      "confidence": 0.78,
+      "state": "suggested",
+      "fallbackMessage": "Unable to summarize because there is not enough feedback data. Try again after collecting more responses."
+    }
+  }
+}
