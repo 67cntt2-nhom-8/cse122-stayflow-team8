@@ -2,6 +2,12 @@
 const SF = {
   NOW0: new Date("2026-10-06T20:30:00").getTime(), T0: Date.now(), q: "",
   now: () => SF.NOW0 + Date.now() - SF.T0, // đồng hồ giả lập khớp dữ liệu mẫu
+  setClock(value) {
+    const timestamp = Date.parse(value);
+    if (!Number.isFinite(timestamp)) throw new Error(`Thời điểm mock không hợp lệ: ${value}`);
+    SF.NOW0 = timestamp;
+    SF.T0 = Date.now();
+  },
   esc: (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]),
   norm: (s) => String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d"),
   match: (text, q) => SF.norm(text).includes(SF.norm(q.trim())), // tìm kiếm không phân biệt dấu
@@ -25,25 +31,160 @@ const SF = {
     return document.getElementById("main");
   },
   async load() {
-    let d = JSON.parse(localStorage.getItem("sf_db") || "null");
-    if (!d) {
-      try { const r = await fetch("../assets/data/db.json"); if (!r.ok) throw 0; d = await r.json(); }
-      catch { document.getElementById("main").innerHTML = '<div class="card"><h3>Không tải được dữ liệu</h3><p class="muted">Hãy mở trang bằng Live Server (không mở trực tiếp file://) và kiểm tra tệp assets/data/db.json.</p></div>'; throw 0; }
+    const showError = (message) => {
+      document.getElementById("main").innerHTML = `<div class="card"><h3>Không tải được dữ liệu</h3><p class="muted">${SF.esc(message)}</p></div>`;
+    };
+    let d;
+    const saved = localStorage.getItem("sf_db");
+    if (saved) {
+      try {
+        d = JSON.parse(saved);
+      } catch (error) {
+        const message = "Dữ liệu đã lưu không hợp lệ. Hãy đặt lại dữ liệu mẫu rồi tải lại trang.";
+        showError(message);
+        throw new Error(message, { cause: error });
+      }
+    } else {
+      let source;
+      try {
+        const response = await fetch("../assets/data/stayflow.mock.json");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        source = await response.json();
+      } catch (error) {
+        const message = `Không thể đọc assets/data/stayflow.mock.json (${error.message}). Hãy chạy dự án bằng Live Server hoặc máy chủ HTTP.`;
+        showError(message);
+        throw new Error(message, { cause: error });
+      }
+      const requireMapped = (value, mapping, field) => {
+        if (!Object.prototype.hasOwnProperty.call(mapping, value)) {
+          const message = `Giá trị "${value}" không hợp lệ trong trường ${field} của dữ liệu mock.`;
+          showError(message);
+          throw new Error(message);
+        }
+        return mapping[value];
+      };
+      const priority = (value) => requireMapped(value, { high: "Cao", normal: "Trung bình", low: "Thấp" }, "priority");
+      const requestStatus = (value) => requireMapped(value, {
+        new: "Chờ xử lý",
+        assigned: "Đang thực hiện",
+        in_progress: "Đang thực hiện",
+        waiting_guest: "Đang chờ khách",
+        completed: "Hoàn thành",
+        cancelled: "Đã hủy",
+      }, "requests.status");
+      const taskStatus = (value) => requireMapped(value, {
+        assigned: "Chờ nhận",
+        in_progress: "Đang làm",
+        waiting_guest: "Chờ khách",
+        completed: "Hoàn tất",
+      }, "tasks.status");
+      const shift = (value) => requireMapped(value, { morning: "Ca sáng", day: "Ca ngày", evening: "Ca chiều", night: "Ca đêm" }, "staff.shift");
+      if (!source || typeof source !== "object") {
+        const message = "Tệp assets/data/stayflow.mock.json phải chứa một đối tượng JSON.";
+        showError(message);
+        throw new Error(message);
+      }
+      const mockStaff = source.staff;
+      const mockStays = source.stays;
+      const mockRequests = source.requests;
+      const mockTasks = source.tasks;
+      const mockServiceTypes = source.serviceTypes;
+      if (![mockStaff, mockStays, mockRequests, mockTasks, mockServiceTypes].every(Array.isArray)) {
+        const message = "Dữ liệu mock cần có các danh sách staff, stays, requests, tasks và serviceTypes.";
+        showError(message);
+        throw new Error(message);
+      }
+      const prioritySuggestions = source.aiMocks?.priorityAssistant || [];
+      d = {
+        staff: mockStaff.filter((staff) => staff.role === "staff").map((staff) => ({
+          id: staff.id,
+          name: staff.name,
+          email: staff.email,
+          phone: staff.phone,
+          role: staff.department,
+          shift: shift(staff.shift),
+          status: requireMapped(staff.status, { on_duty: "Đang trực", off_duty: "Nghỉ" }, "staff.status"),
+        })),
+        serviceTypes: mockServiceTypes.map((service) => ({
+          id: service.id,
+          categoryName: service.name,
+          description: service.description,
+          department: service.department,
+          expectedSLA: service.defaultSlaMinutes,
+          priority: "Trung bình",
+          active: service.isActive,
+        })),
+        stays: mockStays.map((stay) => ({
+          id: stay.id,
+          guestName: stay.guestName,
+          guestPhone: stay.guestPhone,
+          roomNumber: stay.roomNumber,
+          status: requireMapped(stay.status, { checked_in: "Đang lưu trú", checked_out: "Đã trả phòng" }, "stays.status"),
+        })),
+        requests: mockRequests.map((request) => ({
+          id: request.id,
+          stayId: request.stayId,
+          serviceTypeId: request.serviceTypeId,
+          title: request.title,
+          content: request.description,
+          status: requestStatus(request.status),
+          priority: priority(request.priority),
+          createdAt: request.createdAt,
+          dueAt: request.dueAt,
+          ai_priority_reason: prioritySuggestions.find((item) => item.requestId === request.id)?.reason || request.notes || "",
+        })),
+        tasks: mockTasks.map((task) => {
+          const request = mockRequests.find((item) => item.id === task.requestId);
+          return {
+            id: task.id,
+            requestId: task.requestId,
+            staffId: task.assignedTo,
+            status: taskStatus(task.status),
+            priority: request ? priority(request.priority) : "Trung bình",
+            ai_priority_reason: prioritySuggestions.find((item) => item.requestId === task.requestId)?.reason || "",
+            assignedAt: task.createdAt,
+            completedAt: task.completedAt,
+          };
+        }),
+        users: [
+          ...mockStaff.map((staff) => ({
+            id: staff.id,
+            name: staff.name,
+            contact: staff.email,
+            role: requireMapped(staff.role, { staff: "Staff", manager: "Manager", admin: "Admin" }, "staff.role"),
+            scope: staff.role === "staff" ? `${staff.department} · ${shift(staff.shift)}` : staff.role === "admin" ? "Toàn hệ thống" : "Toàn khách sạn",
+            active: requireMapped(staff.status, { on_duty: true, off_duty: false }, "staff.status"),
+            perms: staff.role === "admin" ? [1, 1, 1, 1] : staff.role === "manager" ? [1, 1, 1, 0] : [1, 0, 0, 0],
+          })),
+          ...mockStays.filter((stay) => stay.status === "checked_in").map((stay) => ({
+            id: stay.guestId,
+            name: stay.guestName,
+            contact: stay.guestEmail || stay.guestPhone,
+            role: "Guest",
+            scope: `Phòng ${stay.roomNumber}`,
+            active: true,
+            perms: [0, 0, 0, 0],
+          })),
+        ],
+        audit: [],
+        clock: source.meta?.updatedAt || new Date().toISOString(),
+      };
     }
-    d.users = d.users || [
-      ...d.staff.map((s) => ({ id: s.id, name: s.name, contact: s.email, role: "Staff", scope: `${s.role} · ${s.shift}`, active: s.status !== "Nghỉ", perms: [1, 0, 0, 0] })),
-      ...d.stays.filter((s) => s.status === "Đang lưu trú").map((s) => ({ id: s.id, name: s.guestName, contact: s.guestPhone, role: "Guest", scope: `Phòng ${s.roomNumber}`, active: true, perms: [0, 0, 0, 0] })),
-      { id: "USR-M1", name: "Đỗ Minh Khang", contact: "minh.khang@aurora.vn", role: "Manager", scope: "Toàn khách sạn", active: true, perms: [1, 1, 1, 0] },
-      { id: "USR-A1", name: "Lê Hải Yến", contact: "hai.yen@aurora.vn", role: "Admin", scope: "Toàn hệ thống", active: true, perms: [1, 1, 1, 1] },
-    ];
+    if (![d.staff, d.stays, d.requests, d.tasks, d.serviceTypes].every(Array.isArray)) {
+      const message = "Dữ liệu đã lưu thiếu danh sách cần thiết cho màn hình quản lý.";
+      showError(message);
+      throw new Error(message);
+    }
+    d.users = d.users || [];
     d.audit = d.audit || [];
+    if (d.clock) SF.setClock(d.clock);
     return d;
   },
   save: (d) => localStorage.setItem("sf_db", JSON.stringify(d)),
   log(d, msg) { d.audit.unshift({ at: new Date(SF.now()).toISOString(), by: "Minh Anh", msg }); },
   rows: (d) => d.requests.map((r) => {
     const st = d.stays.find((s) => s.id === r.stayId) || {}, sv = d.serviceTypes.find((s) => s.id === r.serviceTypeId) || {}, task = d.tasks.find((t) => t.requestId === r.id);
-    return { ...r, room: st.roomNumber, guest: st.guestName, svc: sv.categoryName, dept: sv.department, due: new Date(r.createdAt).getTime() + (sv.expectedSLA || 30) * 6e4, task, staff: task && d.staff.find((s) => s.id === task.staffId) };
+    return { ...r, room: st.roomNumber, guest: st.guestName, svc: sv.categoryName, dept: sv.department, due: new Date(r.dueAt || new Date(r.createdAt).getTime() + (sv.expectedSLA || 30) * 6e4).getTime(), task, staff: task && d.staff.find((s) => s.id === task.staffId) };
   }),
   left: (r) => Math.round((r.due - SF.now()) / 1000),
   state(r) {
