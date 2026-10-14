@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StayFlow - Bảng nhiệm vụ buồng phòng theo ca làm việc, dành cho nhân viên khách sạn.">
+    <title>StayFlow - Bảng nhiệm vụ</title>
+    <link rel="stylesheet" href="../css/staff.css">
+</head>
+<body>
+<div class="app">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar">
+        <a class="brand" href="#main">
+            <span class="brand__mark" aria-hidden="true">S</span>
+            <span class="brand__name">StayFlow</span>
+        </a>
+
+        <div class="hotel">
+            <p class="hotel__name">AURORA GRAND - ĐÀ NẴNG</p>
+            <p class="hotel__role">Nhân viên</p>
+        </div>
+
+        <nav class="nav" aria-label="Điều hướng chính">
+            <a class="nav__item" href="#main">
+                <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+                <span>Tổng quan</span>
+            </a>
+            <a class="nav__item is-active" href="#main" aria-current="page">
+                <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8l3 3v13H5V7z"/><path d="M9 12h6M9 16h6"/></svg>
+                <span>Yêu cầu</span>
+            </a>
+            <a class="nav__item" href="#main">
+                <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M9 3v4M15 3v4"/></svg>
+                <span>Lịch &amp; ca</span>
+            </a>
+            <a class="nav__item" href="#main">
+                <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 20c3-1 7-1 10 0"/><path d="M8 17a5 5 0 1 1 8 0z"/></svg>
+                <span>Thông báo</span>
+                <span class="nav__badge" id="navBadge">2</span>
+            </a>
+            <a class="nav__item" href="#main">
+                <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/></svg>
+                <span>Hồ sơ</span>
+            </a>
+        </nav>
+
+        <section class="help" aria-labelledby="helpTitle">
+            <h2 class="help__title" id="helpTitle">Cần trợ giúp?</h2>
+            <p class="help__desc">Trung tâm vận hành hỗ trợ 24/7</p>
+            <a class="help__phone" href="tel:188">Máy lẻ 188</a>
+        </section>
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <div class="shell">
+
+        <header class="topbar">
+            <div class="topbar__left">
+                <p class="crumbs"><a href="#main">Vận hành</a><span aria-hidden="true">/</span> Bảng nhiệm vụ</p>
+                <h1 class="topbar__title">Bảng nhiệm vụ</h1>
+            </div>
+
+            <div class="topbar__right">
+                <form class="global-search" id="globalSearchForm" role="search">
+                    <svg class="global-search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5 20 20"/></svg>
+                    <label class="sr-only" for="globalSearch">Tìm phòng, khách, dịch vụ</label>
+                    <input type="search" id="globalSearch" name="q" placeholder="Tìm phòng, khách..." autocomplete="off">
+                </form>
+
+                <button class="bell" id="bellBtn" type="button" aria-label="Thông báo: 2 mục mới">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 20c3-1 7-1 10 0"/><path d="M8 17a5 5 0 1 1 8 0z"/></svg>
+                    <span class="bell__dot" id="bellDot" aria-hidden="true"></span>
+                </button>
+
+                <div class="user">
+                    <span class="avatar avatar--lg" aria-hidden="true">MA</span>
+                    <span class="user__text">
+                        <strong>Minh Anh</strong>
+                        <small>Nhân viên</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <main class="page" id="main">
+
+            <section class="page-head">
+                <div class="page-head__text">
+                    <p class="eyebrow" id="shiftLabel">CA CHIỀU · 14:00-22:00</p>
+                    <h2 class="page-head__title">Nhiệm vụ hôm nay</h2>
+                    <p class="page-head__desc">Theo dõi và cập nhật tiến độ theo thời gian thực.</p>
+                </div>
+                <button class="btn btn--ghost" id="refreshBtn" type="button">
+                    <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.6"/><path d="M20 4v4h-4"/></svg>
+                    Làm mới
+                </button>
+            </section>
+
+            <!-- ============ FILTER BAR (form + JS) ============ -->
+            <form class="filters" id="filterForm" role="search" aria-label="Tìm và lọc nhiệm vụ">
+                <div class="filters__search">
+                    <svg class="filters__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5 20 20"/></svg>
+                    <label class="sr-only" for="taskSearch">Tìm mã, phòng hoặc dịch vụ</label>
+                    <input type="search" id="taskSearch" name="q" placeholder="Tìm mã, phòng hoặc dịch vụ" autocomplete="off">
+                </div>
+
+                <div class="filters__selects">
+                    <p class="select">
+                        <label class="sr-only" for="filterShift">Ca làm việc</label>
+                        <select id="filterShift" name="shift">
+                            <option value="all">Ca: Tất cả</option>
+                            <option value="morning">Ca sáng 06:00-14:00</option>
+                            <option value="afternoon" selected>Ca chiều 14:00-22:00</option>
+                            <option value="night">Ca đêm 22:00-06:00</option>
+                        </select>
+                    </p>
+                    <p class="select">
+                        <label class="sr-only" for="filterPriority">Ưu tiên</label>
+                        <select id="filterPriority" name="priority">
+                            <option value="all">Ưu tiên: Tất cả</option>
+                            <option value="high">Cao</option>
+                            <option value="medium">Trung bình</option>
+                            <option value="low">Thấp</option>
+                        </select>
+                    </p>
+                    <p class="select">
+                        <label class="sr-only" for="filterZone">Khu vực</label>
+                        <select id="filterZone" name="zone">
+                            <option value="all">Khu vực: Tất cả</option>
+                            <option value="low">Tầng 1-4</option>
+                            <option value="high" selected>Tầng 5-14</option>
+                        </select>
+                    </p>
+                </div>
+            </form>
+
+            <!-- ============ CHÚ THÍCH MÀU ============ -->
+            <ul class="legend" aria-label="Chú thích trạng thái">
+                <li class="legend__item legend__item--new"><i class="dot" aria-hidden="true"></i>Mới · xanh lam</li>
+                <li class="legend__item legend__item--processing"><i class="dot" aria-hidden="true"></i>Đang xử lý · amber</li>
+                <li class="legend__item legend__item--completed"><i class="dot" aria-hidden="true"></i>Hoàn thành · xanh lá</li>
+                <li class="legend__item legend__item--overdue"><i class="dot" aria-hidden="true"></i>Quá hạn · đỏ</li>
+            </ul>
+
+            <div class="board-bar">
+                <p id="resultCount" aria-live="polite"></p>
+                <p class="hint">Kéo thẻ sang cột khác để đổi trạng thái, hoặc bấm nút trên thẻ.</p>
+            </div>
+
+            <!-- ============ KANBAN BOARD ============ -->
+            <div class="board" id="board">
+                <section class="column column--new" data-status="new" aria-labelledby="colNew">
+                    <header class="column__head">
+                        <h3 class="column__title" id="colNew">Mới <span class="column__count" data-count>0</span></h3>
+                        <button class="icon-btn" type="button" aria-label="Tùy chọn cột Mới">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+                        </button>
+                    </header>
+                    <div class="column__body" data-dropzone>
+                        <ul class="cards" data-list></ul>
+                        <p class="drop-hint">Kéo thả nhiệm vụ vào đây</p>
+                    </div>
+                </section>
+
+                <section class="column column--processing" data-status="processing" aria-labelledby="colProcessing">
+                    <header class="column__head">
+                        <h3 class="column__title" id="colProcessing">Đang xử lý <span class="column__count" data-count>0</span></h3>
+                        <button class="icon-btn" type="button" aria-label="Tùy chọn cột Đang xử lý">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+                        </button>
+                    </header>
+                    <div class="column__body" data-dropzone>
+                        <ul class="cards" data-list></ul>
+                        <p class="drop-hint">Kéo thả nhiệm vụ vào đây</p>
+                    </div>
+                </section>
+
+                <section class="column column--completed" data-status="completed" aria-labelledby="colCompleted">
+                    <header class="column__head">
+                        <h3 class="column__title" id="colCompleted">Hoàn thành <span class="column__count" data-count>0</span></h3>
+                        <button class="icon-btn" type="button" aria-label="Tùy chọn cột Hoàn thành">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg>
+                        </button>
+                    </header>
+                    <div class="column__body" data-dropzone>
+                        <ul class="cards" data-list></ul>
+                        <p class="drop-hint">Kéo thả nhiệm vụ vào đây</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Phân trang cột: chỉ hiện khi màn hình nhỏ không đủ 3 cột -->
+            <nav class="pager" id="pager" aria-label="Chuyển cột nhiệm vụ" hidden>
+                <button class="btn btn--ghost" id="pagerPrev" type="button">‹ Cột trước</button>
+                <p class="pager__label" id="pagerLabel" aria-live="polite"></p>
+                <button class="btn btn--ghost" id="pagerNext" type="button">Cột sau ›</button>
+            </nav>
+
+        </main>
+
+        <footer class="foot">
+            <p>Responsive: nội dung chuyển một cột dưới 1024px; bảng cho phép cuộn ngang.</p>
+            <p>WCAG AA · Focus ring 2px · trạng thái không chỉ phụ thuộc màu sắc.</p>
+        </footer>
+    </div>
+</div>
+
+<!-- Toast thông báo -->
+<div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<!-- Modal chi tiết nhiệm vụ -->
+<div class="modal" id="taskModal" hidden>
+    <div class="modal__scrim" data-close></div>
+    <div class="modal__box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <header class="modal__head">
+            <div>
+                <p class="modal__code" id="modalCode">#SF-0000</p>
+                <h2 class="modal__title" id="modalTitle">Chi tiết nhiệm vụ</h2>
+            </div>
+            <button class="icon-btn" id="modalClose" type="button" aria-label="Đóng">✕</button>
+        </header>
+        <div class="modal__body" id="modalBody"></div>
+        <footer class="modal__foot">
+            <button class="btn btn--ghost" id="modalDismiss" type="button">Đóng</button>
+            <button class="btn btn--dark" id="modalAdvance" type="button">Chuyển trạng thái</button>
+        </footer>
+    </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>
