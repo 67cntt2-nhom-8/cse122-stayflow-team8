@@ -1,7 +1,8 @@
 /* =========================================================================
    StayFlow – Dữ liệu giả lập tập trung (mock data)
    -------------------------------------------------------------------------
-   Thay cho các file assets/data/*.json và db.json trước đây.
+   Dữ liệu này phục vụ riêng màn hình nhân viên; các trang quản lý/quản trị
+   đọc assets/data/stayflow.mock.json.
    Chạy được cả trên trình duyệt (file:// hoặc http://) lẫn trong Node.
 
    - Trình duyệt: <script src="js/data.js"></script>  -> window.StayFlowData
