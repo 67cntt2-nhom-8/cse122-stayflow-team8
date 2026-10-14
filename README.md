@@ -3,6 +3,44 @@
 > **Học phần:** PHÁT TRIỂN ỨNG DỤNG WEB CƠ BẢN – CSE122  
 > **Lĩnh vực:** Khách sạn / Hospitality  
 
+## Cấu trúc dự án
+
+```text
+cse122-stayflow-team8/
+├── index.html
+├── pages/
+│   ├── about.html
+│   ├── login.html
+│   ├── staff-task-board.html
+│   ├── manager-dispatch-board.html
+│   ├── manager-sla-monitor.html
+│   ├── admin-service-type-management.html
+│   └── admin-user-management.html
+├── css/
+│   ├── style.css
+│   ├── about.css
+│   ├── login.css
+│   ├── staff.css
+│   └── manager-admin.css
+├── js/
+│   ├── main.js
+│   ├── data.js
+│   ├── about.js
+│   ├── login.js
+│   ├── manager-admin.js
+│   ├── manager-dispatch-board.js
+│   ├── manager-sla-monitor.js
+│   ├── admin-service-type-management.js
+│   ├── admin-user-management.js
+│   ├── domcheck.js
+│   └── selfcheck.js
+└── assets/
+    └── images/
+```
+
+Mở `index.html` để vào trang chủ. Dữ liệu giả lập hiện được khai báo trong
+`js/data.js`; hình ảnh dùng chung nằm trong `assets/images/`.
+
 ## Ngữ cảnh
 Khách lưu trú phải gọi lễ tân cho nhiều yêu cầu nhỏ. Bộ phận vận hành lại thiếu trạng thái thống nhất để theo dõi xử lý và SLA.
 
