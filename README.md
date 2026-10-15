@@ -7,35 +7,38 @@
 
 ```text
 cse122-stayflow-team8/
-├── index.html
-├── pages/
-│   ├── about.html
-│   ├── login.html
-│   ├── staff-task-board.html
+│
+├── index.html                   (Trang chủ / trang chính)
+│
+├── pages/                       (Gom TẤT CẢ các file .html vào đây)
+│   ├── login.html               (Trang đăng nhập)
+│   ├── about.html               (Trang giới thiệu)
 │   ├── manager-dispatch-board.html
 │   ├── manager-sla-monitor.html
 │   ├── admin-service-type-management.html
 │   └── admin-user-management.html
-├── css/
-│   ├── style.css
-│   ├── about.css
-│   ├── login.css
-│   ├── staff.css
-│   └── manager-admin.css
-├── js/
-│   ├── main.js
-│   ├── data.js
-│   ├── about.js
-│   ├── login.js
-│   ├── manager-admin.js
+│
+├── css/                         (Gom TẤT CẢ các file .css vào đây)
+│   ├── style.css                (CSS chung cho cả web)
+│   ├── manager.css              (CSS riêng nếu có)
+│   └── admin.css
+│
+├── js/                          (Gom TẤT CẢ các file .js vào đây)
+│   ├── main.js                  (JS xử lý chung)
 │   ├── manager-dispatch-board.js
 │   ├── manager-sla-monitor.js
 │   ├── admin-service-type-management.js
-│   ├── admin-user-management.js
-│   ├── domcheck.js
-│   └── selfcheck.js
-└── assets/
-    └── images/
+│   └── admin-user-management.js
+│
+├── assets/                      (Thư mục tài nguyên chung)
+│   ├── data/                    (Chứa các file mock JSON dữ liệu giả lập)
+│   │   ├── stays.json
+│   │   ├── requests.json
+│   │   └── staff.json
+│   └── images/                  (Chứa ảnh, logo, icon SVG...)
+│
+└── README.md
+
 ```
 
 Mở `index.html` để vào trang chủ. Dữ liệu giả lập hiện được khai báo trong
