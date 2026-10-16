@@ -1,8 +1,8 @@
 /* =========================================================================
-   StayFlow - Bảng nhiệm vụ (Kanban ca làm việc)
+   StayFlow - Màn hình nhân viên vận hành
    1. Biến thiết kế   2. Nền tảng   3. Sidebar   4. Topbar
    5. Tiêu đề trang   6. Bộ lọc     7. Kanban    8. Modal/Toast
-   9. Responsive     10. A11y
+   9. Responsive     10. A11y      11. Lịch ca trực
    ========================================================================= */
 
 /* ---------- 1. BIẾN THIẾT KẾ (lấy từ Figma) ---------- */
@@ -886,5 +886,192 @@ svg {
         animation-duration: .001ms !important;
         transition-duration: .001ms !important;
     }
+}
+
+/* ---------- 11. LỊCH CA TRỰC (pages/staff-shift-view.html) ---------- */
+/* Màu nhận diện từng ca, dùng lại cho .slot, .pill và .legend__item */
+.slot--morning, .pill--morning, .legend__item--morning { --slot: var(--blue); --slot-bg: var(--blue-bg); }
+.slot--afternoon, .pill--afternoon, .legend__item--afternoon { --slot: var(--amber); --slot-bg: var(--amber-bg); }
+.slot--night, .pill--night, .legend__item--night { --slot: var(--navy-3); --slot-bg: #e9edf5; }
+
+.legend__item--morning,
+.legend__item--afternoon,
+.legend__item--night {
+    background: var(--slot-bg);
+    color: var(--slot);
+}
+
+/* Thanh chuyển kỳ: Trước / Hôm nay / Sau + nhãn kỳ đang xem */
+.sched-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.sched-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.sched-range {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+/* Nút gạt chế độ xem Tuần / Tháng */
+.seg {
+    display: inline-flex;
+    gap: 4px;
+    padding: 4px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+}
+
+.seg__btn {
+    border: 0;
+    background: transparent;
+    padding: 8px 18px;
+    border-radius: var(--r-sm);
+    color: var(--ink-2);
+    cursor: pointer;
+    transition: background .15s ease, color .15s ease;
+}
+
+.seg__btn:hover { color: var(--ink); background: var(--paper); }
+.seg__btn.is-active { background: var(--ink); color: #fff; }
+
+/* Lưới lịch: tự co theo bề ngang, mỗi ngày một thẻ */
+.sched {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+    align-items: start;
+}
+
+/* Chế độ Tháng: giữ đúng 7 cột để thẳng hàng theo thứ */
+.sched--month { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; overflow-x: auto; }
+.sched--month > * { min-width: 0; }
+
+/* ---- Chế độ Tuần: mỗi cột là một ngày ---- */
+.day-card {
+    background: #f1ece0;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.day-card.is-today { border-color: var(--gold); box-shadow: var(--shadow-md); }
+
+.day-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.day-card__date {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.tag-today {
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: var(--gold);
+    color: #26170a;
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ---- Một ca trong ngày ---- */
+.slot {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--slot);
+    border-radius: var(--r-md);
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.slot__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.slot__name { font-size: var(--fs-md); font-weight: 600; color: var(--slot); }
+.slot__time { font-size: var(--fs-xs); color: var(--ink-3); white-space: nowrap; }
+.slot__empty { font-size: var(--fs-xs); color: var(--ink-3); }
+
+.members { display: flex; flex-direction: column; gap: 8px; }
+
+.member { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.member .avatar { width: 28px; height: 28px; }
+
+.member__text { display: flex; flex-direction: column; line-height: 1.25; min-width: 0; }
+.member__text b { font-size: var(--fs-sm); font-weight: 600; }
+.member__text small { font-size: var(--fs-xs); color: var(--ink-3); }
+
+/* ---- Chế độ Tháng: mỗi ô là một ngày, bấm để mở tuần ---- */
+.mcell {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-height: 92px;
+    padding: 8px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color .15s ease, background .15s ease;
+}
+
+.mcell:hover { border-color: var(--gold); }
+.mcell.is-today { border-color: var(--gold); background: #fffdf5; }
+.mcell.is-out { opacity: .45; }
+
+.mcell__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.mcell__head b { font-size: var(--fs-md); }
+.mcell__dow { font-size: var(--fs-xs); color: var(--ink-3); }
+.mcell__list { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    background: var(--slot-bg);
+    color: var(--slot);
+    font-size: var(--fs-xs);
+}
+
+.pill b { font-weight: 700; }
+.pill.is-zero { background: var(--paper); color: var(--ink-3); }
+
+/* Điện thoại: giãn hết bề ngang, lưới tháng cuộn ngang giữ 7 cột */
+@media (max-width: 720px) {
+    .page-head .seg { width: 100%; }
+    .seg__btn { flex: 1 1 auto; }
+    .sched-nav { width: 100%; }
+    .sched-nav .btn { flex: 1 1 auto; }
+    .sched-range { width: 100%; text-align: center; }
+    .sched--month { grid-template-columns: repeat(7, minmax(96px, 1fr)); }
 }
 
