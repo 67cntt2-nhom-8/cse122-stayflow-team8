@@ -23,13 +23,28 @@
 })(typeof self !== 'undefined' ? self : this, function () {
     'use strict';
 
-    /* ---------- Nhân viên ---------- */
+    /* ---------- Nhân viên ----------
+       `role`  = bộ phận (dùng để lọc lịch ca trực)
+       `shift` = ca đăng ký, khớp shifts[].name bên dưới
+       `status`= 'Đang trực' (có thể xếp ca) hoặc 'Nghỉ' (không xếp ca) */
     const staff = [
         { id: 'STF001', name: 'Nguyễn Thị Mai Anh', role: 'Lễ tân', status: 'Đang trực', shift: 'Ca sáng', phone: '0901234567', email: 'maianh.n@stayflow.vn' },
         { id: 'STF002', name: 'Trần Văn Bình', role: 'Buồng phòng', status: 'Đang trực', shift: 'Ca sáng', phone: '0902345678', email: 'binh.tr@stayflow.vn' },
         { id: 'STF003', name: 'Lê Hoàng Phúc', role: 'Kỹ thuật', status: 'Đang trực', shift: 'Ca chiều', phone: '0903456789', email: 'phuc.le@stayflow.vn' },
         { id: 'STF004', name: 'Phạm Thị Hương', role: 'Lễ tân', status: 'Nghỉ', shift: 'Ca đêm', phone: '0904567890', email: 'huong.p@stayflow.vn' },
-        { id: 'STF005', name: 'Vũ Đức Thành', role: 'Buồng phòng', status: 'Đang trực', shift: 'Ca chiều', phone: '0905678901', email: 'thanh.vu@stayflow.vn' }
+        { id: 'STF005', name: 'Vũ Đức Thành', role: 'Buồng phòng', status: 'Đang trực', shift: 'Ca chiều', phone: '0905678901', email: 'thanh.vu@stayflow.vn' },
+        { id: 'STF006', name: 'Ngô Thị Lan', role: 'Lễ tân', status: 'Đang trực', shift: 'Ca sáng', phone: '0906789012', email: 'lan.ngo@stayflow.vn' },
+        { id: 'STF007', name: 'Đặng Minh Quân', role: 'Kỹ thuật', status: 'Đang trực', shift: 'Ca đêm', phone: '0907890123', email: 'quan.dang@stayflow.vn' },
+        { id: 'STF008', name: 'Bùi Thị Ngọc', role: 'Buồng phòng', status: 'Đang trực', shift: 'Ca đêm', phone: '0908901234', email: 'ngoc.bui@stayflow.vn' },
+        { id: 'STF009', name: 'Hoàng Văn Tú', role: 'Kỹ thuật', status: 'Đang trực', shift: 'Ca sáng', phone: '0909012345', email: 'tu.hoang@stayflow.vn' },
+        { id: 'STF010', name: 'Đỗ Thị Thu Hà', role: 'Lễ tân', status: 'Đang trực', shift: 'Ca chiều', phone: '0910123456', email: 'ha.do@stayflow.vn' }
+    ];
+
+    /* ---------- Ca làm việc ---------- */
+    const shifts = [
+        { id: 'morning', name: 'Ca sáng', start: '06:00', end: '14:00' },
+        { id: 'afternoon', name: 'Ca chiều', start: '14:00', end: '22:00' },
+        { id: 'night', name: 'Ca đêm', start: '22:00', end: '06:00' }
     ];
 
     /* ---------- Loại dịch vụ ---------- */
@@ -118,6 +133,7 @@
 
     return {
         staff: staff,
+        shifts: shifts,
         serviceTypes: serviceTypes,
         stays: stays,
         requests: requests,

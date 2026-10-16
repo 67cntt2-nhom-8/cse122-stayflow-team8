@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StayFlow - Lịch ca trực của nhân sự vận hành theo tuần và theo tháng.">
+    <title>StayFlow - Lịch ca trực</title>
+    <link rel="stylesheet" href="../css/staff.css">
+</head>
+<body>
+<div class="app">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="sidebar">
+        <a class="brand" href="#main">
+            <span class="brand__mark" aria-hidden="true">S</span>
+            <span class="brand__name">StayFlow</span>
+        </a>
+
+        <div class="hotel">
+            <p class="hotel__name">AURORA GRAND - ĐÀ NẴNG</p>
+            <p class="hotel__role">Nhân viên</p>
+        </div>
+
+        <nav class="nav" aria-label="Điều hướng chính">
+            <a class="nav__item" href="#main">
+                <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+                <span>Tổng quan</span>
+            </a>
+            <a class="nav__item" href="staff-task-board.html">
+                <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8l3 3v13H5V7z"/><path d="M9 12h6M9 16h6"/></svg>
+                <span>Yêu cầu</span>
+            </a>
+            <a class="nav__item is-active" href="staff-shift-view.html" aria-current="page">
+                <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M9 3v4M15 3v4"/></svg>
+                <span>Lịch &amp; ca</span>
+            </a>
+            <a class="nav__item" href="#main">
+                <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 20c3-1 7-1 10 0"/><path d="M8 17a5 5 0 1 1 8 0z"/></svg>
+                <span>Thông báo</span>
+                <span class="nav__badge" id="navBadge">2</span>
+            </a>
+            <a class="nav__item" href="#main">
+                <svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M6 6l2 2M16 16l2 2M18 6l-2 2M8 16l-2 2"/></svg>
+                <span>Hồ sơ</span>
+            </a>
+        </nav>
+
+        <section class="help" aria-labelledby="helpTitle">
+            <h2 class="help__title" id="helpTitle">Cần trợ giúp?</h2>
+            <p class="help__desc">Trung tâm vận hành hỗ trợ 24/7</p>
+            <a class="help__phone" href="tel:188">Máy lẻ 188</a>
+        </section>
+    </aside>
+
+    <!-- ============ MAIN ============ -->
+    <div class="shell">
+
+        <header class="topbar">
+            <div class="topbar__left">
+                <p class="crumbs"><a href="#main">Vận hành</a><span aria-hidden="true">/</span> Lịch ca trực</p>
+                <h1 class="topbar__title">Lịch ca trực</h1>
+            </div>
+
+            <div class="topbar__right">
+                <button class="bell" id="bellBtn" type="button" aria-label="Thông báo: 2 mục mới">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 20c3-1 7-1 10 0"/><path d="M8 17a5 5 0 1 1 8 0z"/></svg>
+                    <span class="bell__dot" id="bellDot" aria-hidden="true"></span>
+                </button>
+
+                <div class="user">
+                    <span class="avatar" aria-hidden="true">MA</span>
+                    <span class="user__text">
+                        <strong>Minh Anh</strong>
+                        <small>Nhân viên</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <main class="page" id="main">
+
+            <section class="page-head">
+                <div class="page-head__text">
+                    <p class="eyebrow" id="shiftLabel">LỊCH &amp; CA · NHÓM VẬN HÀNH</p>
+                    <h2 class="page-head__title">Lịch ca trực</h2>
+                    <p class="page-head__desc">Xem ai trực ca nào theo tuần hoặc theo tháng, kèm định mức nhân sự mỗi ca.</p>
+                </div>
+
+                <!-- Chế độ xem: Tuần (7 ngày) / Tháng (trọn lưới tháng) -->
+                <div class="seg" role="group" aria-label="Chế độ xem lịch">
+                    <button class="seg__btn" type="button" data-mode="week" aria-pressed="true">Tuần</button>
+                    <button class="seg__btn" type="button" data-mode="month" aria-pressed="false">Tháng</button>
+                </div>
+            </section>
+
+            <!-- ============ THANH CHUYỂN KỲ ============ -->
+            <div class="sched-bar">
+                <div class="sched-nav" role="group" aria-label="Chuyển kỳ xem lịch">
+                    <button class="btn btn--ghost" id="prevBtn" type="button">‹ Trước</button>
+                    <button class="btn btn--ghost" id="todayBtn" type="button">Hôm nay</button>
+                    <button class="btn btn--ghost" id="nextBtn" type="button">Sau ›</button>
+                </div>
+                <p class="sched-range" id="shiftRange" aria-live="polite"></p>
+            </div>
+
+            <!-- ============ BỘ LỌC ============ -->
+            <form class="filters" id="shiftFilterForm" role="search" aria-label="Tìm và lọc lịch ca trực">
+                <div class="filters__search">
+                    <svg class="filters__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5 20 20"/></svg>
+                    <label class="sr-only" for="shiftSearch">Tìm nhân viên theo tên</label>
+                    <input type="search" id="shiftSearch" name="q" placeholder="Tìm nhân viên theo tên" autocomplete="off">
+                </div>
+
+                <div class="filters__selects">
+                    <p class="select">
+                        <label class="sr-only" for="filterDepartment">Bộ phận</label>
+                        <select id="filterDepartment" name="department">
+                            <option value="all">Bộ phận: Tất cả</option>
+                            <option value="Lễ tân">Lễ tân</option>
+                            <option value="Buồng phòng">Buồng phòng</option>
+                            <option value="Kỹ thuật">Kỹ thuật</option>
+                        </select>
+                    </p>
+                    <p class="select">
+                        <label class="sr-only" for="filterShiftType">Ca làm việc</label>
+                        <select id="filterShiftType" name="shift">
+                            <option value="all">Ca: Tất cả</option>
+                            <option value="morning">Ca sáng 06:00-14:00</option>
+                            <option value="afternoon">Ca chiều 14:00-22:00</option>
+                            <option value="night">Ca đêm 22:00-06:00</option>
+                        </select>
+                    </p>
+                </div>
+            </form>
+
+            <!-- ============ CHÚ THÍCH CA ============ -->
+            <ul class="legend" aria-label="Chú thích ca làm việc">
+                <li class="legend__item legend__item--morning"><i class="dot" aria-hidden="true"></i>Ca sáng · 06:00-14:00</li>
+                <li class="legend__item legend__item--afternoon"><i class="dot" aria-hidden="true"></i>Ca chiều · 14:00-22:00</li>
+                <li class="legend__item legend__item--night"><i class="dot" aria-hidden="true"></i>Ca đêm · 22:00-06:00</li>
+            </ul>
+
+            <div class="board-bar">
+                <p id="shiftSummary" aria-live="polite"></p>
+                <p class="hint">Định mức mỗi ca: sáng 2 · chiều 2 · đêm 1 người. Ở chế độ Tháng, bấm một ngày để mở tuần chứa ngày đó.</p>
+            </div>
+
+            <!-- ============ LỊCH CA TRỰC (do js/staff-shift-view.js render) ============ -->
+            <div class="sched" id="schedGrid"></div>
+
+        </main>
+
+        <footer class="foot">
+            <p>Tuần bắt đầu từ Thứ Hai; chế độ Tháng hiển thị trọn lưới tháng kèm các ngày giáp ranh.</p>
+            <p>WCAG AA · Focus ring 2px · ca trực hiển thị bằng chữ và số, không chỉ dựa vào màu sắc.</p>
+        </footer>
+    </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="../js/staff-shift-view.js"></script>
+</body>
+</html>
