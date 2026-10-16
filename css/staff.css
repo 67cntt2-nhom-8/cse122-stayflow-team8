@@ -859,9 +859,204 @@ svg {
     .toast { max-width: none; }
     .modal__foot { flex-direction: column-reverse; }
     .modal__foot .btn { width: 100%; }
+
+    .panel { padding: 14px 16px; }
+    .action__buttons .btn { flex: 1 1 100%; }
+    .info__row { flex-direction: column; align-items: flex-start; gap: 2px; }
+    .info__row dd { text-align: left; }
 }
 
-/* ---------- 10. TRUY CẬP (A11Y) ---------- */
+/* Chi tiết nhiệm vụ: một cột trên màn hình hẹp */
+@media (max-width: 1024px) {
+    .detail { grid-template-columns: 1fr; }
+}
+
+/* ---------- 11. CHI TIẾT NHIỆM VỤ (staff-task-detail.html) ---------- */
+/* Hai cột: thông tin chính bên trái – thao tác & nhật ký bên phải */
+.detail {
+    display: grid;
+    grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.panel {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.panel + .panel { margin-top: 18px; }
+
+.panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.panel__title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.panel__label {
+    font-size: var(--fs-xs);
+    font-weight: 700;
+    letter-spacing: .6px;
+    text-transform: uppercase;
+    color: var(--ink-3);
+}
+
+.panel__note { color: var(--ink-2); }
+
+/* Bảng thông tin dạng nhãn – giá trị */
+.info { display: flex; flex-direction: column; gap: 10px; }
+
+.info__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--line);
+    font-size: var(--fs-md);
+}
+
+.info__row:last-child { border-bottom: 0; padding-bottom: 0; }
+.info__row dt { color: var(--ink-3); font-size: var(--fs-sm); }
+.info__row dd { margin: 0; font-weight: 500; text-align: right; }
+
+/* Khối thao tác */
+.action { display: flex; flex-direction: column; gap: 10px; }
+
+.action__hint { font-size: var(--fs-sm); color: var(--ink-3); }
+
+.action__buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.action__buttons .btn { flex: 1 1 150px; }
+
+/* Ô nhập ghi chú / phản hồi */
+.field { display: flex; flex-direction: column; gap: 6px; }
+
+.field label { font-size: var(--fs-sm); color: var(--ink-2); font-weight: 500; }
+
+.field textarea,
+.field input[type="text"] {
+    width: 100%;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    padding: 10px 12px;
+    resize: vertical;
+    min-height: 96px;
+}
+
+.field textarea:focus,
+.field input[type="text"]:focus {
+    background: #fff;
+    border-color: var(--gold);
+    outline: none;
+}
+
+.field.is-invalid textarea {
+    border-color: var(--red);
+    background: var(--red-bg);
+}
+
+.field__error {
+    font-size: var(--fs-xs);
+    color: var(--red);
+    font-weight: 500;
+}
+
+.field__error[hidden] { display: none; }
+
+/* Nhật ký thay đổi */
+.timeline { display: flex; flex-direction: column; gap: 0; }
+
+.timeline__item {
+    position: relative;
+    padding: 0 0 16px 24px;
+    border-left: 2px solid var(--line);
+}
+
+.timeline__item:last-child { border-left-color: transparent; padding-bottom: 0; }
+
+.timeline__item::before {
+    content: "";
+    position: absolute;
+    left: -7px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--ink-3);
+    border: 2px solid #fff;
+}
+
+.timeline__item--processing::before { background: var(--amber); }
+.timeline__item--completed::before { background: var(--green); }
+.timeline__item--new::before { background: var(--blue); }
+
+.timeline__when {
+    font-size: var(--fs-xs);
+    color: var(--ink-3);
+    letter-spacing: .3px;
+}
+
+.timeline__what { font-weight: 600; margin-top: 2px; }
+
+.timeline__who { font-size: var(--fs-sm); color: var(--ink-2); }
+
+.timeline__note {
+    margin-top: 6px;
+    padding: 8px 10px;
+    border-radius: var(--r-sm);
+    background: var(--paper);
+    font-size: var(--fs-sm);
+    color: var(--ink-2);
+}
+
+.timeline__empty { color: var(--ink-3); font-size: var(--fs-sm); }
+
+/* Thẻ nhiệm vụ mới được chuyển trạng thái -> nhấp nháy nhẹ */
+@keyframes flash-pulse {
+    0% { box-shadow: 0 0 0 0 rgba(201, 154, 63, .55); }
+    100% { box-shadow: 0 0 0 14px rgba(201, 154, 63, 0); }
+}
+
+.is-flash { animation: flash-pulse .6s ease-out; }
+
+/* Trạng thái hiện tại của nhiệm vụ */
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: var(--fs-sm);
+    font-weight: 600;
+    background: var(--blue-bg);
+    color: var(--blue);
+    border: 1px solid #c6daf5;
+}
+
+.status-pill .dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.status-pill--processing { background: var(--amber-bg); color: var(--amber); border-color: #ecd5ab; }
+.status-pill--completed { background: var(--green-bg); color: var(--green); border-color: #bfe3cd; }
+
+/* ---------- 12. TRUY CẬP (A11Y) ---------- */
 .sr-only {
     position: absolute;
     width: 1px;

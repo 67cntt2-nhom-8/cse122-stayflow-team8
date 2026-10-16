@@ -44,6 +44,14 @@ cse122-stayflow-team8/
 Mở `index.html` để vào trang chủ. Dữ liệu giả lập hiện được khai báo trong
 `js/data.js`; hình ảnh dùng chung nằm trong `assets/images/`.
 
+## Kiểm tra nhanh (không cần framework)
+
+```bash
+node js/selfcheck.js     # logic lọc/trạng thái thuần của main.js
+node js/domcheck.js      # render bảng nhiệm vụ trên DOM giả
+node js/detailcheck.js   # trang chi tiết nhiệm vụ: đổ dữ liệu, đổi trạng thái, ghi chú
+```
+
 ## Ngữ cảnh
 Khách lưu trú phải gọi lễ tân cho nhiều yêu cầu nhỏ. Bộ phận vận hành lại thiếu trạng thái thống nhất để theo dõi xử lý và SLA.
 

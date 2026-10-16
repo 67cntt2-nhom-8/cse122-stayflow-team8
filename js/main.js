@@ -412,6 +412,11 @@ if (typeof document !== 'undefined') {
             advanceBtn.textContent = ACTION_TEXT[NEXT_STATUS[task.status]];
             advanceBtn.dataset.code = task.code;
         }
+        // Liên kết sang trang chi tiết, mang theo mã nhiệm vụ đang mở
+        const detailLink = $('#modalDetail');
+        if (detailLink) {
+            detailLink.href = 'staff-task-detail.html?code=' + encodeURIComponent(task.code);
+        }
         modal.hidden = false;
         modal.dataset.code = task.code;
     }
@@ -618,6 +623,26 @@ if (typeof document !== 'undefined') {
             setInterval(render, 30000);
         }
     }
+
+    /* ---- API dùng chung cho các trang nhân viên khác ----
+       Trang chi tiết nhiệm vụ (staff-task-detail.html) tái dùng đúng
+       nguồn dữ liệu và quy tắc nghiệp vụ ở đây thay vì chép lại. */
+    window.StaffFlow = {
+        tasks: tasks,
+        profile: profile,
+        PRIORITY: PRIORITY,
+        STATUS_TEXT: STATUS_TEXT,
+        STATUS_LABELS: STATUS_LABELS,
+        NEXT_STATUS: NEXT_STATUS,
+        ACTION_TEXT: ACTION_TEXT,
+        findTask: findTask,
+        applyStatus: applyStatus,
+        isOverdue: isOverdue,
+        liveMinutes: liveMinutes,
+        timeLabel: timeLabel,
+        initials: initials,
+        toast: toast
+    };
 
     /* Đăng ký chạy khi DOM sẵn sàng */
     document.addEventListener('DOMContentLoaded', init);
