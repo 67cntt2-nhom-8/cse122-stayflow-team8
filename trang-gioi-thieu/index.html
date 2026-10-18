@@ -12,6 +12,7 @@
   </head>
   <body>
     <main id="top">
+      <!-- HEADER: logo + nút menu (mobile) + điều hướng + nút đăng nhập/đăng ký -->
       <header>
         <a class="brand" href="#top" aria-label="Aurora Grand">
           <span class="brand-mark">S</span>
@@ -21,6 +22,7 @@
           </span>
         </a>
 
+        <!-- Nút MENU chỉ hiện trên màn hình nhỏ; JS bật/tắt menu -->
         <button
           class="menu-toggle"
           type="button"
@@ -30,6 +32,7 @@
           MENU
         </button>
 
+        <!-- Điều hướng chính (neo tới các mục trong trang) -->
         <nav id="main-navigation">
           <a href="#story">Giới thiệu</a>
           <a href="#rooms">Phòng nghỉ</a>
@@ -38,22 +41,25 @@
           <a href="#contact">Liên hệ</a>
           <div class="nav-auth">
             <a class="login" href="../trang-dang-nhap/login.html">Đăng nhập</a>
-            <a class="register" href="#contact">Đăng ký</a>
+            <a class="register" href="../trang-dang-ky/sighup.html">Đăng ký</a>
           </div>
         </nav>
 
         <div class="auth-actions">
           <a class="login" href="../trang-dang-nhap/login.html">Đăng nhập StayFlow</a>
-          <a class="register" href="#contact">Đăng ký</a>
+          <a class="register" href="../trang-dang-ky/sighup.html">Đăng ký</a>
         </div>
       </header>
 
+      <!-- HERO: slideshow ảnh bìa (JS tự chuyển ảnh mỗi 5 giây) -->
       <section class="hero">
+        <!-- 3 ảnh nền; ảnh có class "active" mới được hiển thị -->
         <div class="hero-slides">
           <img class="active" src="./assets/58c4c.png" alt="" />
           <img src="./assets/b006a.png" alt="" />
           <img src="./assets/fa1a8.png" alt="" />
         </div>
+        <!-- Lớp phủ gradient giúp chữ nổi rõ trên ảnh -->
         <div class="hero-shade"></div>
         <div class="hero-content">
           <div class="hero-copy">
@@ -74,6 +80,7 @@
               </a>
             </div>
           </div>
+          <!-- Chú thích ảnh + 3 chấm để chuyển ảnh thủ công -->
           <div class="hero-caption">
             <span>Sảnh đón tiếp · Aurora Grand · Đà Nẵng</span>
             <div>
@@ -85,6 +92,7 @@
         </div>
       </section>
 
+      <!-- Dải số liệu nổi bật ngay dưới hero -->
       <section class="stats reveal">
         <div><strong>150+</strong><span>Phòng nghỉ cao cấp</span></div>
         <div><strong>5</strong><span>Nhà hàng &amp; quán cà phê</span></div>
@@ -92,6 +100,7 @@
         <div><strong>24/7</strong><span>Dịch vụ hỗ trợ khách</span></div>
       </section>
 
+      <!-- SECTION: Câu chuyện thương hiệu -->
       <section class="story section" id="story">
         <div class="story-copy reveal">
           <span class="eyebrow">CÂU CHUYỆN AURORA GRAND</span>
@@ -112,12 +121,13 @@
           </a>
         </div>
         <div class="story-images image-reveal">
-          <img class="story-main" src="./assets/58c4c.png" alt="Sảnh Aurora Grand" />
-          <img src="./assets/a80fa.png" alt="Không gian khách sạn" />
-          <img src="./assets/c33e0.png" alt="Hoàng hôn bên biển" />
+          <img class="story-main" src="assets/58c4c.png" alt="Sảnh Aurora Grand" />
+          <img src="assets/a80fa.png" alt="Không gian khách sạn" />
+          <img src="assets/c33e0.png" alt="Hoàng hôn bên biển" />
         </div>
       </section>
 
+      <!-- SECTION: Phòng nghỉ & Suite -->
       <section class="rooms section" id="rooms">
         <div class="section-heading">
           <div class="section-title reveal on-dark">

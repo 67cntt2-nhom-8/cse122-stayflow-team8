@@ -1,3 +1,16 @@
+/* =========================================================================
+ * login.css — Giao diện trang Đăng nhập (StayFlow)
+ * -------------------------------------------------------------------------
+ * Bố cục 2 cột: trái là panel giới thiệu (ảnh nền + hiệu ứng), phải là form.
+ * Các phần chính:
+ *   1.  Font chữ (@font-face) tải từ Figma.
+ *   2.  Biến màu & thiết lập chung (:root, reset).
+ *   3.  Panel trái .brand-panel (ảnh nền, lớp phủ, ánh sáng theo chuột...).
+ *   4.  Panel phải .form-panel + form đăng nhập và các trạng thái lỗi.
+ *   5.  Keyframes (hiệu ứng động) và responsive (media queries).
+ * ========================================================================= */
+
+/* --- 1. Font chữ dùng cho trang --- */
 @font-face {
   font-family: "Inria Sans:Regular";
   src: url("https://static.figma.com/font/InriaSans-Regular_1") format("woff2");
@@ -40,6 +53,7 @@
   font-weight: 600;
 }
 
+/* --- 2. Biến màu & thiết lập chung --- */
 :root {
   color: #101d33;
   background: #f7f3ea;
@@ -48,13 +62,13 @@
   --navy: #101d33;
   --navy-soft: #1b2535;
   --gold: #b8914a;
-  --cream: #f7f3ea;
   --cream-dark: #f2e7cf;
   --muted: #607084;
   --blue: #246bce;
   --error: #b43d45;
 }
 
+/* Reset nhẹ: chuẩn hoá box-sizing, cỡ chữ tối thiểu và màu nền chung */
 * {
   box-sizing: border-box;
 }
@@ -90,6 +104,7 @@ img {
   display: block;
 }
 
+/* --- 3. Bố cục tổng: chia 2 cột (panel giới thiệu | form đăng nhập) --- */
 .login-page {
   display: grid;
   grid-template-columns: minmax(400px, 40vw) 1fr;
@@ -97,6 +112,8 @@ img {
   min-height: 100dvh;
 }
 
+/* --- 4. Panel trái: ảnh nền, lớp phủ tối và vệt sáng theo con trỏ --- */
+/* --mouse-x/--mouse-y do login.js cập nhật liên tục khi rê chuột */
 .brand-panel {
   --mouse-x: 50%;
   --mouse-y: 45%;
@@ -160,6 +177,7 @@ img {
   z-index: -1;
 }
 
+/* --- 5. Logo StayFlow (góc trên panel trái) --- */
 .brand {
   align-items: center;
   animation: fade-down .8s .05s both;
@@ -190,6 +208,7 @@ img {
   font: 400 24px "Instrument Serif:Regular", Georgia, serif;
 }
 
+/* --- 6. Khối nội dung giới thiệu (eyebrow + tiêu đề + mô tả) --- */
 .brand-message {
   max-width: 430px;
   position: relative;
@@ -234,6 +253,7 @@ img {
   color: #fff;
 }
 
+/* --- 7. Các chấm sáng bay lơ lửng (hiệu ứng nền) --- */
 .floating-lights {
   inset: 0;
   overflow: hidden;
@@ -281,6 +301,7 @@ img {
   left: 88%;
 }
 
+/* --- 8. Panel phải: khung chứa form đăng nhập --- */
 .form-panel {
   align-items: center;
   background:
@@ -332,6 +353,7 @@ img {
   width: 300px;
 }
 
+/* --- 9. Form đăng nhập & hiệu ứng xuất hiện lần lượt --- */
 .login-form {
   display: flex;
   flex-direction: column;
@@ -352,6 +374,7 @@ img {
 .reveal-item:nth-child(6) { animation-delay: .42s; }
 .reveal-item:nth-child(7) { animation-delay: .5s; }
 
+/* --- 10. Tiêu đề form --- */
 .form-heading {
   display: flex;
   flex-direction: column;
@@ -377,6 +400,7 @@ img {
   margin: 0;
 }
 
+/* --- 11. Ô nhập liệu (label + khung input) --- */
 .field {
   display: flex;
   flex-direction: column;
@@ -437,6 +461,7 @@ img {
   transform: translateY(-1px);
 }
 
+/* --- 12. Trạng thái lỗi / thành công của ô nhập --- */
 .input-shell--error {
   border: 2px solid var(--error);
 }
@@ -490,6 +515,7 @@ img {
   left: 125%;
 }
 
+/* --- 13. Nút ẩn/hiện mật khẩu (icon con mắt) --- */
 .password-toggle {
   background: transparent;
   border: 0;
@@ -510,6 +536,7 @@ img {
   transform: scale(1.1);
 }
 
+/* --- 14. Dòng thông báo lỗi dưới ô nhập --- */
 .field-message,
 .error-message {
   font: 400 11px "Inter:Regular", Arial, sans-serif;
@@ -542,6 +569,7 @@ img {
   display: none;
 }
 
+/* --- 15. Checkbox "Ghi nhớ đăng nhập" (ẩn input gốc, tự vẽ lại ô vuông) --- */
 .remember {
   align-items: center;
   cursor: pointer;
@@ -596,6 +624,7 @@ img {
   box-shadow: 0 0 0 4px rgba(36, 107, 206, .15);
 }
 
+/* --- 16. Nút đăng nhập (kèm hiệu ứng hover, trạng thái loading & success) --- */
 .submit-button {
   align-items: center;
   background: var(--navy);
@@ -695,6 +724,7 @@ img {
   color: var(--navy);
 }
 
+/* --- 17. Ghi chú trạng thái lỗi cuối form (ux-note) --- */
 .ux-note {
   align-items: center;
   align-self: flex-start;
@@ -722,6 +752,7 @@ img {
   animation: form-shake .38s ease;
 }
 
+/* --- 18. Thông báo nổi (toast) ở góc dưới bên phải --- */
 .toast {
   align-items: center;
   background: var(--navy);
@@ -759,6 +790,7 @@ img {
   width: 22px;
 }
 
+/* --- 19. Định nghĩa các hiệu ứng động (keyframes) --- */
 @keyframes image-breathe {
   from { transform: scale(1.02) translate3d(0, 0, 0); }
   to { transform: scale(1.11) translate3d(-1.8%, -1%, 0); }
@@ -813,6 +845,7 @@ img {
   50% { box-shadow: 0 0 0 5px rgba(180, 61, 69, .12); }
 }
 
+/* --- 20. Responsive: điều chỉnh bố cục theo kích thước màn hình --- */
 @media (max-width: 900px) {
   .login-page {
     grid-template-columns: minmax(330px, 42vw) 1fr;
@@ -906,6 +939,7 @@ img {
   }
 }
 
+/* Tắt/giảm chuyển động cho người dùng bật "giảm hiệu ứng động" trong hệ điều hành */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

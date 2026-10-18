@@ -1,4 +1,9 @@
 <!Doctype html>
+<!-- ======================================================================
+     login.html — Trang Đăng nhập StayFlow
+     Bố cục 2 cột: bên trái là panel giới thiệu thương hiệu (ảnh nền),
+     bên phải là form đăng nhập. Giao diện ở login.css, tương tác ở login.js.
+     ====================================================================== -->
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
@@ -11,8 +16,11 @@
     <link rel="stylesheet" href="login.css" />
   </head>
   <body>
+    <!-- Khung trang: 2 cột (panel giới thiệu | form đăng nhập) -->
     <main class="login-page">
+      <!-- PANEL TRÁI: ảnh nền khách sạn + lớp phủ tối + hiệu ứng ánh sáng -->
       <section class="brand-panel" aria-label="Giới thiệu StayFlow">
+        <!-- Các lớp nền trang trí: ảnh, lớp phủ tối, vệt sáng theo chuột, chấm sáng -->
         <img
           class="brand-panel__image"
           src="./assets/58c4c.png"
@@ -20,15 +28,18 @@
         />
         <div class="brand-panel__overlay"></div>
         <div class="brand-panel__glow" aria-hidden="true"></div>
+        <!-- 5 chấm sáng bay lơ lửng (thuần trang trí, đã ẩn với trình đọc màn hình) -->
         <div class="floating-lights" aria-hidden="true">
           <span></span><span></span><span></span><span></span><span></span>
         </div>
 
+        <!-- Logo StayFlow: bấm vào quay về trang giới thiệu -->
         <a class="brand" href="../trang-gioi-thieu/index.html" aria-label="StayFlow">
           <span class="brand__mark">S</span>
           <span class="brand__name">StayFlow</span>
         </a>
 
+        <!-- Khối lời chào/giới thiệu thương hiệu trên panel trái -->
         <div class="brand-message">
           <p class="eyebrow">ĐIỀU PHỐI DỊCH VỤ LƯU TRÚ</p>
           <h1>Mỗi khoảnh khắc lưu trú đều được chăm sóc.</h1>
@@ -38,6 +49,7 @@
           </p>
         </div>
 
+        <!-- Dòng bản quyền nhỏ dưới cùng panel trái -->
         <p class="brand-footer">
           © 2026 StayFlow ·
           <a href="#">Quyền riêng tư</a> ·
@@ -45,17 +57,22 @@
         </p>
       </section>
 
+      <!-- PANEL PHẢI: khu vực form đăng nhập -->
       <section class="form-panel">
+        <!-- Hai vệt sáng mờ trang trí nền -->
         <div class="form-ambient form-ambient--one" aria-hidden="true"></div>
         <div class="form-ambient form-ambient--two" aria-hidden="true"></div>
 
+        <!-- Form đăng nhập. novalidate: để tự kiểm tra bằng JS (login.js) -->
         <form class="login-form" id="login-form" novalidate>
+          <!-- Tiêu đề form -->
           <div class="form-heading reveal-item">
             <p class="form-heading__kicker">STAYFLOW ACCESS</p>
             <h2>Chào mừng trở lại</h2>
             <p>Đăng nhập để tiếp tục hành trình cùng StayFlow.</p>
           </div>
 
+          <!-- Ô 1: Email hoặc số điện thoại -->
           <div class="field reveal-item">
             <label for="identity">Email hoặc số điện thoại</label>
             <div class="input-shell" id="identity-shell">
@@ -70,9 +87,11 @@
               />
               <span class="input-shine" aria-hidden="true"></span>
             </div>
+            <!-- Dòng báo lỗi của ô email/SĐT (được JS điền nội dung) -->
             <p class="field-message" id="identity-message"></p>
           </div>
 
+          <!-- Ô 2: Mật khẩu (kèm link quên mật khẩu & nút ẩn/hiện) -->
           <div class="field field--password reveal-item">
             <div class="field__label-row">
               <label for="password">Mật khẩu</label>
@@ -88,6 +107,7 @@
                 aria-invalid="false"
                 aria-describedby="password-message"
               />
+              <!-- Nút bật/tắt hiển thị mật khẩu -->
               <button
                 class="password-toggle"
                 type="button"
@@ -98,12 +118,14 @@
               </button>
               <span class="input-shine" aria-hidden="true"></span>
             </div>
+            <!-- Khối báo lỗi mật khẩu (mặc định ẩn, JS sẽ hiện khi cần) -->
             <p class="error-message is-hidden" id="password-message">
               <img src="./assets/5a87b.svg" alt="" />
               <span>Mật khẩu không đúng. Bạn còn 4 lần thử.</span>
             </p>
           </div>
 
+          <!-- Checkbox "Ghi nhớ đăng nhập" (ô vuông được vẽ lại bằng CSS) -->
           <label class="remember reveal-item">
             <input type="checkbox" checked />
             <span class="remember__box">
@@ -112,23 +134,27 @@
             <span>Ghi nhớ đăng nhập trên thiết bị này</span>
           </label>
 
+          <!-- Nút đăng nhập (có 3 phần: chữ / vòng xoay loading / mũi tên) -->
           <button class="submit-button reveal-item" type="submit">
             <span class="submit-button__label">Đăng nhập</span>
             <span class="submit-button__loader" aria-hidden="true"></span>
             <span class="submit-button__arrow" aria-hidden="true">→</span>
           </button>
 
+          <!-- Link chuyển sang trang tạo tài khoản -->
           <p class="register-link reveal-item">
             Chưa có tài khoản?
-            <a href="#">Tạo tài khoản</a>
+            <a href="../trang-dang-ky/sighup.html">Tạo tài khoản</a>
           </p>
 
+          <!-- Ghi chú trạng thái lỗi cuối form (mặc định ẩn) -->
           <div class="ux-note reveal-item is-hidden" id="ux-note">
             <span></span>
             Trạng thái lỗi: email hoặc mật khẩu không hợp lệ!
           </div>
         </form>
 
+        <!-- Thông báo nổi (toast) hiện ở góc dưới khi có sự kiện -->
         <div class="toast" role="status" aria-live="polite">
           <span class="toast__icon">✓</span>
           <span class="toast__message">Đăng nhập thành công</span>
@@ -136,6 +162,7 @@
       </section>
     </main>
 
+    <!-- Nạp script xử lý tương tác của trang đăng nhập -->
     <script src="login.js"></script>
   </body>
 </html>

@@ -1,13 +1,51 @@
-@font-face { font-family: "Instrument Sans:Regular"; src: url("https://static.figma.com/font/InstrumentSans_wdth_wght__1") format("woff2"); font-style: normal; font-weight: 400; }
-@font-face { font-family: "Instrument Sans:SemiBold"; src: url("https://static.figma.com/font/InstrumentSans_wdth_wght__1") format("woff2"); font-style: normal; font-weight: 600; }
-@font-face { font-family: "Instrument Serif:Regular"; src: url("https://static.figma.com/font/InstrumentSerif-Regular_1") format("woff2"); font-style: normal; font-weight: 400; }
-@font-face { font-family: "Inter:Bold"; src: url("https://static.figma.com/font/Inter_1") format("woff2"); font-style: normal; font-weight: 700; }
-@font-face { font-family: "Inter:Medium"; src: url("https://static.figma.com/font/Inter_1") format("woff2"); font-style: normal; font-weight: 500; }
-@font-face { font-family: "Inter:Regular"; src: url("https://static.figma.com/font/Inter_1") format("woff2"); font-style: normal; font-weight: 400; }
-@font-face { font-family: "Inter:Semi Bold"; src: url("https://static.figma.com/font/Inter_1") format("woff2"); font-style: normal; font-weight: 600; }
+/* =========================================================================
+ * style.css — Giao diện trang Giới thiệu khách sạn Aurora Grand (Đà Nẵng)
+ * -------------------------------------------------------------------------
+ * Một trang cuộn dọc gồm: header, hero (ảnh bìa), dải số liệu, câu chuyện,
+ * phòng nghỉ, tiện ích, spa, khám phá thành phố, thư viện ảnh, thông tin
+ * lưu trú, liên hệ và footer. Cuối file là hiệu ứng cuộn (reveal) + responsive.
+ * ========================================================================= */
 
-:root { color: #101d33; background: #f7f3ea; font-family: "Inter:Regular", sans-serif; font-synthesis: none; scroll-behavior: smooth; }
-* { box-sizing: border-box; }
+/* --- 1. Font chữ dùng cho trang --- */
+@font-face { 
+  font-family: "Instrument Sans:Regular"; 
+  src: url("https://static.figma.com/font/InstrumentSans_wdth_wght__1") format("woff2"); 
+  font-style: normal; font-weight: 400; }
+@font-face { 
+  font-family: "Instrument Sans:SemiBold"; 
+  src: url("https://static.figma.com/font/InstrumentSans_wdth_wght__1") format("woff2"); 
+  font-style: normal; font-weight: 600; }
+@font-face { 
+  font-family: "Instrument Serif:Regular"; 
+  src: url("https://static.figma.com/font/InstrumentSerif-Regular_1") format("woff2"); 
+  font-style: normal; font-weight: 400; }
+@font-face { 
+  font-family: "Inter:Bold"; 
+  src: url("https://static.figma.com/font/Inter_1") format("woff2"); 
+  font-style: normal; font-weight: 700; }
+@font-face { 
+  font-family: "Inter:Medium"; 
+  src: url("https://static.figma.com/font/Inter_1") format("woff2"); 
+  font-style: normal; font-weight: 500; }
+@font-face { 
+  font-family: "Inter:Regular"; 
+  src: url("https://static.figma.com/font/Inter_1") format("woff2"); 
+  font-style: normal; font-weight: 400; }
+@font-face { 
+  font-family: "Inter:Semi Bold"; 
+  src: url("https://static.figma.com/font/Inter_1") format("woff2"); 
+  font-style: normal; font-weight: 600; }
+
+/* --- 2. Thiết lập chung & biến toàn cục --- */
+:root { 
+  color: #101d33; background: #f7f3ea; 
+  font-family: "Inter:Regular", sans-serif; 
+  font-synthesis: none; 
+  scroll-behavior: smooth; 
+}
+* { 
+  box-sizing: border-box; 
+}
 body { margin: 0; min-width: 320px; overflow-x: hidden; }
 a { color: inherit; text-decoration: none; }
 button, a { -webkit-tap-highlight-color: transparent; }
@@ -17,6 +55,8 @@ img { display: block; }
 h1, h2, h3, p { margin: 0; }
 h1, h2 { font-family: "Instrument Serif:Regular"; font-weight: 400; font-variation-settings: "CTGR" 0, "wdth" 100; }
 
+/* --- 3. Header & thanh điều hướng --- */
+/* header dán trên đầu trang, nền mờ (backdrop-filter blur) */
 header { align-items: center; backdrop-filter: blur(14px); background: rgba(255,253,248,.94); border-bottom: 1px solid #ded8cc; display: flex; height: 76px; justify-content: space-between; padding: 0 clamp(24px, 4.2vw, 60px); position: sticky; top: 0; z-index: 30; }
 .brand { align-items: center; display: flex; gap: 10px; flex-shrink: 0; }
 .brand-mark { align-items: center; background: #b8914a; border-radius: 10px; color: #fff; display: flex; font-family: "Instrument Serif:Regular"; font-size: 22px; height: 36px; justify-content: center; width: 36px; }
@@ -35,6 +75,7 @@ nav a:hover { color: #b8914a; }
 .register:hover { background: #c9a45f; transform: translateY(-2px); }
 .menu-toggle { display: none; }
 
+/* --- 4. Ảnh bìa (hero): slideshow ảnh nền + lớp phủ tối + nội dung --- */
 .hero { color: #fff; height: 590px; overflow: hidden; position: relative; }
 .hero-slides, .hero-shade { inset: 0; position: absolute; }
 .hero-slides img { height: 100%; inset: 0; object-fit: cover; object-position: center 48%; opacity: 0; position: absolute; transform: scale(1.06); transition: opacity 1.4s ease, transform 6s ease; width: 100%; }
@@ -55,12 +96,14 @@ nav a:hover { color: #b8914a; }
 .hero-caption div { display: flex; gap: 7px; }
 .hero-caption button { background: rgba(255,255,255,.38); border: 0; border-radius: 9px; cursor: pointer; height: 4px; padding: 0; transition: width .3s, background .3s; width: 18px; }
 .hero-caption button.active { background: #b8914a; width: 34px; }
+/* --- 5. Dải số liệu nổi bật ngay dưới hero --- */
 .stats { background: #101d33; color: #fff; display: grid; grid-template-columns: repeat(4,1fr); padding: 26px clamp(24px, 5.55vw, 80px); }
 .stats div { align-items: center; border-right: 1px solid #36445b; display: flex; gap: 12px; justify-content: center; }
 .stats div:last-child { border: 0; }
 .stats strong { color: #d6b46e; font: 400 30px "Instrument Serif:Regular"; }
 .stats span { color: #aab5c4; font-size: 12px; }
 
+/* --- 6. Câu chuyện thương hiệu (2 cột: chữ | lưới ảnh) --- */
 .story { background: #fffdf8; display: grid; gap: clamp(40px, 6vw, 96px); grid-template-columns: .85fr 1.15fr; }
 .story-copy { align-self: center; max-width: 520px; }
 .story h2, .section-title h2, .split-copy h2, .contact h2 { font-size: clamp(38px, 3.05vw, 44px); line-height: 1.07; margin: 13px 0 24px; }
@@ -70,6 +113,7 @@ nav a:hover { color: #b8914a; }
 .story-images img { border-radius: 14px; height: 153px; object-fit: cover; width: 100%; }
 .story-images .story-main { grid-row: span 2; height: 320px; }
 
+/* --- 7. Phòng nghỉ & Suite (nền tối, lưới 3 thẻ) --- */
 .rooms { background: #101d33; color: #fff; }
 .section-heading { align-items: end; display: flex; justify-content: space-between; margin-bottom: 42px; }
 .section-title.on-dark h2 { color: #fffdf8; }
@@ -91,6 +135,7 @@ nav a:hover { color: #b8914a; }
 .features img { height: 14px; width: 14px; }
 .room-info > a { align-items: center; color: #d6b46e; display: flex; font: 600 11px "Inter:Semi Bold"; gap: 8px; margin-top: 17px; }
 
+/* --- 8. Tiện ích & dịch vụ (nền sáng) --- */
 .amenities { background: #f7f3ea; }
 .section-intro { color: #607084; font-size: 13px; line-height: 1.6; margin: 16px auto 38px; text-align: center; }
 .amenity-grid { display: grid; gap: 16px; grid-template-columns: repeat(3,1fr); }
@@ -104,6 +149,7 @@ nav a:hover { color: #b8914a; }
 .amenity-card p { color: #607084; font-size: 12px; line-height: 1.55; min-height: 58px; }
 .amenity-card small { color: #89672f; display: block; font-size: 10px; margin-top: 14px; }
 
+/* --- 9. Khối Spa & thư giãn (split-feature: ảnh lớn | nội dung) --- */
 .split-feature { background: linear-gradient(180deg,#f7f3ea 0%,#e1d5c8 50%,#101d33 100%); display: grid; grid-template-columns: 1fr 1fr; min-height: 560px; }
 .split-feature.reverse { background: linear-gradient(180deg,#101d33 0%,#e1d5c8 50%,#f7f3ea 100%); }
 .split-feature.reverse .split-image { order: 2; }
@@ -116,6 +162,7 @@ nav a:hover { color: #b8914a; }
 .split-copy li { align-items: center; color: #36445b; display: flex; font-size: 12px; gap: 10px; margin: 11px 0; }
 .split-copy li span { background: #b8914a; border-radius: 50%; height: 5px; width: 5px; }
 
+/* --- 10. Khám phá Đà Nẵng (lưới 4 thẻ địa điểm) --- */
 .danang { background: linear-gradient(180deg,#f7f3ea 0%,#e1d5c8 45%,#101d33 100%); color: #fff; }
 .section-heading > p { color: #8793a3; font-size: 13px; }
 .place-grid { display: grid; gap: 14px; grid-template-columns: repeat(4,1fr); }
@@ -127,6 +174,7 @@ nav a:hover { color: #b8914a; }
 .concierge { align-items: center; background: #1c2c46; border-radius: 12px; color: #d6deea; display: flex; font-size: 12px; gap: 14px; margin-top: 24px; padding: 20px; }
 .concierge img { height: 18px; width: 18px; }
 
+/* --- 11. Thư viện hình ảnh (lưới ghép ô - masonry đơn giản) --- */
 .gallery { background: #f7f3ea; }
 .gallery-grid { display: grid; gap: 16px; grid-template-columns: repeat(6,1fr); grid-template-rows: 152px 152px 200px; margin-top: 38px; }
 .gallery-grid > div { border-radius: 14px; overflow: hidden; }
@@ -136,6 +184,7 @@ nav a:hover { color: #b8914a; }
 .gallery-2, .gallery-3 { grid-column: span 3; }
 .gallery-4, .gallery-5, .gallery-6 { grid-column: span 2; }
 
+/* --- 12. Thông tin lưu trú (nhận/trả phòng, hỗ trợ) --- */
 .info { align-items: center; background: #fffdf8; border-bottom: 1px solid #ded8cc; border-top: 1px solid #ded8cc; display: grid; gap: 24px; grid-template-columns: 220px repeat(3,1fr); padding-bottom: 64px; padding-top: 64px; }
 .info-label p { color: #607084; font-size: 13px; line-height: 1.5; margin-top: 8px; }
 .info-item { align-items: center; border-left: 1px solid #ded8cc; display: flex; gap: 15px; min-height: 80px; padding-left: 24px; }
@@ -145,6 +194,7 @@ nav a:hover { color: #b8914a; }
 .info-item strong { display: block; font: 600 22px "Instrument Sans:SemiBold"; margin: 4px 0; }
 .info-item p { color: #607084; font-size: 11px; }
 
+/* --- 13. Liên hệ & đặt phòng (nền tối) --- */
 .contact { background: #101d33; color: #fff; display: grid; gap: 10%; grid-template-columns: 1.4fr .6fr; overflow: hidden; position: relative; }
 .contact::before { border: 1px solid rgba(184,145,74,.14); border-radius: 50%; content: ""; height: 480px; left: -190px; position: absolute; top: -220px; width: 480px; }
 .contact-copy { max-width: 690px; position: relative; }
@@ -157,6 +207,7 @@ nav a:hover { color: #b8914a; }
 .contact-details small { color: #8793a3; display: block; font-size: 10px; margin-bottom: 4px; }
 .contact-details strong { font: 400 15px "Instrument Sans:Regular"; }
 
+/* --- 14. Footer (thông tin thương hiệu + liên kết + bản quyền) --- */
 footer { background: #0b1729; color: #8793a3; padding-bottom: 34px !important; padding-top: 64px !important; }
 .footer-top { display: grid; gap: 12%; grid-template-columns: 1fr 1.7fr; }
 .footer-about p { font-size: 12px; line-height: 1.6; margin-top: 22px; max-width: 340px; }
@@ -168,12 +219,14 @@ footer { background: #0b1729; color: #8793a3; padding-bottom: 34px !important; p
 .footer-bottom { border-top: 1px solid #1c2c46; display: flex; font-size: 10px; justify-content: space-between; margin-top: 50px; padding-top: 24px; }
 .footer-bottom b { color: #b8914a; }
 
+/* --- 15. Hiệu ứng xuất hiện khi cuộn tới (JS thêm class .visible) --- */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .75s ease, transform .75s cubic-bezier(.2,.7,.2,1); }
 .reveal.visible { opacity: 1; transform: none; }
 .image-reveal { clip-path: inset(0 0 100% 0); transition: clip-path 1s cubic-bezier(.4,0,.2,1); }
 .image-reveal.visible { clip-path: inset(0); }
 @keyframes hero-in { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
 
+/* --- 16. Responsive: điều chỉnh bố cục theo kích thước màn hình --- */
 @media (max-width: 1000px) {
   nav { gap: 18px; }
   nav > a:nth-of-type(n+4) { display: none; }
@@ -229,6 +282,7 @@ footer { background: #0b1729; color: #8793a3; padding-bottom: 34px !important; p
   .footer-bottom { align-items: flex-start; flex-direction: column; gap: 10px; }
 }
 
+/* --- 17. Tắt/giảm chuyển động khi người dùng bật "giảm hiệu ứng động" --- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
   .reveal { opacity: 1; transform: none; }
