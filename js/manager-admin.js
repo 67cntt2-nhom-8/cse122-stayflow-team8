@@ -1,6 +1,7 @@
 // StayFlow – phần dùng chung cho Quản lý + Quản trị (SV1): dữ liệu, khung trang, toast, hộp thoại.
 const SF = {
   NOW0: new Date("2026-10-06T20:30:00").getTime(), T0: Date.now(), q: "",
+  cfg: () => ({ warn: 20, cap: 4, target: 92, ai: true, ...JSON.parse(localStorage.getItem("sf_cfg") || "{}") }),
   now: () => SF.NOW0 + Date.now() - SF.T0, // đồng hồ giả lập khớp dữ liệu mẫu
   setClock(value) {
     const timestamp = Date.parse(value);
@@ -16,7 +17,7 @@ const SF = {
     return a >= 86400 ? `${g}${Math.floor(a / 86400)}n ${Math.floor((a % 86400) / 3600)}g` : `${g}${p(Math.floor(a / 3600))}:${p(Math.floor((a % 3600) / 60))}:${p(a % 60)}`;
   },
   NAV: {
-    manager: [["Điều phối", "manager-dispatch-board.html", "dispatch", "▦"], ["Theo dõi SLA", "manager-sla-monitor.html", "sla", "◷"], ["Báo cáo", "", "report", "▮"], ["Nhân sự", "", "hr", "☺"], ["Cấu hình", "", "cfg", "⚙"]],
+    manager: [["Điều phối", "manager-dispatch-board.html", "dispatch", "▦"], ["Theo dõi SLA", "manager-sla-monitor.html", "sla", "◷"], ["Báo cáo", "manager-service-report.html", "report", "▮"], ["Nhân sự", "manager-staff-management.html", "hr", "☺"], ["Cấu hình", "manager-settings.html", "cfg", "⚙"]],
     admin: [["Tổng quan", "", "home", "▦"], ["Người dùng", "admin-user-management.html", "user", "☺"], ["Loại dịch vụ", "admin-service-type-management.html", "svc", "☰"], ["Khách sạn", "", "hotel", "⌂"], ["Nhật ký hệ thống", "", "log", "≡"]],
   },
   shell(role, page, crumb, title) {
@@ -89,8 +90,9 @@ const SF = {
       const mockRequests = source.requests;
       const mockTasks = source.tasks;
       const mockServiceTypes = source.serviceTypes;
-      if (![mockStaff, mockStays, mockRequests, mockTasks, mockServiceTypes].every(Array.isArray)) {
-        const message = "Dữ liệu mock cần có các danh sách staff, stays, requests, tasks và serviceTypes.";
+      const mockFeedback = source.feedback;
+      if (![mockStaff, mockStays, mockRequests, mockTasks, mockServiceTypes, mockFeedback].every(Array.isArray)) {
+        const message = "Dữ liệu mock cần có các danh sách staff, stays, requests, tasks, serviceTypes và feedback.";
         showError(message);
         throw new Error(message);
       }
@@ -146,6 +148,8 @@ const SF = {
             completedAt: task.completedAt,
           };
         }),
+        feedback: mockFeedback,
+        feedbackSummary: source.aiMocks?.feedbackSummarizer?.summary || "",
         users: [
           ...mockStaff.map((staff) => ({
             id: staff.id,
@@ -177,6 +181,18 @@ const SF = {
     }
     d.users = d.users || [];
     d.audit = d.audit || [];
+    if (d.feedback === undefined) d.feedback = [];
+    if (!Array.isArray(d.feedback)) {
+      const message = "Dữ liệu đã lưu không hợp lệ: feedback phải là danh sách.";
+      showError(message);
+      throw new Error(message);
+    }
+    if (d.feedbackSummary === undefined) d.feedbackSummary = "";
+    if (typeof d.feedbackSummary !== "string") {
+      const message = "Dữ liệu đã lưu không hợp lệ: feedbackSummary phải là văn bản.";
+      showError(message);
+      throw new Error(message);
+    }
     if (d.clock) SF.setClock(d.clock);
     return d;
   },
@@ -189,7 +205,7 @@ const SF = {
   left: (r) => Math.round((r.due - SF.now()) / 1000),
   state(r) {
     if (["Hoàn thành", "Đã hủy"].includes(r.status)) return ["Đã đóng", "info"];
-    const l = SF.left(r); return l < 0 ? ["Quá hạn", "bad"] : l < 1200 ? ["Sắp hạn", "warn"] : ["Trong hạn", "ok"];
+    const l = SF.left(r); return l < 0 ? ["Quá hạn", "bad"] : l < SF.cfg().warn * 60 ? ["Sắp hạn", "warn"] : ["Trong hạn", "ok"];
   },
   toast(msg, undo) {
     const t = document.getElementById("toast"); clearTimeout(SF.tt);

@@ -214,7 +214,7 @@
 
       /* Ba trang xác thực dùng auth-ui.js. */
       async function authPages() {
-        await load("../trang-dang-nhap/login.html");
+        await load("../pages/login.html");
         await sleep(200);
         const panel = doc().querySelector(".brand-panel");
         panel.dispatchEvent(new (win().PointerEvent)("pointermove", { clientX: 10, clientY: 10 }));
@@ -263,4 +263,3 @@
     </script>
   </body>
 </html>
-

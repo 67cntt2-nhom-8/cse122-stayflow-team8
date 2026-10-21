@@ -1,7 +1,7 @@
 /* =========================================================================
  * quenmatkhau.css — Phần CSS riêng của trang Xác thực email (StayFlow)
  * -------------------------------------------------------------------------
- * Trang dùng lại toàn bộ khung + hiệu ứng của ../trang-dang-nhap/login.css
+ * Trang dùng lại toàn bộ khung + hiệu ứng của ../css/login.css
  * (panel trái, form, ô nhập, nút, toast, keyframes...). File này chỉ thêm:
  *   1.  Banner xác nhận "Xác thực email thành công".
  *   2.  Nút "Quay lại đăng nhập" có mũi tên trái.

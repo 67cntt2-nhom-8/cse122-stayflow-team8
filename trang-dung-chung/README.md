@@ -8,7 +8,7 @@ một bản duy nhất.
 | `dashboard.css` | `trang-tong-quan`, `trang-yeu-cau`, `trang-tao-yeu-cau`, `trang-ho-so` | font, biến màu, reset, sidebar, topbar, dropdown, lời chào `.welcome`, thẻ, nhãn trạng thái, nút, toast, keyframes, responsive khung |
 | `dashboard.js` | `trang-tong-quan`, `trang-yeu-cau`, `trang-tao-yeu-cau`, `trang-ho-so` | sidebar mobile, dropdown, Escape, đăng xuất, toast, bỏ dấu tiếng Việt, hiệu ứng hiện dần, kho yêu cầu `stayflow_requests`, `SERVICE_META`, modal gửi yêu cầu |
 | `error-page.css` | `trang-403`, `trang-404` | font, biến màu, reset, khung trang lỗi, header logo, footer, bộ nút |
-| `auth-ui.js` | `trang-dang-nhap`, `trang-dang-ky`, `trang-quen-mat-khau` | vệt sáng theo con trỏ, ẩn/hiện mật khẩu, rung form, toast |
+| `auth-ui.js` | `pages/login.html`, `trang-dang-ky`, `trang-quen-mat-khau` | vệt sáng theo con trỏ, ẩn/hiện mật khẩu, rung form, toast |
 | `selfcheck.html` | — | trang tự kiểm tra: mở bằng trình duyệt, mọi dòng phải PASS |
 
 ## Thứ tự nạp (bắt buộc)
