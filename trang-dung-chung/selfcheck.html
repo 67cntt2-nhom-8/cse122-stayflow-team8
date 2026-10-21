@@ -133,6 +133,51 @@
         });
       }
 
+      /* Trang Thông báo: dựng 4 thông báo mẫu, lọc theo chip, đọc/xoá, đồng bộ số đếm. */
+      async function thongbaoCenter() {
+        await load("../trang-thong-bao/thongbao.html");
+        await sleep(300);
+        const before = win().localStorage.getItem("stayflow_notifications");
+        const rows = () => doc().querySelectorAll("#notice-list .notice-item");
+        const shown = () => doc().querySelectorAll("#notice-list .notice-item:not([hidden])").length;
+
+        say(rows().length === 4, "thongbao: dựng 4 dòng từ dữ liệu mẫu", String(rows().length));
+        say(doc().querySelectorAll("#notice-list .is-unread").length === 2, "thongbao: 2 dòng chưa đọc");
+        say(doc().querySelector("#notice-unread").textContent === "2", "thongbao: phụ đề đếm 2 chưa đọc");
+        say(doc().querySelector("#bell-dot").hidden === false, "thongbao: chuông còn chấm đỏ");
+        say(doc().querySelector('[data-count="system"]').textContent === "1", "thongbao: chip Hệ thống đếm 1");
+
+        doc().querySelector('[data-filter="unread"]').click();
+        say(shown() === 2, "thongbao: chip Chưa đọc lọc còn 2 dòng", String(shown()));
+
+        doc().querySelector("#notice-list .notice-item .notice-item__read").click();
+        await sleep(50);
+        say(doc().querySelector("#notice-unread").textContent === "1" && shown() === 1, "thongbao: đánh dấu đã đọc thì rời danh sách chưa đọc");
+
+        doc().querySelector("#mark-all").click();
+        await sleep(50);
+        say(doc().querySelector("#bell-dot").hidden === true, "thongbao: đọc hết thì ẩn chấm đỏ");
+        say(
+          doc().querySelector("#notice-empty").classList.contains("show") &&
+            doc().querySelector("#notice-empty span").textContent === "Bạn đã xem hết thông báo chưa đọc.",
+          "thongbao: báo đúng 'đã xem hết thông báo chưa đọc'",
+        );
+
+        doc().querySelector('[data-filter="all"]').click();
+        let asked = false;
+        win().confirm = () => {
+          asked = true;
+          return true;
+        };
+        doc().querySelector('#notice-list .notice-item [data-action="delete"]').click();
+        await sleep(50);
+        say(asked && rows().length === 3, "thongbao: xoá phải hỏi lại rồi bỏ dòng", String(rows().length));
+
+        // Trả lại dữ liệu cũ để lần chạy sau vẫn bắt đầu từ trạng thái thật của người dùng
+        if (before === null) win().localStorage.removeItem("stayflow_notifications");
+        else win().localStorage.setItem("stayflow_notifications", before);
+      }
+
       /* Hai trang lỗi dùng error-page.css. */
       async function errorPages() {
         for (const page of ["../trang-403/403.html", "../trang-404/404.html"]) {
@@ -169,7 +214,7 @@
       }
 
       (async () => {
-        const steps = [yeucauEmpty, yeucauCreate, tongquan, yeucauRestore, hosoProfile, errorPages, authPages];
+        const steps = [yeucauEmpty, yeucauCreate, tongquan, yeucauRestore, hosoProfile, thongbaoCenter, errorPages, authPages];
         for (const step of steps) {
           try {
             await step();

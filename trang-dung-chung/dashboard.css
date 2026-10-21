@@ -261,15 +261,21 @@ img { display: block; }
 
 /* --- 8. Nút phụ (.secondary-button) --- */
 .secondary-button {
+  align-items: center;
   background: var(--paper);
   border: 1px solid #c9c0b1;
   border-radius: 10px;
   color: var(--navy);
+  display: inline-flex;
   font: 700 14px "Inter:Bold";
+  gap: 8px;
   height: 42px;
   padding: 0 18px;
   transition: background .2s ease, color .2s ease, transform .2s ease;
+  white-space: nowrap;
 }
+/* Icon trong nút phải có kích thước cố định, nếu không SVG sẽ phình theo mặc định 300x150. */
+.secondary-button img, .secondary-button svg { flex: 0 0 auto; height: 16px; width: 16px; }
 .secondary-button:hover { background: var(--navy); color: #fff; transform: translateY(-2px); }
 .secondary-button:disabled, .secondary-button:disabled:hover { background: var(--paper); color: var(--muted); cursor: not-allowed; opacity: .55; transform: none; }
 
@@ -342,6 +348,84 @@ img { display: block; }
 .toast.show { opacity: 1; transform: none; }
 .toast span { align-items: center; background: var(--gold); border-radius: 50%; color: var(--navy); display: flex; font-weight: 700; height: 23px; justify-content: center; width: 23px; }
 .toast p { font: 500 12px "Inter:Medium"; margin: 0; }
+
+/* --- 10b. Thanh lọc trong trang: chip lọc, ô tìm + 2 bộ lọc, nút chữ, trạng thái trống.
+ * Trang "Yêu cầu" và trang "Thông báo" dùng y hệt nhau nên để ở đây (trước đây nằm
+ * trong yeucau.css; chuyển sang để trang Thông báo không phải chép lại). --- */
+.request-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.filter-tab {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font: 700 12px "Inter:Bold";
+  padding: 9px 16px;
+  transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+.filter-tab:hover { border-color: #c9c0b1; color: var(--navy); }
+.filter-tab.is-active { background: var(--navy); border-color: var(--navy); color: #fff; }
+.filter-tab span { margin-left: 4px; opacity: .65; }
+.filter-tab.is-active span { opacity: .85; }
+
+.request-toolbar { display: flex; gap: 10px; }
+.request-toolbar__search {
+  align-items: center;
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex: 1;
+  gap: 10px;
+  height: 46px;
+  padding: 0 14px;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.request-toolbar__search:focus-within { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(184,145,74,.1); }
+.request-toolbar__search img { height: 15px; width: 15px; }
+.request-toolbar__search input { background: transparent; border: 0; color: var(--navy); font-size: 13px; min-width: 0; outline: 0; width: 100%; }
+.request-toolbar__search input::placeholder { color: #8793a3; }
+.request-toolbar select {
+  background: var(--paper);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--navy);
+  font: 600 12px "Inter:Medium";
+  height: 46px;
+  padding: 0 10px;
+}
+.request-toolbar select:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(184,145,74,.1); outline: 0; }
+
+.text-button {
+  background: transparent;
+  border: 0;
+  color: var(--blue);
+  font: 700 12px "Inter:Bold";
+  padding: 4px 0;
+  transition: opacity .2s ease;
+}
+.text-button:hover { opacity: .65; }
+
+.empty-state {
+  background: var(--paper);
+  border: 1px dashed #c9c0b1;
+  border-radius: 16px;
+  color: var(--muted);
+  display: none;
+  font-size: 13px;
+  margin: 0;
+  padding: 42px 20px;
+  text-align: center;
+}
+.empty-state.show { display: block; }
+
+/* Màn hẹp: chip lọc cuộn ngang, ô tìm chiếm trọn một dòng, 2 select chia đôi dòng dưới. */
+@media (max-width: 760px) {
+  .request-filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
+  .filter-tab { flex: 0 0 auto; }
+  .request-toolbar { flex-wrap: wrap; }
+  .request-toolbar__search { flex: 1 0 100%; }
+  .request-toolbar select { flex: 1; min-width: 0; }
+}
 
 /* --- 11. Keyframes dùng chung --- */
 @keyframes sidebar-glow { to { transform: translate(-80px, 80px) scale(1.25); } }

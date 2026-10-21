@@ -6,57 +6,13 @@
    ../trang-dung-chung/dashboard.css và được nạp TRƯỚC file này.
    Trước đây phần đó bị copy nguyên văn từ tongquan.css nên sửa 1 trang là lệch trang kia.
 
-   File này chỉ giữ: bộ lọc trạng thái, thanh tìm kiếm trong trang, một dòng yêu cầu,
-   chi tiết mở rộng, nút huỷ/gửi lại, trạng thái trống và phân trang.
+   File này chỉ giữ: một dòng yêu cầu, chi tiết mở rộng, nút huỷ/gửi lại và phân trang.
+   (Chip lọc, thanh tìm/lọc, nút chữ và trạng thái trống đã về dashboard.css vì
+   trang Thông báo cũng dùng y hệt.)
    ============================================================================ */
 
 
 /* ========================= PHẦN B — RIÊNG TRANG YÊU CẦU ==================== */
-
-/* B.1 — Bộ lọc trạng thái */
-.request-filters { display: flex; flex-wrap: wrap; gap: 8px; }
-.filter-tab {
-  background: var(--paper);
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--muted);
-  font: 700 12px "Inter:Bold";
-  padding: 9px 16px;
-  transition: background .2s ease, border-color .2s ease, color .2s ease;
-}
-.filter-tab:hover { border-color: #c9c0b1; color: var(--navy); }
-.filter-tab.is-active { background: var(--navy); border-color: var(--navy); color: #fff; }
-.filter-tab span { margin-left: 4px; opacity: .65; }
-.filter-tab.is-active span { opacity: .85; }
-
-/* B.2 — Hàng tìm kiếm + 2 bộ lọc trong trang */
-.request-toolbar { display: flex; gap: 10px; }
-.request-toolbar__search {
-  align-items: center;
-  background: var(--paper);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  display: flex;
-  flex: 1;
-  gap: 10px;
-  height: 46px;
-  padding: 0 14px;
-  transition: border-color .2s ease, box-shadow .2s ease;
-}
-.request-toolbar__search:focus-within { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(184,145,74,.1); }
-.request-toolbar__search img { height: 15px; width: 15px; }
-.request-toolbar__search input { background: transparent; border: 0; color: var(--navy); font-size: 13px; min-width: 0; outline: 0; width: 100%; }
-.request-toolbar__search input::placeholder { color: #8793a3; }
-.request-toolbar select {
-  background: var(--paper);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  color: var(--navy);
-  font: 600 12px "Inter:Medium";
-  height: 46px;
-  padding: 0 10px;
-}
-.request-toolbar select:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(184,145,74,.1); outline: 0; }
 
 /* B.3 — Một dòng yêu cầu trong danh sách */
 .request-list { display: flex; flex-direction: column; gap: 14px; }
@@ -104,34 +60,12 @@
 /* B.5 — Hành động dưới mỗi yêu cầu */
 .request-item__actions { align-items: center; display: flex; flex-wrap: wrap; gap: 12px; }
 .request-item__hint { color: var(--muted); font-size: 11px; }
-.text-button {
-  background: transparent;
-  border: 0;
-  color: var(--blue);
-  font: 700 12px "Inter:Bold";
-  padding: 4px 0;
-  transition: opacity .2s ease;
-}
-.text-button:hover { opacity: .65; }
+/* .text-button nằm ở dashboard.css (trang Thông báo cũng dùng) */
 .text-button--danger { color: #b4432f; }
 
 /* B.6 — Trạng thái "Đã huỷ": chấm vẽ bằng CSS để không thêm asset mới */
 .status--muted { background: #eee7da; color: var(--muted); }
 .status--muted::before { background: currentColor; border-radius: 50%; content: ""; flex: 0 0 auto; height: 6px; width: 6px; }
-
-/* B.7 — Trạng thái trống của danh sách */
-.empty-state {
-  background: var(--paper);
-  border: 1px dashed #c9c0b1;
-  border-radius: 16px;
-  color: var(--muted);
-  display: none;
-  font-size: 13px;
-  margin: 0;
-  padding: 42px 20px;
-  text-align: center;
-}
-.empty-state.show { display: block; }
 
 /* B.8 — Footer phân trang */
 .request-footer { align-items: center; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; }
@@ -160,11 +94,6 @@
   .request-item__head .secondary-button { width: 100%; }
   .request-item__detail { grid-template-columns: 1fr; gap: 0; }
   .request-item__detail > div + div { border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px; }
-  .request-filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px; }
-  .filter-tab { flex: 0 0 auto; }
-  .request-toolbar { flex-wrap: wrap; }
-  .request-toolbar__search { flex: 1 0 100%; }
-  .request-toolbar select { flex: 1; min-width: 0; }
   .request-footer { align-items: flex-start; flex-direction: column; }
 }
 
