@@ -1,156 +1,137 @@
-const sidebar = document.querySelector("#sidebar");
-const menuButton = document.querySelector("#menu-button");
-const navItems = document.querySelectorAll(".nav-item");
-const pageTitle = document.querySelector("#page-title");
-const notificationButton = document.querySelector("#notification-button");
-const notificationDropdown = document.querySelector("#notification-dropdown");
-const profileButton = document.querySelector("#profile-button");
-const profileDropdown = document.querySelector("#profile-dropdown");
-const searchInput = document.querySelector("#dashboard-search");
-const searchables = document.querySelectorAll(".searchable");
-const noResults = document.querySelector("#no-results");
-const requestModal = document.querySelector("#request-modal");
-const requestForm = document.querySelector("#request-form");
-const serviceSelect = document.querySelector("#service-select");
-const requestNote = document.querySelector("#request-note");
-const toast = document.querySelector("#toast");
+/* ============================================================================
+ * tongquan.js — Riêng trang "Tổng quan kỳ lưu trú"
+ * ----------------------------------------------------------------------------
+ * Phần khung dashboard (sidebar, dropdown, toast, Escape, kho yêu cầu, modal gửi
+ * yêu cầu, hiệu ứng hiện dần) nằm ở ../trang-dung-chung/dashboard.js.
+ * File này chỉ xử lý những gì thuộc trang Tổng quan:
+ *   1. Thời gian lưu trú: giờ nhận phòng, thanh tiến độ, nút trả phòng.
+ *   2. Lời chào + tên người dùng đã đăng nhập.
+ *   3. Tìm kiếm trong các thẻ (.searchable) của trang.
+ *   4. Thẻ dịch vụ -> mở modal gửi yêu cầu.
+ *   5. Thẻ "Yêu cầu gần nhất" + hiệu ứng đếm số trên 2 thẻ số liệu.
+ * ========================================================================= */
+
+/* --- 1. Tham chiếu phần tử riêng của trang --- */
+const searchables = document.querySelectorAll(".searchable"); // các thẻ lọc được
+const noResults = document.querySelector("#no-results"); // dòng "không tìm thấy"
 const latestRequestTitle = document.querySelector("#latest-request-title");
 const requestDescription = document.querySelector("#request-description");
-const processingCounter = document.querySelector('.counter[data-target="2"]');
-let toastTimer;
+const requestStatus = document.querySelector("#request-status");
+const timelineSteps = document.querySelectorAll(".request-timeline .timeline-step");
+const viewRequestButton = document.querySelector("#view-request");
+const processingCounter = document.querySelector(".metric-card .counter");
+const checkInTime = document.querySelector("#check-in-time");
+const checkOutTime = document.querySelector("#check-out-time");
+const stayProgressFill = document.querySelector("#stay-progress-fill");
+const stayDuration = document.querySelector("#stay-duration");
 
-menuButton.addEventListener("click", () => {
-  sidebar.classList.toggle("open");
-});
+/* --- 2. Kỳ lưu trú (demo): nhận phòng lúc mở trang, ở 4 đêm --- */
+const stayStart = new Date();
+const stayNights = 4;
+const stayEnd = new Date(stayStart.getTime() + stayNights * 24 * 60 * 60 * 1000);
 
-navItems.forEach((item) => {
-  item.addEventListener("click", () => {
-    navItems.forEach((navItem) => navItem.classList.remove("active"));
-    item.classList.add("active");
-    pageTitle.textContent = item.dataset.section;
-    sidebar.classList.remove("open");
+/* Phần trăm kỳ lưu trú đã trôi qua, chặn trên ở 100 để thanh tiến độ không tràn. */
+function stayProgress() {
+  return Math.min(100, ((Date.now() - stayStart) / (stayEnd - stayStart)) * 100);
+}
 
-    if (item.dataset.section !== "Tổng quan") {
-      showToast(`${item.dataset.section} đang được chuẩn bị cho bản demo.`);
-    }
-  });
-});
+function updateStayTime() {
+  stayProgressFill.style.width = `${stayProgress()}%`;
+}
 
-notificationButton.addEventListener("click", (event) => {
-  event.stopPropagation();
-  profileDropdown.classList.remove("open");
-  notificationDropdown.classList.toggle("open");
-});
+/* "20 Thg 10, 14:05" — định dạng ngày giờ gọn cho ngày nhận/trả phòng. */
+function formatStayDate(date) {
+  return new Intl.DateTimeFormat("vi-VN", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
 
-profileButton.addEventListener("click", (event) => {
-  event.stopPropagation();
-  notificationDropdown.classList.remove("open");
-  profileDropdown.classList.toggle("open");
-});
+/* Trả phòng: chưa hết kỳ thì chỉ gửi yêu cầu cho lễ tân; đã hết kỳ thì chốt luôn. */
+function checkOut() {
+  document.querySelector(".room-card").classList.add("checked-out");
 
-document.addEventListener("click", (event) => {
-  if (!event.target.closest(".dropdown-wrap")) {
-    notificationDropdown.classList.remove("open");
-    profileDropdown.classList.remove("open");
+  if (stayProgress() < 100) {
+    checkOutTime.textContent = formatStayDate(new Date());
+    stayDuration.textContent = "Yêu cầu trả phòng đã được gửi đến lễ tân.";
+    showToast("Yêu cầu trả phòng đã được gửi. Vui lòng chờ lễ tân xác nhận.");
+    return;
   }
 
-  if (
-    window.innerWidth <= 860 &&
-    sidebar.classList.contains("open") &&
-    !event.target.closest("#sidebar") &&
-    !event.target.closest("#menu-button")
-  ) {
-    sidebar.classList.remove("open");
-  }
-});
+  checkOutTime.textContent = "Đã trả phòng";
+  stayDuration.textContent = `Đã hoàn thành ${stayNights}/${stayNights} đêm lưu trú.`;
+  viewRequestButton.disabled = true;
+  showToast("Bạn đã trả phòng. Cảm ơn bạn đã lưu trú tại Aurora Grand.");
+}
 
+/* Khởi động: hiện giờ nhận phòng, giấu phần chỉ dùng sau khi trả phòng,
+   rồi cập nhật thanh tiến độ mỗi giây. */
+checkInTime.textContent = formatStayDate(stayStart);
+checkOutTime.parentElement.classList.add("stay-masked");
+stayDuration.classList.add("stay-masked");
+updateStayTime();
+window.setInterval(updateStayTime, 1000);
+document.querySelector("#checkout-button").addEventListener("click", checkOut);
+
+/* --- 3. Lời chào theo tên người dùng (dashboard.js đã điền tên trên topbar) --- */
+if (currentUserName) {
+  document.querySelector(".welcome .eyebrow").textContent = `XIN CHÀO, ${currentUserName.toUpperCase()}`;
+}
+/* --- 4. Tìm kiếm: lọc các thẻ .searchable theo data-search (bỏ dấu tiếng Việt) --- */
 searchInput.addEventListener("input", () => {
   const term = normalize(searchInput.value);
   let visibleCount = 0;
 
   searchables.forEach((item) => {
     const matches = !term || normalize(item.dataset.search || "").includes(term);
-    item.classList.toggle("is-filtered", !matches);
+    item.classList.toggle("is-filtered", !matches); // .is-filtered { display: none }
     if (matches) visibleCount += 1;
   });
 
   noResults.style.display = visibleCount ? "none" : "block";
 });
 
-document.querySelectorAll(".open-request").forEach((button) => {
-  button.addEventListener("click", () => openRequestModal());
-});
-
+/* --- 5. Thẻ dịch vụ: bấm là mở modal với đúng loại dịch vụ đã chọn --- */
 document.querySelectorAll(".service-card").forEach((card) => {
   card.querySelector("button").addEventListener("click", () => {
     openRequestModal(card.dataset.service);
   });
 });
 
-requestModal.querySelector(".modal__close").addEventListener("click", closeRequestModal);
-requestModal.addEventListener("click", (event) => {
-  if (event.target === requestModal) closeRequestModal();
+/* --- 6. Modal gửi yêu cầu: hành vi chung ở dashboard.js, ở đây chỉ xử lý dữ liệu --- */
+setupRequestModal(({ title, note }) => {
+  /* Lưu vào kho chung để trang "Yêu cầu của bạn" đọc được (cùng khoá, cùng cấu trúc). */
+  saveRequest({ code: nextRequestCode(), title, note, time: nowClock() });
+
+  /* Thẻ "Yêu cầu gần nhất" chỉ có dữ liệu sau khi khách gửi yêu cầu đầu tiên. */
+  latestRequestTitle.textContent = title;
+  requestDescription.textContent = note || "Yêu cầu vừa được gửi đến đội ngũ vận hành.";
+  requestStatus.innerHTML = '<img src="./assets/979b6.svg" alt="" />Đang xử lý';
+  timelineSteps[0].classList.add("done");
+  timelineSteps[1].classList.add("active");
+  viewRequestButton.disabled = false;
+
+  /* Tăng số "đang xử lý" ngay trên thẻ số liệu (không chạy lại hiệu ứng đếm). */
+  const nextProcessing = Number(processingCounter.dataset.target) + 1;
+  processingCounter.dataset.target = String(nextProcessing);
+  processingCounter.textContent = String(nextProcessing).padStart(2, "0");
 });
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
-    closeRequestModal();
-    notificationDropdown.classList.remove("open");
-    profileDropdown.classList.remove("open");
-  }
-});
-
-requestForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const submitButton = requestForm.querySelector(".modal__submit");
-
-  submitButton.classList.add("loading");
-  submitButton.disabled = true;
-
-  window.setTimeout(() => {
-    submitButton.classList.remove("loading");
-    submitButton.disabled = false;
-    latestRequestTitle.textContent = serviceSelect.value;
-    requestDescription.textContent =
-      requestNote.value.trim() || "Yêu cầu vừa được gửi đến đội ngũ vận hành.";
-    processingCounter.dataset.target = "3";
-    processingCounter.textContent = "03";
-    closeRequestModal();
-    requestNote.value = "";
-    showToast("Yêu cầu đã được gửi thành công.");
-  }, 850);
-});
-
-document.querySelector("#view-request").addEventListener("click", () => {
-  document.querySelector(".request-card").classList.add("focus-card");
-  showToast("Yêu cầu #SF-3184 đang được thực hiện.");
-  window.setTimeout(
-    () => document.querySelector(".request-card").classList.remove("focus-card"),
-    1200,
-  );
+/* --- 7. Hai nút nhỏ trên trang --- */
+viewRequestButton.addEventListener("click", () => {
+  const card = document.querySelector(".request-card");
+  card.classList.add("focus-card");
+  showToast("Yêu cầu đang được thực hiện.");
+  window.setTimeout(() => card.classList.remove("focus-card"), 1200);
 });
 
 document.querySelector("#explore-offer").addEventListener("click", () => {
   showToast("Ưu đãi Spa đã được lưu cho phòng 1208.");
 });
 
-const revealObserver = new IntersectionObserver(
-  (entries, observer) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-        observer.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.12 },
-);
-
-document.querySelectorAll(".reveal").forEach((element, index) => {
-  element.style.animationDelay = `${Math.min(index * 55, 350)}ms`;
-  revealObserver.observe(element);
-});
-
+/* --- 8. Hiệu ứng đếm số cho 2 thẻ số liệu (chỉ chạy khi thẻ lọt vào màn hình) --- */
 const counterObserver = new IntersectionObserver(
   (entries, observer) => {
     entries.forEach((entry) => {
@@ -166,20 +147,7 @@ document.querySelectorAll(".counter").forEach((counter) => {
   counterObserver.observe(counter);
 });
 
-function openRequestModal(service) {
-  if (service) serviceSelect.value = service;
-  requestModal.classList.add("open");
-  requestModal.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-  window.setTimeout(() => requestNote.focus(), 250);
-}
-
-function closeRequestModal() {
-  requestModal.classList.remove("open");
-  requestModal.setAttribute("aria-hidden", "true");
-  document.body.style.overflow = "";
-}
-
+/* Đếm từ 0 lên dataset.target trong 900ms, dùng easing bậc 3 cho mượt. */
 function animateCounter(counter) {
   const target = Number(counter.dataset.target);
   const start = performance.now();
@@ -193,18 +161,4 @@ function animateCounter(counter) {
   }
 
   requestAnimationFrame(frame);
-}
-
-function showToast(message) {
-  window.clearTimeout(toastTimer);
-  toast.querySelector("p").textContent = message;
-  toast.classList.add("show");
-  toastTimer = window.setTimeout(() => toast.classList.remove("show"), 3000);
-}
-
-function normalize(value) {
-  return value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "");
 }

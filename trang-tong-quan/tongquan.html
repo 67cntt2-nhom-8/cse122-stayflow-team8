@@ -8,6 +8,9 @@
       content="Bảng điều khiển khách lưu trú StayFlow tại Aurora Grand Đà Nẵng."
     />
     <title>Tổng quan kỳ lưu trú · StayFlow</title>
+    <!-- Khung dashboard dùng chung (sidebar, topbar, thẻ, modal, toast...) -->
+    <link rel="stylesheet" href="../trang-dung-chung/dashboard.css" />
+    <!-- Chỉ phần riêng của trang Tổng quan; nạp SAU để có thể ghi đè khối chung -->
     <link rel="stylesheet" href="tongquan.css" />
   </head>
   <body>
@@ -28,18 +31,18 @@
           <button class="nav-item active" type="button" data-section="Tổng quan">
             <img src="./assets/b5398.svg" alt="" /><span>Tổng quan</span>
           </button>
-          <button class="nav-item" type="button" data-section="Yêu cầu">
+          <a class="nav-item" href="../trang-yeu-cau/yeucau.html">
             <img src="./assets/5605b.svg" alt="" /><span>Yêu cầu</span>
-          </button>
+          </a>
           <button class="nav-item" type="button" data-section="Chi tiết">
             <img src="./assets/ec848.svg" alt="" /><span>Chi tiết</span>
           </button>
           <button class="nav-item" type="button" data-section="Thông báo">
             <img src="./assets/27592.svg" alt="" /><span>Thông báo</span>
           </button>
-          <button class="nav-item" type="button" data-section="Hồ sơ">
+          <a class="nav-item" href="../trang-ho-so/hoso.html">
             <img src="./assets/3f703.svg" alt="" /><span>Hồ sơ</span>
-          </button>
+          </a>
         </nav>
 
         <div class="help-card">
@@ -69,20 +72,18 @@
 
             <div class="dropdown-wrap">
               <button class="icon-button" id="notification-button" type="button" aria-label="Thông báo">
-                <img src="./assets/f92f1.svg" alt="" />
+                <!-- Bản sao ./assets/f92f1.svg đã bỏ chấm đỏ "chưa đọc": khách vừa nhận phòng nên chưa có thông báo nào. -->
+                <svg aria-hidden="true" fill="none" height="38" preserveAspectRatio="none" style="display: block" viewBox="0 0 38 38" width="38" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="38" height="38" rx="10" fill="#F7F3EA" />
+                  <path d="M17.7723 25.3756C17.8966 25.5909 18.0755 25.7698 18.2908 25.8941C18.5062 26.0184 18.7505 26.0839 18.9991 26.0839C19.2478 26.0839 19.4921 26.0184 19.7075 25.8941C19.9228 25.7698 20.1017 25.5909 20.226 25.3756M12.8101 21.3561C12.7175 21.4576 12.6565 21.5837 12.6343 21.7192C12.6121 21.8547 12.6298 21.9937 12.6852 22.1194C12.7406 22.245 12.8313 22.3518 12.9463 22.4269C13.0612 22.5019 13.1955 22.5419 13.3328 22.542H24.6664C24.8037 22.542 24.938 22.5022 25.0531 22.4273C25.1681 22.3524 25.2589 22.2457 25.3145 22.1202C25.37 21.9946 25.3878 21.8556 25.3659 21.7201C25.3439 21.5846 25.283 21.4584 25.1906 21.3569C24.2485 20.3856 23.2497 19.3535 23.2497 16.1665C23.2497 15.0392 22.8019 13.9581 22.0049 13.161C21.2078 12.3639 20.1268 11.9161 18.9996 11.9161C17.8724 11.9161 16.7914 12.3639 15.9943 13.161C15.1973 13.9581 14.7495 15.0392 14.7495 16.1665C14.7495 19.3535 13.75 20.3856 12.8101 21.3561Z" stroke="#101D33" stroke-linecap="round" />
+                </svg>
               </button>
               <div class="dropdown notification-dropdown" id="notification-dropdown">
                 <div class="dropdown__heading">
-                  <strong>Thông báo</strong><span>2 mới</span>
+                  <strong>Thông báo</strong>
                 </div>
-                <button type="button">
-                  <b>Yêu cầu khăn đang được xử lý</b>
-                  <small>Dự kiến giao trong 8 phút</small>
-                </button>
-                <button type="button">
-                  <b>Ưu đãi Spa dành riêng cho bạn</b>
-                  <small>Giảm 20% trước 17:00 ngày mai</small>
-                </button>
+                <!-- Khách vừa nhận phòng nên chưa có thông báo nào. -->
+                <p class="dropdown__empty">Bạn vừa nhận phòng. Thông báo mới sẽ xuất hiện tại đây.</p>
               </div>
             </div>
 
@@ -90,13 +91,13 @@
 
             <div class="dropdown-wrap">
               <button class="profile-button" id="profile-button" type="button">
-                <img src="assets/images.jpg" alt="Ảnh đại diện Thu Hà" />
+                <img src="assets/images.jpg" alt="Ảnh đại diện người dùng" />
                 <span><b>Thu Hà</b><small>Khách lưu trú</small></span>
               </button>
               <div class="dropdown profile-dropdown" id="profile-dropdown">
-                <button type="button">Thông tin cá nhân</button>
+                <a href="../trang-ho-so/hoso.html">Thông tin cá nhân</a>
                 <button type="button">Cài đặt thông báo</button>
-                <a href="../trang-dang-nhap/index.html">Đăng xuất</a>
+                <a href="../trang-dang-nhap/login.html">Đăng xuất</a>
               </div>
             </div>
           </div>
@@ -109,9 +110,6 @@
               <h1>Chúc bạn một kỳ nghỉ thật dễ chịu</h1>
               <p>Mọi dịch vụ cho phòng 1208 đều ở ngay đây.</p>
             </div>
-            <button class="primary-button open-request" type="button">
-              <img src="./assets/65c52.svg" alt="" />Yêu cầu dịch vụ
-            </button>
           </section>
 
           <section class="stay-overview searchable-group">
@@ -121,28 +119,31 @@
                   <span class="eyebrow">AURORA GRAND · OCEAN VIEW</span>
                   <h2>Phòng 1208</h2>
                 </div>
-                <span class="status status--success">
-                  <img src="./assets/f1794.svg" alt="" />Đã dọn phòng
-                </span>
+                <div class="stay-actions">
+                  <span class="status status--success">
+                    <img src="./assets/f1794.svg" alt="" />Đã dọn phòng
+                  </span>
+                  <button class="secondary-button" type="button" id="checkout-button">Trả phòng</button>
+                </div>
               </div>
               <div class="stay-dates">
-                <div><small>NHẬN PHÒNG</small><strong>02 Thg 10 · 14:00</strong></div>
-                <div><small>TRẢ PHÒNG</small><strong>06 Thg 10 · 12:00</strong></div>
+                <div><small>NHẬN PHÒNG</small><strong id="check-in-time">Đang tính...</strong></div>
+                <div><small>TRẢ PHÒNG</small><strong id="check-out-time">Đang cập nhật...</strong></div>
               </div>
-              <div class="stay-progress"><span></span></div>
-              <p class="card-note">Đêm 2/4 · Còn 2 đêm lưu trú</p>
+              <div class="stay-progress"><span id="stay-progress-fill"></span></div>
+              <p class="card-note" id="stay-duration">Đang cập nhật thời gian lưu trú...</p>
             </article>
 
             <div class="metric-grid">
               <article class="card metric-card reveal searchable" data-search="đang xử lý yêu cầu">
                 <div><strong>Đang xử lý</strong><span class="metric-icon metric-icon--warning"><img src="./assets/2b8b2.svg" alt="" /></span></div>
-                <b class="counter" data-target="2">00</b>
-                <p>1 yêu cầu sắp hoàn thành</p>
+                <b class="counter" data-target="0">00</b>
+                <p></p>
               </article>
               <article class="card metric-card reveal searchable" data-search="hoàn thành yêu cầu">
                 <div><strong>Hoàn thành</strong><span class="metric-icon metric-icon--success"><img src="./assets/ad18b.svg" alt="" /></span></div>
-                <b class="counter" data-target="7">00</b>
-                <p>Trong kỳ lưu trú này</p>
+                <b class="counter" data-target="0">00</b>
+                <p></p>
               </article>
             </div>
           </section>
@@ -175,23 +176,23 @@
           </section>
 
           <section class="bottom-grid searchable-group">
-            <article class="card request-card reveal searchable" data-search="sf-3184 bổ sung khăn tắm đang xử lý">
+            <article class="card request-card reveal searchable" data-search="yêu cầu gần nhất">
               <div class="request-card__heading">
-                <div><small>YÊU CẦU GẦN NHẤT · #SF-3184</small><h3 id="latest-request-title">Bổ sung khăn tắm</h3></div>
-                <span class="status status--warning"><img src="./assets/979b6.svg" alt="" />Đang xử lý</span>
+                <div><small>YÊU CẦU GẦN NHẤT</small><h3 id="latest-request-title"></h3></div>
+                <span class="status status--warning" id="request-status"></span>
               </div>
 
               <div class="request-timeline">
-                <div class="timeline-step done">
-                  <div><span><img src="./assets/091ee.svg" alt="" /></span><i></i></div>
+                <div class="timeline-step">
+                  <div><span></span><i></i></div>
                   <small>Đã gửi</small>
                 </div>
-                <div class="timeline-step done">
-                  <div><span><img src="./assets/091ee.svg" alt="" /></span><i></i></div>
+                <div class="timeline-step">
+                  <div><span></span><i></i></div>
                   <small>Đã tiếp nhận</small>
                 </div>
-                <div class="timeline-step active">
-                  <div><span><img src="./assets/091ee.svg" alt="" /></span><i></i></div>
+                <div class="timeline-step">
+                  <div><span></span><i></i></div>
                   <small>Đang thực hiện</small>
                 </div>
                 <div class="timeline-step">
@@ -201,8 +202,8 @@
               </div>
 
               <div class="request-card__footer">
-                <p id="request-description">Lan Anh đang mang khăn lên · dự kiến 8 phút</p>
-                <button class="secondary-button" type="button" id="view-request">Xem chi tiết</button>
+                <p id="request-description"></p>
+                <button class="secondary-button" type="button" id="view-request" disabled>Xem chi tiết</button>
               </div>
             </article>
 
@@ -256,6 +257,8 @@
       <span>✓</span><p>Yêu cầu đã được gửi thành công.</p>
     </div>
 
+    <!-- Hành vi khung dashboard dùng chung, phải nạp TRƯỚC script của trang -->
+    <script src="../trang-dung-chung/dashboard.js"></script>
     <script src="tongquan.js"></script>
   </body>
 </html>
