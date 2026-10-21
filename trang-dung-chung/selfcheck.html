@@ -37,6 +37,10 @@
         doc()
           .querySelector("#request-form")
           .dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+      const submitCreate = () =>
+        doc()
+          .querySelector("#create-request-form")
+          .dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
 
       /* Trang Yêu cầu lúc mới mở: danh sách trống, số đếm 0, không có thông báo. */
       async function yeucauEmpty() {
@@ -49,22 +53,42 @@
         say(doc().querySelector(".dropdown__empty").hidden === false, "yeucau: thông báo rỗng");
       }
 
-      /* Tạo yêu cầu từ trang Yêu cầu: modal, mã 01, toast, badge thông báo, phím Escape. */
-      async function yeucauCreate() {
-        doc().querySelector("#new-request").click();
-        say(doc().querySelector("#request-modal").classList.contains("open"), "yeucau: modal mở");
-        doc().querySelector("#service-select").value = "Đặt bữa";
-        doc().querySelector("#request-note").value = "Cơm gà";
-        submitModal();
-        await sleep(1300);
-        say(doc().querySelectorAll("#request-list .request-item").length === 1, "yeucau: thêm 1 thẻ");
-        say(doc().querySelector(".request-item__code").textContent === "#REQ-1208-01", "yeucau: mã 01");
-        say(!doc().querySelector("#request-modal").classList.contains("open"), "yeucau: modal đóng sau khi gửi");
-        say(doc().querySelector("#toast").classList.contains("show"), "yeucau: toast hiện");
-        say(doc().querySelector(".dropdown__heading span").textContent === "1 mới", "yeucau: badge 1 mới");
-        doc().querySelector("#new-request").click();
+      /* Trang Tạo yêu cầu mới: nút ở trang Yêu cầu là liên kết; ghi chú bắt buộc; gửi thì
+         lưu vào kho chung rồi tự quay về danh sách kèm thẻ mới. */
+      async function taoyeucau() {
+        say(
+          doc().querySelector("#new-request").getAttribute("href") === "../trang-tao-yeu-cau/taoyeucau.html",
+          "yeucau: nút Tạo yêu cầu mới trỏ sang trang tạo",
+        );
+
+        doc().querySelector("#new-request").click(); // là <a> nên iframe tự chuyển trang
+        await sleep(700);
+        say(doc().querySelectorAll("#service-picker .service-option").length === 4, "taoyeucau: dựng đủ 4 dịch vụ từ SERVICE_META");
+
+        doc().querySelector('[data-service="Đặt bữa"]').click();
+        say(doc().querySelector("#preview-title").textContent === "Đặt bữa", "taoyeucau: chọn dịch vụ đổi khối xem trước");
+        say(doc().querySelector("#preview-eta").textContent === "Trong 40 phút", "taoyeucau: xem trước đúng thời gian dự kiến");
+        say(doc().querySelector("#preview-code").textContent === "#REQ-1208-01", "taoyeucau: mã dự kiến 01");
+
+        doc().querySelector("#notification-button").click();
         doc().dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
-        say(!doc().querySelector("#request-modal").classList.contains("open"), "yeucau: Escape đóng modal");
+        say(!doc().querySelector("#notification-dropdown").classList.contains("open"), "taoyeucau: Escape đóng dropdown của khung chung");
+
+        submitCreate(); // ghi chú còn trống -> phải báo lỗi, chưa gửi
+        await sleep(100);
+        say(doc().querySelector("#note-error").hidden === false, "taoyeucau: ghi chú trống thì báo lỗi");
+        say(doc().querySelector("#preview-code").textContent === "#REQ-1208-01", "taoyeucau: lỗi chưa ghi vào kho");
+
+        doc().querySelector("#suggest-row .suggest-chip").click();
+        say(doc().querySelector("#request-note").value.length > 0, "taoyeucau: chip gợi ý điền ghi chú");
+        say(doc().querySelector("#note-count").textContent.endsWith("/ 300"), "taoyeucau: đếm ký tự theo maxlength");
+
+        submitCreate();
+        await sleep(1800); // 700ms giả lập gọi API + 900ms chờ chuyển trang
+        const stored = JSON.parse(win().localStorage.getItem("stayflow_requests") || "[]");
+        say(stored.length === 1 && stored[0].code === "#REQ-1208-01", "taoyeucau: lưu vào kho chung mã 01", String(stored.length));
+        say(stored[0] && stored[0].title === "Đặt bữa", "taoyeucau: lưu đúng dịch vụ đã chọn");
+        say(doc().querySelectorAll("#request-list .request-item").length === 1, "taoyeucau: tự quay về danh sách kèm thẻ mới");
       }
       /* Trang Tổng quan: CSS chung áp dụng, gửi yêu cầu ghi vào cùng kho -> mã nối tiếp 02. */
       async function tongquan() {
@@ -214,7 +238,14 @@
       }
 
       (async () => {
-        const steps = [yeucauEmpty, yeucauCreate, tongquan, yeucauRestore, hosoProfile, thongbaoCenter, errorPages, authPages];
+        /* Kho yêu cầu là dữ liệu thật của người dùng: sao lưu, chạy trên kho trống rồi trả
+           lại như cũ — cùng cách bước thongbao làm với stayflow_notifications. Không có
+           bước này thì máy nào đã có yêu cầu sẵn sẽ báo FAIL hàng loạt. */
+        await load("../trang-yeu-cau/yeucau.html");
+        const savedRequests = win().localStorage.getItem("stayflow_requests");
+        win().localStorage.removeItem("stayflow_requests");
+
+        const steps = [yeucauEmpty, taoyeucau, tongquan, yeucauRestore, hosoProfile, thongbaoCenter, errorPages, authPages];
         for (const step of steps) {
           try {
             await step();
@@ -225,6 +256,9 @@
         const failed = lines.filter((l) => l.startsWith("FAIL")).length;
         lines.push(`TONG: ${lines.length - failed}/${lines.length} PASS`);
         document.getElementById("log").textContent = lines.join("\n");
+
+        if (savedRequests === null) win().localStorage.removeItem("stayflow_requests");
+        else win().localStorage.setItem("stayflow_requests", savedRequests);
       })();
     </script>
   </body>

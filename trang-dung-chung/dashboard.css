@@ -222,6 +222,7 @@ img { display: block; }
   overflow: hidden;
   padding: 0 18px;
   position: relative;
+  text-decoration: none; /* cùng tên lớp còn dùng cho <a>, ví dụ nút "Tạo yêu cầu mới" */
   transition: transform .25s ease, box-shadow .25s ease;
   white-space: nowrap; /* nhãn nút không xuống dòng, kể cả khi có icon bên trái */
 }
@@ -271,6 +272,7 @@ img { display: block; }
   gap: 8px;
   height: 42px;
   padding: 0 18px;
+  text-decoration: none; /* cùng tên lớp còn dùng cho <a>, ví dụ "Quay lại danh sách" */
   transition: background .2s ease, color .2s ease, transform .2s ease;
   white-space: nowrap;
 }

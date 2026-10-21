@@ -2,8 +2,10 @@
  * dashboard.js — Hành vi DÙNG CHUNG của khung dashboard StayFlow
  * ----------------------------------------------------------------------------
  * Nạp TRƯỚC script riêng của từng trang:
- *   trang-tong-quan/tongquan.html -> ../trang-dung-chung/dashboard.js + tongquan.js
- *   trang-yeu-cau/yeucau.html     -> ../trang-dung-chung/dashboard.js + yeucau.js
+ *   trang-tong-quan/tongquan.html   -> ../trang-dung-chung/dashboard.js + tongquan.js
+ *   trang-yeu-cau/yeucau.html       -> ../trang-dung-chung/dashboard.js + yeucau.js
+ *   trang-tao-yeu-cau/taoyeucau.html -> ../trang-dung-chung/dashboard.js + taoyeucau.js
+ *   trang-thong-bao/thongbao.html   -> ../trang-dung-chung/dashboard.js + thongbao.js
  *
  * Trước đây mỗi trang tự copy lại: mở/đóng sidebar, dropdown thông báo/hồ sơ,
  * đóng khi bấm ra ngoài, phím Escape, xoá tên khi đăng xuất, toast, bỏ dấu tiếng
@@ -30,6 +32,17 @@ let toastTimer; // id setTimeout để tự ẩn toast
 /* --- 2. Kho yêu cầu dùng chung giữa 2 trang (localStorage) --- */
 const REQUEST_KEY = "stayflow_requests"; // 1 khoá duy nhất, cả 2 trang đọc/ghi cùng chỗ
 const REQUEST_SEQ_START = 0; // danh sách khởi đầu trống -> yêu cầu đầu tiên là #REQ-1208-01
+
+/* Thông tin phụ trách / thời gian dự kiến theo từng loại dịch vụ. Trang Yêu cầu dùng
+   để dựng thẻ, trang Tạo yêu cầu dùng để dựng ô chọn + khối xem trước; để chung ở đây
+   nên thêm dịch vụ mới chỉ phải sửa một nơi. Icon nằm trong assets/ của từng trang
+   (đường dẫn tính theo trang đang mở, giống mọi ảnh khác của khối dùng chung). */
+const SERVICE_META = {
+  "Gọi dọn phòng": { icon: "./assets/ccf51.svg", owner: "Đội buồng phòng", eta: "Trong 20 phút" },
+  "Yêu cầu khăn": { icon: "./assets/f8914.svg", owner: "Đội buồng phòng", eta: "Trong 10 phút" },
+  "Đặt bữa": { icon: "./assets/9e188.svg", owner: "Bếp Aurora", eta: "Trong 40 phút" },
+  "Báo sự cố": { icon: "./assets/3df7f.svg", owner: "Kỹ thuật toà nhà", eta: "Trong 15 phút" },
+};
 
 /* Đọc danh sách yêu cầu; JSON hỏng hoặc localStorage bị chặn thì trả mảng rỗng để
    trang vẫn chạy bình thường. */

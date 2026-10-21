@@ -1,8 +1,8 @@
 /* ============================================================================
  * yeucau.js — Riêng trang "Yêu cầu của tôi"
  * ----------------------------------------------------------------------------
- * Phần khung dashboard (sidebar, dropdown, toast, Escape, kho yêu cầu, modal gửi
- * yêu cầu, hiệu ứng hiện dần) nằm ở ../trang-dung-chung/dashboard.js.
+ * Phần khung dashboard (sidebar, dropdown, toast, Escape, kho yêu cầu, hiệu ứng hiện
+ * dần) nằm ở ../trang-dung-chung/dashboard.js.
  * File này chỉ xử lý danh sách yêu cầu:
  *   1. Lọc theo tab trạng thái + dropdown + từ khoá, rồi chia trang.
  *   2. Đếm lại số lượng cho các tab và thẻ số liệu.
@@ -22,13 +22,8 @@ const pageRange = document.querySelector("#page-range");
 const pageTotal = document.querySelector("#page-total");
 const requestTemplate = document.querySelector("#request-template");
 
-/* Thông tin phụ trách / thời gian dự kiến theo từng loại dịch vụ. */
-const SERVICE_META = {
-  "Gọi dọn phòng": { icon: "./assets/ccf51.svg", owner: "Đội buồng phòng", eta: "Trong 20 phút" },
-  "Yêu cầu khăn": { icon: "./assets/f8914.svg", owner: "Đội buồng phòng", eta: "Trong 10 phút" },
-  "Đặt bữa": { icon: "./assets/9e188.svg", owner: "Bếp Aurora", eta: "Trong 40 phút" },
-  "Báo sự cố": { icon: "./assets/3df7f.svg", owner: "Kỹ thuật toà nhà", eta: "Trong 15 phút" },
-};
+/* Bảng SERVICE_META (phụ trách + thời gian dự kiến theo dịch vụ) nằm ở dashboard.js
+   vì trang "Tạo yêu cầu mới" cũng dùng để dựng ô chọn dịch vụ. */
 
 let activeFilter = "all"; // tab trạng thái đang chọn
 let currentPage = 1; // trang hiện tại của danh sách
@@ -318,12 +313,10 @@ function showRequest(code) {
   card.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
-/* --- 7. Nút "Tạo yêu cầu mới" + modal gửi yêu cầu (hành vi chung ở dashboard.js) --- */
-document.querySelector("#new-request").addEventListener("click", () => openRequestModal());
-
-setupRequestModal(({ title, note }) => {
-  createRequest(title, note);
-});
+/* --- 7. Nút "Tạo yêu cầu mới" ---
+ * Trang này không còn modal: nút là liên kết sang trang-tao-yeu-cau/taoyeucau.html,
+ * khách chọn dịch vụ rồi gửi ở đó; gửi xong trang đó quay về đây và createRequest()
+ * ở mục 6 dựng thẻ từ chính bản ghi đã lưu trong kho chung. */
 
 /* --- 8. Khởi động trang ---
  * Thứ tự quan trọng: đọc lại dữ liệu trước, rồi mới đếm và chia trang, để số trên

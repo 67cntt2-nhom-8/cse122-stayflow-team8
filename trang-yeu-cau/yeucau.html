@@ -111,9 +111,10 @@
               <h1>Yêu cầu của bạn</h1>
               <p>Theo dõi toàn bộ yêu cầu dịch vụ trong kỳ lưu trú.</p>
             </div>
-            <button class="primary-button" id="new-request" type="button">
+            <!-- Liên kết sang trang tạo yêu cầu riêng, không mở modal tại chỗ nữa. -->
+            <a class="primary-button" id="new-request" href="../trang-tao-yeu-cau/taoyeucau.html">
               <img src="./assets/65c52.svg" alt="" />Tạo yêu cầu mới
-            </button>
+            </a>
           </section>
 
           <section class="request-filters" aria-label="Lọc theo trạng thái">
@@ -150,7 +151,7 @@
           </section>
 
           <section class="request-list" id="request-list" aria-label="Danh sách yêu cầu">
-            <!-- Trống cho tới khi khách tạo yêu cầu (từ trang này hoặc từ Tổng quan). -->
+            <!-- Trống cho tới khi khách tạo yêu cầu (từ trang Tạo yêu cầu mới hoặc từ Tổng quan). -->
           </section>
 
           <p class="empty-state" id="empty-state">
@@ -167,33 +168,7 @@
       </div>
     </div>
 
-    <!-- Modal gửi yêu cầu: dùng lại đúng cấu trúc của trang-tong-quan -->
-    <div class="modal-backdrop" id="request-modal" aria-hidden="true">
-      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="request-modal-title">
-        <button class="modal__close" type="button" aria-label="Đóng">×</button>
-        <span class="modal__eyebrow">DỊCH VỤ PHÒNG 1208</span>
-        <h2 id="request-modal-title">Gửi yêu cầu mới</h2>
-        <p>Đội ngũ Aurora Grand sẽ phản hồi trong thời gian sớm nhất.</p>
-        <form id="request-form">
-          <label>
-            Loại dịch vụ
-            <select id="service-select">
-              <option>Gọi dọn phòng</option>
-              <option>Yêu cầu khăn</option>
-              <option>Đặt bữa</option>
-              <option>Báo sự cố</option>
-            </select>
-          </label>
-          <label>
-            Ghi chú
-            <textarea id="request-note" rows="4" placeholder="Mô tả yêu cầu của bạn..."></textarea>
-          </label>
-          <button class="primary-button modal__submit" type="submit">
-            <span>Gửi yêu cầu</span><b></b>
-          </button>
-        </form>
-      </div>
-    </div>
+    <!-- Modal gửi yêu cầu đã bỏ: khách tạo yêu cầu ở trang-tao-yeu-cau/taoyeucau.html. -->
 
     <!-- Mẫu cho yêu cầu vừa tạo: yeucau.js nhân bản rồi điền dữ liệu -->
     <template id="request-template">
