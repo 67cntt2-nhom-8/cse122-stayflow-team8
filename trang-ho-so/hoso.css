@@ -1,0 +1,83 @@
+/* ============================================================================
+   StayFlow — hoso.css (chỉ còn phần RIÊNG của trang "Hồ sơ cá nhân")
+   ----------------------------------------------------------------------------
+   Khối dùng chung (font, biến màu, reset, sidebar, topbar, dropdown, lời chào
+   .welcome, thẻ, nhãn trạng thái, nút, toast, responsive khung...) đã nằm ở
+   ../trang-dung-chung/dashboard.css và được nạp TRƯỚC file này.
+
+   File này chỉ giữ: lưới 2 cột của trang, danh thiếp khách (cột trái), biểu mẫu
+   thông tin liên hệ (cột phải) và dải xác nhận đã lưu.
+   ============================================================================ */
+
+
+/* --- 1. Lưới 2 cột: danh thiếp khách + biểu mẫu --- */
+.profile-grid { align-items: start; display: grid; gap: 18px; grid-template-columns: 300px 1fr; }
+
+/* --- 2. Cột trái: danh thiếp của khách --- */
+.profile-card { align-items: center; display: flex; flex-direction: column; gap: 12px; padding: 24px 20px; text-align: center; }
+.profile-avatar { border-radius: 50%; box-shadow: 0 0 0 6px var(--paper), 0 0 0 7px var(--border); height: 104px; overflow: hidden; width: 104px; }
+.profile-avatar img { height: 100%; object-fit: cover; width: 100%; }
+.avatar-edit {
+  align-items: center;
+  background: var(--paper);
+  border: 1px solid #c9c0b1;
+  border-radius: 999px;
+  color: var(--navy);
+  display: inline-flex;
+  font: 700 12px "Inter:Bold";
+  gap: 6px;
+  height: 32px;
+  padding: 0 14px;
+  transition: background .2s ease, color .2s ease;
+}
+.avatar-edit:hover { background: var(--navy); color: #fff; }
+.avatar-edit svg { height: 14px; width: 14px; }
+.profile-name { font: 400 26px "Instrument Serif:Regular", Georgia, serif; margin: 4px 0 0; }
+.profile-meta { display: flex; flex-direction: column; gap: 4px; }
+.profile-meta small { color: var(--muted); font-size: 11px; }
+.profile-meta strong { color: #1b2535; font: 700 13px "Inter:Bold"; }
+.stay-summary { background: var(--cream); border-radius: 12px; display: flex; flex-direction: column; gap: 4px; margin-top: 6px; padding: 12px 14px; text-align: left; width: 100%; }
+.stay-summary small { color: var(--muted); font-size: 10px; letter-spacing: .06em; }
+.stay-summary strong { font: 700 13px "Inter:Bold"; }
+
+/* --- 3. Cột phải: biểu mẫu thông tin liên hệ --- */
+.profile-form { display: grid; gap: 16px 18px; grid-template-columns: 1fr 1fr; padding: 24px; }
+.field { display: flex; flex-direction: column; gap: 7px; min-width: 0; }
+.field--full { grid-column: 1 / -1; }
+.field label { color: #1b2535; font: 700 12px "Inter:Bold"; }
+.field input, .field select {
+  background: #fff;
+  border: 1px solid #c9c0b1;
+  border-radius: 10px;
+  color: var(--navy);
+  font-size: 13px;
+  height: 42px;
+  padding: 0 12px;
+  transition: border-color .2s ease, box-shadow .2s ease;
+  width: 100%;
+}
+.field input:focus, .field select:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(184,145,74,.1); outline: 0; }
+.field__hint { color: var(--muted); font-size: 11px; }
+/* Icon nằm trong ô chọn: đặt tuyệt đối đè lên select, select chừa chỗ bằng padding */
+.field__control { position: relative; }
+.field__control .field__icon { color: var(--muted); height: 15px; left: 12px; pointer-events: none; position: absolute; top: 50%; transform: translateY(-50%); width: 15px; }
+.field__control select { padding-left: 35px; }
+.profile-actions { align-items: center; display: flex; gap: 10px; grid-column: 1 / -1; }
+.profile-reset { background: transparent; border: 0; color: var(--navy); font: 700 13px "Inter:Bold"; padding: 0 6px; transition: opacity .2s ease; }
+.profile-reset:hover { opacity: .6; }
+
+/* --- 4. Dải xác nhận đã lưu (chỉ hiện sau khi bấm Lưu thay đổi) --- */
+.save-banner { align-items: center; background: #e5f4ec; border-radius: 12px; color: var(--green); display: flex; font: 500 12px "Inter:Medium"; gap: 8px; margin: 0; padding: 12px 16px; }
+.save-banner[hidden] { display: none; } /* display:flex ở trên sẽ đè thuộc tính hidden nếu thiếu dòng này */
+.save-banner img { height: 15px; width: 15px; }
+
+/* --- 5. Responsive riêng của trang --- */
+@media (max-width: 1024px) {
+  .profile-grid { grid-template-columns: 1fr; } /* nội dung dồn về một cột */
+}
+
+@media (max-width: 620px) {
+  .profile-form { grid-template-columns: 1fr; padding: 20px; }
+  .profile-actions { align-items: stretch; flex-direction: column; }
+  .profile-reset { height: 34px; }
+}

@@ -1,0 +1,94 @@
+/* ============================================================================
+   StayFlow — tongquan.css (chỉ còn phần RIÊNG của trang Tổng quan)
+   ----------------------------------------------------------------------------
+   Khối dùng chung (font, biến màu, reset, sidebar, topbar, dropdown, thẻ, nhãn
+   trạng thái, nút, modal, toast, responsive khung...) đã chuyển sang
+   ../trang-dung-chung/dashboard.css và được nạp TRƯỚC file này.
+
+   File này chỉ giữ những thứ trang Yêu cầu không dùng: lời chào, thẻ phòng 1208,
+   tiến độ kỳ lưu trú, 2 thẻ số liệu, lưới dịch vụ, yêu cầu gần nhất, ưu đãi Spa.
+   ============================================================================ */
+
+/* --- 1. Hiệu ứng nhấn thẻ + khối kỳ lưu trú (thẻ phòng) --- */
+/* .welcome / .eyebrow đã chuyển sang dashboard.css vì cả 3 trang đều dùng. */
+.card.focus-card { border-color: var(--gold); box-shadow: 0 0 0 5px rgba(184,145,74,.12), var(--shadow); }
+.stay-overview { display: grid; gap: 18px; grid-template-columns: minmax(400px, 500px) 1fr; }
+.room-card { display: flex; flex-direction: column; gap: 16px; padding: 22px; }
+.room-card__heading, .request-card__heading, .request-card__footer { align-items: flex-start; display: flex; justify-content: space-between; }
+.room-card__heading > div { display: flex; flex-direction: column; gap: 4px; }
+.room-card h2 { font: 400 38px "Instrument Serif:Regular"; margin: 0; }
+
+/* --- 2. Ngày nhận/trả phòng, tiến độ và nút trả phòng --- */
+.stay-dates { display: grid; gap: 18px; grid-template-columns: 1fr 1fr; }
+.stay-dates > div { display: flex; flex-direction: column; gap: 4px; }
+.stay-dates small { color: var(--muted); font-size: 11px; }
+.stay-dates strong { color: #1b2535; font: 700 14px "Inter:Bold"; }
+.stay-progress { background: #efe8da; border-radius: 99px; height: 7px; overflow: hidden; }
+.stay-progress span { animation: progress-fill 1.4s .45s cubic-bezier(.2,.8,.2,1) both; background: var(--gold); border-radius: inherit; display: block; height: 100%; transition: width .5s ease; width: 0; }
+.card-note { color: var(--muted); font-size: 11px; margin: 0; }
+/* Trả phòng và thời gian chạy (tiến độ, số đêm còn lại) ẩn cho tới khi khách trả phòng. */
+.stay-masked { display: none; }
+.room-card.checked-out .stay-masked { display: block; }
+.room-card.checked-out .stay-progress span { background: var(--muted); }
+.room-card.checked-out .stay-actions #checkout-button { display: none; }
+.stay-actions { align-items: center; display: flex; gap: 12px; }
+
+/* --- 3. Hai thẻ số liệu (đang xử lý / hoàn thành) --- */
+.metric-grid { display: grid; gap: 18px; grid-template-columns: 1fr 1fr; }
+.metric-card { display: flex; flex-direction: column; gap: 16px; padding: 18px; }
+.metric-card > div { align-items: center; display: flex; justify-content: space-between; }
+.metric-card > div > strong { color: var(--muted); font: 700 12px "Inter:Bold"; }
+.metric-icon { align-items: center; border-radius: 10px; display: flex; height: 30px; justify-content: center; width: 30px; }
+.metric-icon--warning { background: #fff1d8; }
+.metric-icon--success { background: #e5f4ec; }
+.metric-icon img { height: 15px; width: 15px; }
+.metric-card > b { font: 400 30px "Instrument Serif:Regular"; }
+.metric-card > p { font-size: 11px; margin: 0; }
+.metric-card:first-child > p { color: var(--orange); }
+.metric-card:last-child > p { color: var(--green); }
+
+/* --- 4. Lưới dịch vụ đặt nhanh --- */
+.service-grid { display: grid; gap: 14px; grid-template-columns: repeat(4, 1fr); }
+.service-card { display: flex; flex-direction: column; gap: 16px; padding: 18px; position: relative; }
+.service-icon { align-items: center; background: #f2e7cf; border-radius: 10px; display: flex; height: 42px; justify-content: center; transition: transform .35s ease, background .35s ease; width: 42px; }
+.service-card:hover .service-icon { background: var(--gold); transform: rotate(-7deg) scale(1.06); }
+.service-icon img { height: 20px; width: 20px; }
+.service-card h3 { color: #1b2535; font: 700 14px "Inter:Bold"; margin: 0; }
+.service-card p { color: var(--muted); font-size: 12px; margin: 0; }
+.service-card button { align-items: center; background: transparent; border: 0; color: var(--blue); display: flex; font: 700 12px "Inter:Bold"; gap: 6px; margin-top: auto; padding: 0; width: fit-content; }
+.service-card button img { height: 14px; transition: transform .2s ease; width: 14px; }
+.service-card button:hover img { transform: translateX(4px); }
+
+/* --- 5. Khung 2 cột: yêu cầu gần nhất + ưu đãi --- */
+.bottom-grid { display: grid; gap: 18px; grid-template-columns: 1fr 420px; }
+.request-card { display: flex; flex-direction: column; gap: 16px; padding: 20px; }
+.request-card__heading > div { display: flex; flex-direction: column; gap: 4px; }
+.request-card__heading small { color: var(--muted); font-size: 11px; }
+.request-card h3, .offer-card h3 { font: 400 22px "Instrument Serif:Regular"; font-variation-settings: "CTGR" 0, "wdth" 100; margin: 0; }
+
+/* --- 6. Chân thẻ yêu cầu và trạng thái rỗng (giữ chỗ trước khi có dữ liệu) --- */
+.request-card__footer { align-items: center; }
+.request-card__footer p { color: var(--muted); font-size: 12px; margin: 0; }
+/* Trạng thái "phòng mới": giữ nguyên khung thẻ nhưng để trống dữ liệu phục vụ */
+.request-card h3:empty { min-height: 26px; }
+.request-card__footer p:empty { min-height: 17px; }
+.status:empty { display: none; }
+.metric-card > p:empty { min-height: 13px; }
+
+/* --- 7. Ưu đãi Aurora Signature Spa --- */
+.offer-card { overflow: hidden; }
+.offer-card__image { height: 160px; overflow: hidden; position: relative; }
+.offer-card__image > img { height: 100%; object-fit: cover; transition: transform 1s cubic-bezier(.2,.7,.2,1); width: 100%; }
+.offer-card:hover .offer-card__image > img { transform: scale(1.08); }
+.image-glow { background: radial-gradient(circle at 60% 45%, rgba(255,230,180,.2), transparent 42%); inset: 0; pointer-events: none; position: absolute; }
+.offer-card__content { display: flex; flex-direction: column; gap: 8px; padding: 18px; }
+.offer-card__content p { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 0; }
+.offer-card .secondary-button { align-self: flex-start; margin-top: 2px; }
+.no-results { color: var(--muted); display: none; font-size: 13px; margin: 0; text-align: center; }
+
+/* --- 8. Responsive riêng của trang (màn <=1100px) --- */
+@media (max-width: 1100px) {
+  .stay-overview { grid-template-columns: 1.15fr .85fr; }
+  .bottom-grid { grid-template-columns: 1fr 340px; }
+  .service-grid { grid-template-columns: repeat(2, 1fr); }
+}

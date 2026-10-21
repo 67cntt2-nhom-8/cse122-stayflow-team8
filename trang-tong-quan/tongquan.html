@@ -1,0 +1,264 @@
+<!Doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Bảng điều khiển khách lưu trú StayFlow tại Aurora Grand Đà Nẵng."
+    />
+    <title>Tổng quan kỳ lưu trú · StayFlow</title>
+    <!-- Khung dashboard dùng chung (sidebar, topbar, thẻ, modal, toast...) -->
+    <link rel="stylesheet" href="../trang-dung-chung/dashboard.css" />
+    <!-- Chỉ phần riêng của trang Tổng quan; nạp SAU để có thể ghi đè khối chung -->
+    <link rel="stylesheet" href="tongquan.css" />
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar__glow" aria-hidden="true"></div>
+        <div class="brand">
+          <span class="brand__mark">S</span>
+          <span>StayFlow</span>
+        </div>
+
+        <div class="role-card">
+          <small>AURORA GRAND · ĐÀ NẴNG</small>
+          <strong>Khách lưu trú</strong>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Điều hướng chính">
+          <button class="nav-item active" type="button" data-section="Tổng quan">
+            <img src="./assets/b5398.svg" alt="" /><span>Tổng quan</span>
+          </button>
+          <a class="nav-item" href="../trang-yeu-cau/yeucau.html">
+            <img src="./assets/5605b.svg" alt="" /><span>Yêu cầu</span>
+          </a>
+          <button class="nav-item" type="button" data-section="Chi tiết">
+            <img src="./assets/ec848.svg" alt="" /><span>Chi tiết</span>
+          </button>
+          <button class="nav-item" type="button" data-section="Thông báo">
+            <img src="./assets/27592.svg" alt="" /><span>Thông báo</span>
+          </button>
+          <a class="nav-item" href="../trang-ho-so/hoso.html">
+            <img src="./assets/3f703.svg" alt="" /><span>Hồ sơ</span>
+          </a>
+        </nav>
+
+        <div class="help-card">
+          <strong>Cần trợ giúp?</strong>
+          <p>Trung tâm vận hành hỗ trợ 24/7</p>
+          <a href="tel:188">Máy lẻ 188</a>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <div class="topbar__left">
+            <button class="menu-button" id="menu-button" type="button" aria-label="Mở menu">
+              <span></span><span></span><span></span>
+            </button>
+            <div class="page-context">
+              <small>Tổng quan</small>
+              <strong id="page-title">Tổng quan</strong>
+            </div>
+          </div>
+
+          <div class="user-tools">
+            <label class="search-box">
+              <img src="./assets/70b7a.svg" alt="" />
+              <input id="dashboard-search" type="search" placeholder="Tìm mã, phòng, khách..." />
+            </label>
+
+            <div class="dropdown-wrap">
+              <button class="icon-button" id="notification-button" type="button" aria-label="Thông báo">
+                <!-- Bản sao ./assets/f92f1.svg đã bỏ chấm đỏ "chưa đọc": khách vừa nhận phòng nên chưa có thông báo nào. -->
+                <svg aria-hidden="true" fill="none" height="38" preserveAspectRatio="none" style="display: block" viewBox="0 0 38 38" width="38" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="38" height="38" rx="10" fill="#F7F3EA" />
+                  <path d="M17.7723 25.3756C17.8966 25.5909 18.0755 25.7698 18.2908 25.8941C18.5062 26.0184 18.7505 26.0839 18.9991 26.0839C19.2478 26.0839 19.4921 26.0184 19.7075 25.8941C19.9228 25.7698 20.1017 25.5909 20.226 25.3756M12.8101 21.3561C12.7175 21.4576 12.6565 21.5837 12.6343 21.7192C12.6121 21.8547 12.6298 21.9937 12.6852 22.1194C12.7406 22.245 12.8313 22.3518 12.9463 22.4269C13.0612 22.5019 13.1955 22.5419 13.3328 22.542H24.6664C24.8037 22.542 24.938 22.5022 25.0531 22.4273C25.1681 22.3524 25.2589 22.2457 25.3145 22.1202C25.37 21.9946 25.3878 21.8556 25.3659 21.7201C25.3439 21.5846 25.283 21.4584 25.1906 21.3569C24.2485 20.3856 23.2497 19.3535 23.2497 16.1665C23.2497 15.0392 22.8019 13.9581 22.0049 13.161C21.2078 12.3639 20.1268 11.9161 18.9996 11.9161C17.8724 11.9161 16.7914 12.3639 15.9943 13.161C15.1973 13.9581 14.7495 15.0392 14.7495 16.1665C14.7495 19.3535 13.75 20.3856 12.8101 21.3561Z" stroke="#101D33" stroke-linecap="round" />
+                </svg>
+              </button>
+              <div class="dropdown notification-dropdown" id="notification-dropdown">
+                <div class="dropdown__heading">
+                  <strong>Thông báo</strong>
+                </div>
+                <!-- Khách vừa nhận phòng nên chưa có thông báo nào. -->
+                <p class="dropdown__empty">Bạn vừa nhận phòng. Thông báo mới sẽ xuất hiện tại đây.</p>
+              </div>
+            </div>
+
+            <img class="tool-divider" src="./assets/06eb2.svg" alt="" />
+
+            <div class="dropdown-wrap">
+              <button class="profile-button" id="profile-button" type="button">
+                <img src="assets/images.jpg" alt="Ảnh đại diện người dùng" />
+                <span><b>Thu Hà</b><small>Khách lưu trú</small></span>
+              </button>
+              <div class="dropdown profile-dropdown" id="profile-dropdown">
+                <a href="../trang-ho-so/hoso.html">Thông tin cá nhân</a>
+                <button type="button">Cài đặt thông báo</button>
+                <a href="../trang-dang-nhap/login.html">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content">
+          <section class="welcome reveal">
+            <div>
+              <span class="eyebrow">XIN CHÀO, THU HÀ</span>
+              <h1>Chúc bạn một kỳ nghỉ thật dễ chịu</h1>
+              <p>Mọi dịch vụ cho phòng 1208 đều ở ngay đây.</p>
+            </div>
+          </section>
+
+          <section class="stay-overview searchable-group">
+            <article class="card room-card reveal searchable" data-search="aurora grand ocean view phòng 1208">
+              <div class="room-card__heading">
+                <div>
+                  <span class="eyebrow">AURORA GRAND · OCEAN VIEW</span>
+                  <h2>Phòng 1208</h2>
+                </div>
+                <div class="stay-actions">
+                  <span class="status status--success">
+                    <img src="./assets/f1794.svg" alt="" />Đã dọn phòng
+                  </span>
+                  <button class="secondary-button" type="button" id="checkout-button">Trả phòng</button>
+                </div>
+              </div>
+              <div class="stay-dates">
+                <div><small>NHẬN PHÒNG</small><strong id="check-in-time">Đang tính...</strong></div>
+                <div><small>TRẢ PHÒNG</small><strong id="check-out-time">Đang cập nhật...</strong></div>
+              </div>
+              <div class="stay-progress"><span id="stay-progress-fill"></span></div>
+              <p class="card-note" id="stay-duration">Đang cập nhật thời gian lưu trú...</p>
+            </article>
+
+            <div class="metric-grid">
+              <article class="card metric-card reveal searchable" data-search="đang xử lý yêu cầu">
+                <div><strong>Đang xử lý</strong><span class="metric-icon metric-icon--warning"><img src="./assets/2b8b2.svg" alt="" /></span></div>
+                <b class="counter" data-target="0">00</b>
+                <p></p>
+              </article>
+              <article class="card metric-card reveal searchable" data-search="hoàn thành yêu cầu">
+                <div><strong>Hoàn thành</strong><span class="metric-icon metric-icon--success"><img src="./assets/ad18b.svg" alt="" /></span></div>
+                <b class="counter" data-target="0">00</b>
+                <p></p>
+              </article>
+            </div>
+          </section>
+
+          <section class="service-grid searchable-group" aria-label="Dịch vụ nhanh">
+            <article class="card service-card reveal searchable" data-service="Gọi dọn phòng" data-search="gọi dọn phòng dự kiến 20 phút">
+              <span class="service-icon"><img src="./assets/ccf51.svg" alt="" /></span>
+              <h3>Gọi dọn phòng</h3>
+              <p>Dự kiến 20 phút</p>
+              <button type="button">Bắt đầu <img src="./assets/c781d.svg" alt="" /></button>
+            </article>
+            <article class="card service-card reveal searchable" data-service="Yêu cầu khăn" data-search="yêu cầu khăn khăn tắm tiện nghi">
+              <span class="service-icon"><img src="./assets/f8914.svg" alt="" /></span>
+              <h3>Yêu cầu khăn</h3>
+              <p>Khăn tắm &amp; tiện nghi</p>
+              <button type="button">Bắt đầu <img src="./assets/c781d.svg" alt="" /></button>
+            </article>
+            <article class="card service-card reveal searchable" data-service="Đặt bữa" data-search="đặt bữa ẩm thực tại phòng">
+              <span class="service-icon"><img src="./assets/9e188.svg" alt="" /></span>
+              <h3>Đặt bữa</h3>
+              <p>Ẩm thực tại phòng</p>
+              <button type="button">Bắt đầu <img src="./assets/c781d.svg" alt="" /></button>
+            </article>
+            <article class="card service-card reveal searchable" data-service="Báo sự cố" data-search="báo sự cố hỗ trợ ưu tiên">
+              <span class="service-icon"><img src="./assets/3df7f.svg" alt="" /></span>
+              <h3>Báo sự cố</h3>
+              <p>Hỗ trợ ưu tiên</p>
+              <button type="button">Bắt đầu <img src="./assets/c781d.svg" alt="" /></button>
+            </article>
+          </section>
+
+          <section class="bottom-grid searchable-group">
+            <article class="card request-card reveal searchable" data-search="yêu cầu gần nhất">
+              <div class="request-card__heading">
+                <div><small>YÊU CẦU GẦN NHẤT</small><h3 id="latest-request-title"></h3></div>
+                <span class="status status--warning" id="request-status"></span>
+              </div>
+
+              <div class="request-timeline">
+                <div class="timeline-step">
+                  <div><span></span><i></i></div>
+                  <small>Đã gửi</small>
+                </div>
+                <div class="timeline-step">
+                  <div><span></span><i></i></div>
+                  <small>Đã tiếp nhận</small>
+                </div>
+                <div class="timeline-step">
+                  <div><span></span><i></i></div>
+                  <small>Đang thực hiện</small>
+                </div>
+                <div class="timeline-step">
+                  <div><span></span><i></i></div>
+                  <small>Hoàn thành</small>
+                </div>
+              </div>
+
+              <div class="request-card__footer">
+                <p id="request-description"></p>
+                <button class="secondary-button" type="button" id="view-request" disabled>Xem chi tiết</button>
+              </div>
+            </article>
+
+            <article class="card offer-card reveal searchable" data-search="aurora signature spa ưu đãi">
+              <div class="offer-card__image">
+                <img src="./assets/e38c4.png" alt="Aurora Signature Spa" />
+                <span class="image-glow" aria-hidden="true"></span>
+              </div>
+              <div class="offer-card__content">
+                <span class="status status--private"><img src="./assets/9ccdc.svg" alt="" />Dành riêng cho bạn</span>
+                <h3>Aurora Signature Spa</h3>
+                <p>Thư giãn 60 phút với ưu đãi 20% trước 17:00 ngày mai.</p>
+                <button class="secondary-button" type="button" id="explore-offer">Khám phá ưu đãi</button>
+              </div>
+            </article>
+          </section>
+
+          <p class="no-results" id="no-results">Không tìm thấy nội dung phù hợp.</p>
+        </main>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="request-modal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="request-modal-title">
+        <button class="modal__close" type="button" aria-label="Đóng">×</button>
+        <span class="modal__eyebrow">DỊCH VỤ PHÒNG 1208</span>
+        <h2 id="request-modal-title">Gửi yêu cầu mới</h2>
+        <p>Đội ngũ Aurora Grand sẽ phản hồi trong thời gian sớm nhất.</p>
+        <form id="request-form">
+          <label>
+            Loại dịch vụ
+            <select id="service-select">
+              <option>Gọi dọn phòng</option>
+              <option>Yêu cầu khăn</option>
+              <option>Đặt bữa</option>
+              <option>Báo sự cố</option>
+            </select>
+          </label>
+          <label>
+            Ghi chú
+            <textarea id="request-note" rows="4" placeholder="Mô tả yêu cầu của bạn..."></textarea>
+          </label>
+          <button class="primary-button modal__submit" type="submit">
+            <span>Gửi yêu cầu</span><b></b>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span>✓</span><p>Yêu cầu đã được gửi thành công.</p>
+    </div>
+
+    <!-- Hành vi khung dashboard dùng chung, phải nạp TRƯỚC script của trang -->
+    <script src="../trang-dung-chung/dashboard.js"></script>
+    <script src="tongquan.js"></script>
+  </body>
+</html>

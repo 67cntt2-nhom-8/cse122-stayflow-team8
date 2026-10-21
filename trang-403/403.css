@@ -1,0 +1,177 @@
+/* ============================================================================
+   403.css — Giao diện trang 403 "Bạn không có quyền truy cập" (StayFlow)
+   ----------------------------------------------------------------------------
+   Bố cục: header (logo + trợ giúp) -> khối giữa 2 CỘT (ảnh hành lang có icon từ
+   chối truy cập | nội dung lỗi + 2 nút) -> footer (mã tham chiếu).
+
+   Phần dùng chung (font, biến màu, reset, khung trang, header, bộ nút) đã chuyển
+   sang ../trang-dung-chung/error-page.css và được nạp TRƯỚC file này.
+   File này chỉ giữ bố cục riêng của trang 403.
+   ============================================================================ */
+
+/* ========================================================================
+ * PHẦN B — PHẦN RIÊNG CỦA TRANG 403
+ * ======================================================================== */
+
+/* --- B.1 Khối nội dung giữa: bố cục 2 cột (ảnh | nội dung) ---
+   404 xếp nội dung dọc ở giữa trang; 403 chia 2 cột như thiết kế riêng.
+   Cột dùng minmax(0, …) thay vì chiều rộng tối thiểu cố định để grid luôn
+   co theo viewport, không bao giờ tràn ngang ở màn hình hẹp. */
+.error-main {
+  align-items: center;
+  display: grid;
+  flex: 1;
+  gap: clamp(52px, 5.4vw, 73px);
+  grid-template-columns: minmax(0, 502px) minmax(0, 560px);
+  justify-content: center;
+  padding: clamp(50px, 11vh, 155px) 0 clamp(42px, 8vh, 80px);
+}
+
+/* --- B.2 Khối ảnh trái: ảnh hành lang bo góc + icon "từ chối truy cập" ---
+   Icon (assets/image1.png) có sẵn nền tối ở 4 góc nên được bo tròn
+   (border-radius 29%) để chỉ còn phần thẻ trắng khiên như thiết kế. */
+.access-visual {
+  border-radius: 23px;
+  height: min(58.1vh, 492px);
+  max-width: 100%;
+  min-height: 380px;
+  min-width: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.access-visual__image {
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  width: 100%;
+}
+
+.access-visual__badge {
+  border-radius: 29%;
+  box-shadow: 0 12px 30px rgba(16, 29, 51, .12);
+  height: 86px;
+  left: 50%;
+  object-fit: cover;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 86px;
+}
+
+/* --- B.3 Nội dung phải: số 403 vàng gold + tiêu đề + mô tả ---
+   Cùng họ với .error-title/.error-text của 404.css, chỉnh cỡ chữ theo thiết
+   kế 403 (số 403 lớn màu gold, tiêu đề serif navy, mô tả màu muted). */
+.access-code {
+  color: var(--gold);
+  font: 400 clamp(72px, 5.3vw, 86px)/0.9 "Instrument Serif:Regular", Georgia, serif;
+  margin: 0 0 37px;
+}
+
+.access-content h1 {
+  color: var(--navy);
+  font: 400 clamp(34px, 3vw, 43px)/1.12 "Instrument Serif:Regular", Georgia, serif;
+  margin: 0 0 22px;
+}
+
+.access-description {
+  color: var(--muted);
+  font: 400 14px/1.6 "Inter:Regular", Arial, sans-serif;
+  margin: 0 0 20px;
+  max-width: 550px;
+}
+
+/* --- B.4 Nhóm 2 nút hành động (dùng lại .button ở A.7) --- */
+.access-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* --- B.5 Responsive: thu cột ở màn vừa, xếp dọc ở màn nhỏ --- */
+@media (max-width: 900px) {
+  .error-main {
+    gap: 40px;
+    grid-template-columns: minmax(0, 45%) minmax(0, 1fr);
+  }
+
+  .access-visual {
+    min-height: 330px;
+  }
+
+  .access-code {
+    margin-bottom: 28px;
+  }
+}
+
+@media (max-width: 700px) {
+  /* Chuyển từ grid 2 cột sang 1 cột xếp dọc, căn giữa như thiết kế mobile */
+  .error-main {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 38px;
+    padding: 54px 0 52px;
+  }
+
+  .access-visual {
+    height: min(80vw, 430px);
+    min-height: 0;
+    width: 100%;
+  }
+
+  .access-content {
+    max-width: 502px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .access-code {
+    margin-bottom: 24px;
+  }
+
+  .access-description {
+    margin-inline: auto;
+  }
+
+  .access-actions {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Thu gọn header & khối ảnh cho màn nhỏ (mức giống 404.css) */
+  .brand__mark {
+    border-radius: 7px;
+    font-size: 18px;
+    height: 32px;
+    width: 32px;
+  }
+
+  .brand__name {
+    font-size: 20px;
+  }
+
+  .header-link {
+    font-size: 12px;
+  }
+
+  .access-visual {
+    border-radius: 18px;
+    height: min(88vw, 360px);
+  }
+
+  .access-visual__badge {
+    height: 76px;
+    width: 76px;
+  }
+}
+
+/* --- B.6 Tôn trọng "giảm hiệu ứng động" của hệ điều hành (như login.css) --- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: .01ms !important;
+  }
+}
