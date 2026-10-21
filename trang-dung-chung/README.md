@@ -46,6 +46,16 @@ Vì vậy **không được đảo thứ tự** hai thẻ `<script>`.
 (`--gold: #b8914a` so với `#c9a84c`). Gộp sẽ làm đổi màu giao diện trang Đăng ký, nên để riêng;
 phần logic trùng nhau đã đưa vào `auth-ui.js`.
 
+## Quy ước icon mục menu trong `assets/`
+
+Thư mục `assets/` được sao chép theo từng trang vì icon mục menu phải đổi màu theo trạng thái:
+bản **kem `#F2E7CF`** cho mục thường (nền navy), bản **navy `#101D33`** cho mục đang mở (nền vàng).
+Vì tên file giữ nguyên như bản gốc, `trang-ho-so/assets/b5398.svg` **khác màu** với
+`trang-tong-quan/assets/b5398.svg`; file đang mở dùng tên `…-navy.svg` cho dễ phân biệt.
+
+Làm trang mới: chép nguyên bộ `assets/` của `trang-tong-quan`, rồi đổi `stroke` của
+icon ứng với mục đang mở sang navy. Quên bước này thì icon thành navy trên nền navy → mất hẳn.
+
 ## Kiểm tra sau khi sửa
 
 Mở `selfcheck.html` bằng trình duyệt. Kỳ vọng: dòng cuối là `TONG: 37/37 PASS`.
