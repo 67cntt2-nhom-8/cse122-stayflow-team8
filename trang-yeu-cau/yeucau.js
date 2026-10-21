@@ -7,7 +7,7 @@
  *   1. Lọc theo tab trạng thái + dropdown + từ khoá, rồi chia trang.
  *   2. Đếm lại số lượng cho các tab và thẻ số liệu.
  *   3. Mở/đóng chi tiết, huỷ, đánh giá, gửi lại một yêu cầu.
- *   4. Dựng thẻ yêu cầu mới / đọc lại từ localStorage.
+ *   4. Dựng thẻ yêu cầu mới / đọc lại từ kho của phiên (sessionStorage).
  *   5. Danh sách thông báo lấy từ chính các yêu cầu đã tạo.
  * ========================================================================= */
 
@@ -215,7 +215,7 @@ function markCancelled(item) {
   applyFilters();
 }
 /* --- 6. Dựng thẻ yêu cầu từ <template> ---
- * Dùng chung cho yêu cầu vừa tạo và yêu cầu đọc lại từ localStorage,
+ * Dùng chung cho yêu cầu vừa tạo và yêu cầu đọc lại từ kho của phiên,
  * nhờ vậy thẻ mới và thẻ sau khi tải lại trang trông giống hệt nhau. */
 function renderRequest({ code, title, note, time }) {
   const meta = SERVICE_META[title] || SERVICE_META["Gọi dọn phòng"];
@@ -313,10 +313,12 @@ function showRequest(code) {
   card.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
-/* --- 7. Nút "Tạo yêu cầu mới" ---
- * Trang này không còn modal: nút là liên kết sang trang-tao-yeu-cau/taoyeucau.html,
- * khách chọn dịch vụ rồi gửi ở đó; gửi xong trang đó quay về đây và createRequest()
- * ở mục 6 dựng thẻ từ chính bản ghi đã lưu trong kho chung. */
+/* --- 7. Nút "Tạo yêu cầu mới" + modal gửi yêu cầu (hành vi chung ở dashboard.js) --- */
+document.querySelector("#new-request").addEventListener("click", () => openRequestModal());
+
+setupRequestModal(({ title, note }) => {
+  createRequest(title, note);
+});
 
 /* --- 8. Khởi động trang ---
  * Thứ tự quan trọng: đọc lại dữ liệu trước, rồi mới đếm và chia trang, để số trên

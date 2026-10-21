@@ -4,7 +4,6 @@
  * Nạp TRƯỚC script riêng của từng trang:
  *   trang-tong-quan/tongquan.html   -> ../trang-dung-chung/dashboard.js + tongquan.js
  *   trang-yeu-cau/yeucau.html       -> ../trang-dung-chung/dashboard.js + yeucau.js
- *   trang-tao-yeu-cau/taoyeucau.html -> ../trang-dung-chung/dashboard.js + taoyeucau.js
  *   trang-thong-bao/thongbao.html   -> ../trang-dung-chung/dashboard.js + thongbao.js
  *
  * Trước đây mỗi trang tự copy lại: mở/đóng sidebar, dropdown thông báo/hồ sơ,
@@ -29,7 +28,10 @@ const toast = document.querySelector("#toast"); // thông báo nổi góc dướ
 const searchInput = document.querySelector("#dashboard-search"); // ô tìm trên topbar
 let toastTimer; // id setTimeout để tự ẩn toast
 
-/* --- 2. Kho yêu cầu dùng chung giữa 2 trang (localStorage) --- */
+/* --- 2. Kho yêu cầu dùng chung giữa 2 trang (sessionStorage) ---
+ * Cố ý không dùng localStorage: yêu cầu là dữ liệu "thật" của khách, không nên tồn tại
+ * vĩnh viễn trên máy. sessionStorage tự xoá khi đóng tab và vẫn chia sẻ giữa 2 trang
+ * dashboard trong cùng một tab (cùng nguồn) -> mở sang trang Yêu cầu vẫn thấy yêu cầu. */
 const REQUEST_KEY = "stayflow_requests"; // 1 khoá duy nhất, cả 2 trang đọc/ghi cùng chỗ
 const REQUEST_SEQ_START = 0; // danh sách khởi đầu trống -> yêu cầu đầu tiên là #REQ-1208-01
 
@@ -44,11 +46,11 @@ const SERVICE_META = {
   "Báo sự cố": { icon: "./assets/3df7f.svg", owner: "Kỹ thuật toà nhà", eta: "Trong 15 phút" },
 };
 
-/* Đọc danh sách yêu cầu; JSON hỏng hoặc localStorage bị chặn thì trả mảng rỗng để
+/* Đọc danh sách yêu cầu; JSON hỏng hoặc sessionStorage bị chặn thì trả mảng rỗng để
    trang vẫn chạy bình thường. */
 function readRequests() {
   try {
-    return JSON.parse(localStorage.getItem(REQUEST_KEY) || "[]");
+    return JSON.parse(sessionStorage.getItem(REQUEST_KEY) || "[]");
   } catch {
     return [];
   }
@@ -57,9 +59,9 @@ function readRequests() {
 /* Ghi thêm 1 yêu cầu vào kho. Cấu trúc bản ghi: { code, title, note, time }. */
 function saveRequest(record) {
   try {
-    localStorage.setItem(REQUEST_KEY, JSON.stringify([...readRequests(), record]));
+    sessionStorage.setItem(REQUEST_KEY, JSON.stringify([...readRequests(), record]));
   } catch {
-    /* localStorage bị chặn thì bỏ qua: phần còn lại của trang vẫn hoạt động. */
+    /* sessionStorage bị chặn thì bỏ qua: phần còn lại của trang vẫn hoạt động. */
   }
 }
 
