@@ -1,3 +1,17 @@
+/* ============================================================================
+ * signup.js — Tương tác trang Đăng ký (StayFlow)
+ * ----------------------------------------------------------------------------
+ * Nhiệm vụ:
+ *   1. Tham chiếu các ô nhập và gom trạng thái lỗi/đúng của từng ô vào 1 chỗ.
+ *   2. Tự định dạng số điện thoại khi khách gõ (090 123 4567).
+ *   3. Chấm điểm độ mạnh mật khẩu theo thời gian thực.
+ *   4. Kiểm tra toàn bộ form trước khi cho gửi.
+ *   5. Gửi thành công -> lưu tên + chuyển sang trang tổng quan.
+ * Hiệu ứng vệt sáng, ẩn/hiện mật khẩu và rung form dùng chung ở
+ * ../trang-dung-chung/auth-ui.js.
+ * ========================================================================= */
+
+/* --- 1. Tham chiếu phần tử --- */
 const brandPanel = document.querySelector(".brand-panel");
 const formPanel = document.querySelector(".form-panel");
 const registerForm = document.querySelector("#register-form");
@@ -13,6 +27,12 @@ const strength = document.querySelector(".strength");
 const strengthLabel = document.querySelector("#strength-label");
 const confirmAlert = document.querySelector("#confirm-alert");
 
+// Trang tổng quan cần chuyển tới ngay sau khi tạo tài khoản thành công.
+const OVERVIEW_URL = "../trang-tong-quan/tongquan.html";
+let redirectTimer; // id của setTimeout chuyển sang trang tổng quan
+
+/* Gom mỗi ô nhập với khung viền và dòng báo lỗi của nó -> chỉ cần gọi
+   setFieldState("email", ...) là đủ, không phải nhớ 3 phần tử rời rạc. */
 const fields = {
   name: {
     input: nameInput,
@@ -40,30 +60,11 @@ const fields = {
   },
 };
 
-brandPanel.addEventListener("pointermove", (event) => {
-  const bounds = brandPanel.getBoundingClientRect();
-  const x = ((event.clientX - bounds.left) / bounds.width) * 100;
-  const y = ((event.clientY - bounds.top) / bounds.height) * 100;
-
-  brandPanel.style.setProperty("--mouse-x", `${x}%`);
-  brandPanel.style.setProperty("--mouse-y", `${y}%`);
-});
-
-brandPanel.addEventListener("pointerleave", () => {
-  brandPanel.style.setProperty("--mouse-x", "50%");
-  brandPanel.style.setProperty("--mouse-y", "50%");
-});
-
-passwordToggle.addEventListener("click", () => {
-  const shouldShow = passwordInput.type === "password";
-  passwordInput.type = shouldShow ? "text" : "password";
-  passwordToggle.setAttribute("aria-pressed", String(shouldShow));
-  passwordToggle.setAttribute(
-    "aria-label",
-    shouldShow ? "Ẩn mật khẩu" : "Hiện mật khẩu",
-  );
-  passwordInput.focus();
-});
+/* --- 3. Hiệu ứng vệt sáng trên panel trái + nút ẩn/hiện mật khẩu ---
+   Hai hàm này dùng chung với trang Đăng nhập / Quên mật khẩu:
+   xem trang-dung-chung/auth-ui.js */
+setupBrandSpotlight(brandPanel, 50); // 50 = vệt sáng đứng giữa panel khi chưa rê chuột
+setupPasswordToggle(passwordToggle, passwordInput);
 
 passwordInput.addEventListener("input", () => {
   updatePasswordStrength();
@@ -96,6 +97,8 @@ confirmInput.addEventListener("input", () => {
   });
 });
 
+/* Số điện thoại: bỏ hết ký tự không phải số, cắt còn 10 số rồi chèn khoảng trắng
+   theo nhóm 3-3-4 để khách thấy ngay mình gõ đúng hay sai. */
 phoneInput.addEventListener("input", () => {
   const digits = phoneInput.value.replace(/\D/g, "").slice(0, 10);
   phoneInput.value = digits.replace(
@@ -107,6 +110,8 @@ phoneInput.addEventListener("input", () => {
 
 termsInput.addEventListener("change", updateSubmitState);
 
+/* Gửi form: kiểm tra hết một lượt; sai thì rung form, đúng thì giả lập gọi API
+   ~1.1 giây rồi lưu tên và chuyển sang trang tổng quan. */
 registerForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -114,7 +119,7 @@ registerForm.addEventListener("submit", (event) => {
   updateSubmitState();
 
   if (!valid) {
-    shakeForm();
+    shakeForm(registerForm); // dữ liệu sai -> rung form để báo lỗi
     return;
   }
 
@@ -124,9 +129,20 @@ registerForm.addEventListener("submit", (event) => {
   window.setTimeout(() => {
     submitButton.classList.remove("is-loading");
     formPanel.classList.add("is-success");
+
+    // Lưu tên người dùng để trang tổng quan hiển thị đúng chủ tài khoản
+    localStorage.setItem("stayflow_user_name", nameInput.value.trim());
+
+    // Tạo tài khoản xong → chuyển thẳng sang trang tổng quan
+    window.clearTimeout(redirectTimer);
+    redirectTimer = window.setTimeout(() => {
+      window.location.href = OVERVIEW_URL;
+    }, 1200);
   }, 1100);
 });
 
+/* Chấm điểm mật khẩu 0-4 (độ dài, hoa+thường, số, ký tự đặc biệt) rồi đổi màu
+   thanh độ mạnh và nhãn tương ứng. */
 function updatePasswordStrength() {
   const value = passwordInput.value;
   let score = 0;
@@ -163,6 +179,7 @@ function validateConfirmation() {
   return matches;
 }
 
+/* Kiểm tra toàn bộ form và tô viền đỏ/xanh cho từng ô; trả về true nếu mọi thứ hợp lệ. */
 function validateForm() {
   const nameValid = nameInput.value.trim().length >= 2;
   const phoneValid = /^\d{3}\s\d{3}\s\d{4}$/.test(phoneInput.value.trim());
@@ -226,8 +243,5 @@ function updateSubmitState() {
   submitButton.disabled = !hasRequiredValues;
 }
 
-function shakeForm() {
-  registerForm.classList.remove("shake");
-  void registerForm.offsetWidth;
-  registerForm.classList.add("shake");
-}
+/* Ghi chú: shakeForm() và setupBrandSpotlight()/setupPasswordToggle() là hàm dùng
+   chung, đã chuyển sang ../trang-dung-chung/auth-ui.js. */

@@ -6,6 +6,7 @@
  *   2. Ẩn/hiện mật khẩu khi bấm nút con mắt.
  *   3. Kiểm tra thông tin đăng nhập (demo) và hiển thị trạng thái lỗi/thành công.
  *   4. Hiện toast thông báo và hiệu ứng rung form khi đăng nhập sai.
+ *   5. Đăng nhập thành công → chuyển thẳng sang trang tổng quan.
  * ========================================================================= */
 
 /* --- 1. Tham chiếu các phần tử DOM (lấy một lần, dùng lại nhiều lần) --- */
@@ -22,49 +23,23 @@ const passwordMessageText = passwordMessage.querySelector("span"); // phần ch�
 const submitButton = document.querySelector(".submit-button"); // nút "Đăng nhập"
 const submitLabel = document.querySelector(".submit-button__label"); // phần chữ của nút
 const toast = document.querySelector(".toast"); // thông báo nổi ở góc dưới
-const toastMessage = document.querySelector(".toast__message"); // nội dung thông báo nổi
-const forgotPassword = document.querySelector("#forgot-password"); // link "Quên mật khẩu?"
 const uxNote = document.querySelector("#ux-note"); // ghi chú trạng thái lỗi cuối form
 
 /* --- 2. Biến trạng thái dùng chung --- */
 let attemptsRemaining = 4; // số lần còn được nhập sai mật khẩu (demo)
-let toastTimer; // id của setTimeout để tự ẩn toast sau vài giây
+let redirectTimer; // id của setTimeout chuyển sang trang tổng quan
 // Tài khoản hợp lệ giả lập chỉ phục vụ demo (không dùng cho thực tế)
 const validIdentity = "thuha.nguyen@email.com";
 const validPassword = "StayFlow2026";
+// Trang tổng quan cần chuyển tới ngay sau khi đăng nhập thành công.
+const OVERVIEW_URL = "../trang-tong-quan/tongquan.html";
 
-/* --- 3. Hiệu ứng vệt sáng đi theo con trỏ trên panel trái --- */
-// Tính toạ độ con trỏ theo tỉ lệ % so với khung rồi ghi vào biến CSS
-// --mouse-x / --mouse-y; CSS dùng biến này để vẽ vệt sáng (.brand-panel__glow).
-brandPanel.addEventListener("pointermove", (event) => {
-  const bounds = brandPanel.getBoundingClientRect();
-  const x = ((event.clientX - bounds.left) / bounds.width) * 100;
-  const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+/* --- 3. Hiệu ứng vệt sáng đi theo con trỏ trên panel trái ---
+   Hàm dùng chung với trang Đăng ký / Quên mật khẩu: xem trang-dung-chung/auth-ui.js */
+setupBrandSpotlight(brandPanel, 45);
 
-  brandPanel.style.setProperty("--mouse-x", `${x}%`);
-  brandPanel.style.setProperty("--mouse-y", `${y}%`);
-});
-
-// Khi chuột rời panel thì đưa vệt sáng về vị trí mặc định (giữa panel)
-brandPanel.addEventListener("pointerleave", () => {
-  brandPanel.style.setProperty("--mouse-x", "50%");
-  brandPanel.style.setProperty("--mouse-y", "45%");
-});
-
-/* --- 4. Ẩn / hiện mật khẩu --- */
-passwordToggle.addEventListener("click", () => {
-  // Đang là "password" nghĩa là sắp chuyển sang hiện chữ
-  const shouldShowPassword = passwordInput.type === "password";
-
-  passwordInput.type = shouldShowPassword ? "text" : "password";
-  // Cập nhật trạng thái cho trình đọc màn hình (accessibility)
-  passwordToggle.setAttribute("aria-pressed", String(shouldShowPassword));
-  passwordToggle.setAttribute(
-    "aria-label",
-    shouldShowPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu",
-  );
-  passwordInput.focus(); // giữ con trỏ trong ô mật khẩu sau khi bấm
-});
+/* --- 4. Ẩn / hiện mật khẩu (dùng chung: auth-ui.js) --- */
+setupPasswordToggle(passwordToggle, passwordInput);
 
 /* --- 5. Xoá trạng thái lỗi khi người dùng bắt đầu nhập lại --- */
 // Ô mật khẩu: bỏ viền đỏ/xanh, ẩn thông báo lỗi và ghi chú cuối form
@@ -83,11 +58,9 @@ identityInput.addEventListener("input", () => {
   uxNote.classList.add("is-hidden");
 });
 
-/* --- 6. Link "Quên mật khẩu?" chỉ giả lập (không điều hướng) --- */
-forgotPassword.addEventListener("click", (event) => {
-  event.preventDefault(); // chặn hành vi mặc định của thẻ <a href="#">
-  showToast("Liên kết khôi phục đã được gửi tới email của bạn.");
-});
+/* --- 6. Link "Quên mật khẩu?" --- */
+// Không cần JS: link là thẻ <a> trỏ tới ../trang-quen-mat-khau/quenmatkhau.html,
+// trình duyệt tự điều hướng khi click hoặc bấm Enter.
 
 /* --- 7. Xử lý khi bấm nút "Đăng nhập" --- */
 loginForm.addEventListener("submit", (event) => {
@@ -120,7 +93,19 @@ loginForm.addEventListener("submit", (event) => {
       uxNote.classList.add("is-hidden");
       submitButton.classList.add("is-success");
       submitLabel.textContent = "Đăng nhập thành công";
-      showToast("Chào mừng bạn quay lại StayFlow.");
+      showToast(toast, "Chào mừng bạn quay lại StayFlow.");
+
+      // Lưu tên người dùng để trang tổng quan hiển thị đúng chủ tài khoản;
+      // giữ nguyên tên đã lưu nếu người dùng đã đăng ký trước đó.
+      if (!localStorage.getItem("stayflow_user_name")) {
+        localStorage.setItem("stayflow_user_name", "Thu Hà");
+      }
+
+      // Chờ một nhịp ngắn để người dùng thấy thông báo rồi vào trang tổng quan
+      window.clearTimeout(redirectTimer);
+      redirectTimer = window.setTimeout(() => {
+        window.location.href = OVERVIEW_URL;
+      }, 1200);
       return;
     }
 
@@ -149,27 +134,9 @@ loginForm.addEventListener("submit", (event) => {
     }
 
     uxNote.classList.remove("is-hidden"); // hiện ghi chú "trạng thái lỗi"
-    shakeForm(); // rung form để báo lỗi trực quan
+    shakeForm(loginForm); // rung form để báo lỗi trực quan
   }, 900);
 });
 
-/* Rung form để báo đăng nhập thất bại.
- * Phải xoá class rồi ép trình duyệt reflow (đọc offsetWidth) để animation
- * có thể chạy lại từ đầu ở các lần sai tiếp theo. */
-function shakeForm() {
-  loginForm.classList.remove("shake");
-  void loginForm.offsetWidth;
-  loginForm.classList.add("shake");
-}
-
-/* Hiện thông báo nổi (toast) trong 3.2 giây rồi tự ẩn.
- * clearTimeout để nếu toast cũ đang chạy thì đặt lại thời gian đếm. */
-function showToast(message) {
-  window.clearTimeout(toastTimer);
-  toastMessage.textContent = message;
-  toast.classList.add("is-visible");
-
-  toastTimer = window.setTimeout(() => {
-    toast.classList.remove("is-visible");
-  }, 3200);
-}
+/* Ghi chú: shakeForm() và showToast() là hàm dùng chung, đã chuyển sang
+   ../trang-dung-chung/auth-ui.js (nạp trước file này trong login.html). */
