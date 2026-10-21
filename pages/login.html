@@ -13,7 +13,7 @@
       content="Đăng nhập StayFlow để tiếp tục hành trình lưu trú của bạn."
     />
     <title>Đăng nhập · StayFlow</title>
-    <link rel="stylesheet" href="login.css" />
+    <link rel="stylesheet" href="../css/login.css" />
   </head>
   <body>
     <!-- Khung trang: 2 cột (panel giới thiệu | form đăng nhập) -->
@@ -23,7 +23,7 @@
         <!-- Các lớp nền trang trí: ảnh, lớp phủ tối, vệt sáng theo chuột, chấm sáng -->
         <img
           class="brand-panel__image"
-          src="./assets/58c4c.png"
+          src="../assets/images/58c4c.png"
           alt="Không gian sảnh khách sạn sang trọng"
         />
         <div class="brand-panel__overlay"></div>
@@ -33,8 +33,12 @@
           <span></span><span></span><span></span><span></span><span></span>
         </div>
 
+<<<<<<< HEAD:trang-dang-nhap/login.html
         <!-- Logo StayFlow: bấm vào quay về trang giới thiệu -->
         <a class="brand" href="../trang-gioi-thieu/index.html" aria-label="StayFlow">
+=======
+        <a class="brand" href="about.html" aria-label="StayFlow">
+>>>>>>> dev:pages/login.html
           <span class="brand__mark">S</span>
           <span class="brand__name">StayFlow</span>
         </a>
@@ -76,7 +80,7 @@
           <div class="field reveal-item">
             <label for="identity">Email hoặc số điện thoại</label>
             <div class="input-shell" id="identity-shell">
-              <img src="./assets/ebb71.svg" alt="" />
+              <img src="../assets/images/ebb71.svg" alt="" />
               <input
                 id="identity"
                 name="identity"
@@ -114,13 +118,13 @@
                 aria-label="Hiện mật khẩu"
                 aria-pressed="false"
               >
-                <img src="./assets/5b24c.svg" alt="" />
+                <img src="../assets/images/5b24c.svg" alt="" />
               </button>
               <span class="input-shine" aria-hidden="true"></span>
             </div>
             <!-- Khối báo lỗi mật khẩu (mặc định ẩn, JS sẽ hiện khi cần) -->
             <p class="error-message is-hidden" id="password-message">
-              <img src="./assets/5a87b.svg" alt="" />
+              <img src="../assets/images/5a87b.svg" alt="" />
               <span>Mật khẩu không đúng. Bạn còn 4 lần thử.</span>
             </p>
           </div>
@@ -129,7 +133,7 @@
           <label class="remember reveal-item">
             <input type="checkbox" checked />
             <span class="remember__box">
-              <img src="./assets/14f9c.svg" alt="" />
+              <img src="../assets/images/14f9c.svg" alt="" />
             </span>
             <span>Ghi nhớ đăng nhập trên thiết bị này</span>
           </label>
@@ -162,9 +166,13 @@
       </section>
     </main>
 
+<<<<<<< HEAD:trang-dang-nhap/login.html
     <!-- Nạp script xử lý tương tác của trang đăng nhập -->
     <!-- Tiện ích dùng chung (vệt sáng theo con trỏ, ẩn/hiện mật khẩu, rung form, toast) -->
     <script src="../trang-dung-chung/auth-ui.js"></script>
     <script src="login.js"></script>
+=======
+    <script src="../js/login.js"></script>
+>>>>>>> dev:pages/login.html
   </body>
 </html>
