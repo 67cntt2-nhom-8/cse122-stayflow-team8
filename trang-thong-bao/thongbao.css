@@ -54,6 +54,8 @@
 
 /* Chấm đỏ trên chuông là phần tử SVG: cần luật riêng thì [hidden] mới ẩn được. */
 #bell-dot[hidden] { display: none; }
+/* Chấm đỏ chuông ở các trang khách khác cũng cần luật ẩn này (thongbao.css đặt
+   riêng cho trang thông báo; đặt thêm ở đây để trang Tổng quan/Yêu cầu/Hồ sơ). */
 
 /* --- 6. Responsive riêng của danh sách --- */
 @media (max-width: 760px) {

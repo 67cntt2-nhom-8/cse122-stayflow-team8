@@ -1,6 +1,6 @@
 /* ============================================================================
  * auth-ui.js — Tiện ích DÙNG CHUNG cho 3 trang xác thực StayFlow
- *   trang-dang-nhap/login.html, trang-dang-ky/sighup.html,
+ *   pages/login.html, trang-dang-ky/signup.html,
  *   trang-quen-mat-khau/quenmatkhau.html
  *
  * Nạp TRƯỚC script của trang (login.js / signup.js / quenmatkhau.js).

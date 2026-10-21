@@ -137,6 +137,41 @@ a {
   line-height: 1.5;
 }
 
+/* Dải điều hướng nhanh trên header trang chủ */
+.home__nav {
+  display: flex;
+  gap: 22px;
+  margin-left: auto;
+  margin-right: 28px;
+}
+
+.home__nav a {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #4d6158;
+  border-bottom: 2px solid transparent;
+  padding-bottom: 3px;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.home__nav a:hover {
+  color: #244e43;
+  border-bottom-color: #244e43;
+}
+
+@media (max-width: 760px) {
+  .home__header {
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .home__nav {
+    order: 3;
+    width: 100%;
+    margin: 0;
+  }
+}
+
 @media (max-width: 760px) {
   .home__roles {
     grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -48,10 +48,16 @@ function seedNotices() {
   return NOTICE_SEED.map((notice) => ({ ...notice }));
 }
 
+/* Trả về danh sách thật. Lần đầu (chưa có trong kho) phải LƯU bộ mẫu xuống
+   localStorage để các trang khác (Tổng quan, Yêu cầu...) đọc lại cho chuông
+   đồng bộ; nếu chỉ trả về trong bộ nhớ thì chuông ở trang khác luôn trống. */
 function readNotices() {
   try {
     const saved = JSON.parse(localStorage.getItem(NOTICE_KEY) || "null");
-    return Array.isArray(saved) ? saved : seedNotices();
+    if (Array.isArray(saved)) return saved;
+    const seeded = seedNotices();
+    localStorage.setItem(NOTICE_KEY, JSON.stringify(seeded));
+    return seeded;
   } catch {
     return seedNotices();
   }
@@ -184,7 +190,9 @@ function refreshCounts() {
 
   totalLabel.textContent = notices.length;
   unreadLabel.textContent = unread.length;
-  bellDot.hidden = unread.length === 0; // hết thông báo chưa đọc thì bỏ chấm đỏ
+  /* Chấm đỏ là phần tử SVG nên .hidden (IDL của HTMLElement) không có tác dụng;
+     phải bật/tắt attribute thật thì CSS #bell-dot[hidden] mới ẩn được. */
+  bellDot.toggleAttribute("hidden", unread.length === 0);
   markAllButton.disabled = unread.length === 0;
 
   const badge = notificationDropdown.querySelector(".dropdown__heading span");

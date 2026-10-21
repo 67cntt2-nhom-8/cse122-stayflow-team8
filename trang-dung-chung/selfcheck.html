@@ -168,7 +168,7 @@
         say(rows().length === 4, "thongbao: dựng 4 dòng từ dữ liệu mẫu", String(rows().length));
         say(doc().querySelectorAll("#notice-list .is-unread").length === 2, "thongbao: 2 dòng chưa đọc");
         say(doc().querySelector("#notice-unread").textContent === "2", "thongbao: phụ đề đếm 2 chưa đọc");
-        say(doc().querySelector("#bell-dot").hidden === false, "thongbao: chuông còn chấm đỏ");
+        say(!doc().querySelector("#bell-dot").hasAttribute("hidden"), "thongbao: chuông còn chấm đỏ");
         say(doc().querySelector('[data-count="system"]').textContent === "1", "thongbao: chip Hệ thống đếm 1");
 
         doc().querySelector('[data-filter="unread"]').click();
@@ -180,7 +180,7 @@
 
         doc().querySelector("#mark-all").click();
         await sleep(50);
-        say(doc().querySelector("#bell-dot").hidden === true, "thongbao: đọc hết thì ẩn chấm đỏ");
+        say(doc().querySelector("#bell-dot").hasAttribute("hidden"), "thongbao: đọc hết thì ẩn chấm đỏ");
         say(
           doc().querySelector("#notice-empty").classList.contains("show") &&
             doc().querySelector("#notice-empty span").textContent === "Bạn đã xem hết thông báo chưa đọc.",
@@ -214,7 +214,7 @@
 
       /* Ba trang xác thực dùng auth-ui.js. */
       async function authPages() {
-        await load("../trang-dang-nhap/login.html");
+        await load("../pages/login.html");
         await sleep(200);
         const panel = doc().querySelector(".brand-panel");
         panel.dispatchEvent(new (win().PointerEvent)("pointermove", { clientX: 10, clientY: 10 }));

@@ -176,6 +176,65 @@ if (currentUserName) {
   if (profileName) profileName.textContent = currentUserName;
 }
 
+/* --- 5b. Chuông thông báo: đọc kho dùng chung stayflow_notifications ---
+ * Trang Trung tâm thông báo (thongbao.js) ghi danh sách vào kho này; các trang
+ * khác (Tổng quan, Hồ sơ, Tạo yêu cầu) đọc lại để chuông luôn hiện đúng số chưa
+ * đọc dù mở từ trang nào. yeucau.js / thongbao.js có vòng render riêng chạy sau
+ * file này nên tự ghi đè nội dung dropdown — không lo đụng nhau.
+ * Bọc trong IIFE để các hằng/hàm trung gian không đụng tên với script trang. */
+(() => {
+  const NOTICE_KEY = "stayflow_notifications";
+
+  /* Mốc thời gian tương đối (cùng định dạng với Trung tâm thông báo). */
+  function noticeTime(minutes) {
+    if (minutes < 60) return `${minutes} phút trước`;
+    if (minutes < 1440) return `${Math.floor(minutes / 60)} giờ trước`;
+    const at = new Date(Date.now() - minutes * 60000);
+    const clock = new Intl.DateTimeFormat("vi-VN", { hour: "2-digit", minute: "2-digit" }).format(at);
+    return minutes < 2880 ? `Hôm qua, ${clock}` : new Intl.DateTimeFormat("vi-VN").format(at);
+  }
+
+  /* Cập nhật badge "X mới", chấm đỏ trên chuông và vài dòng thông báo chưa đọc.
+     Nếu trang đó không có badge (hoso/tongquan) thì bỏ qua phần tương ứng. */
+  const unread = (() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(NOTICE_KEY) || "null");
+      return Array.isArray(saved) ? saved.filter((notice) => notice && !notice.read) : [];
+    } catch {
+      return [];
+    }
+  })();
+
+  const badge = notificationDropdown.querySelector(".dropdown__heading span");
+  if (badge) {
+    badge.hidden = unread.length === 0;
+    badge.textContent = `${unread.length} mới`;
+  }
+
+  const bellDot = document.querySelector("#bell-dot");
+  /* Chấm đỏ là phần tử SVG nên dùng toggleAttribute (không có thuộc tính
+     hidden như HTMLElement; gán .hidden sẽ không tạo attribute để CSS bắt). */
+  if (bellDot) bellDot.toggleAttribute("hidden", unread.length === 0);
+
+  const empty = notificationDropdown.querySelector(".dropdown__empty");
+  if (empty) empty.hidden = unread.length > 0;
+
+  const container = notificationDropdown;
+  container.querySelectorAll(".notification-item").forEach((item) => item.remove());
+  [...unread].slice(0, 3).reverse().forEach((notice) => {
+    const item = document.createElement("button");
+    item.className = "notification-item";
+    item.type = "button";
+    item.innerHTML = "<b></b><small></small>";
+    item.querySelector("b").textContent = notice.title;
+    item.querySelector("small").textContent = noticeTime(notice.minutes);
+    item.addEventListener("click", () => {
+      window.location.href = "../trang-thong-bao/thongbao.html";
+    });
+    container.appendChild(item);
+  });
+})();
+
 /* --- 6. Hiệu ứng "hiện dần khi cuộn tới" cho mọi phần tử .reveal --- */
 const revealObserver = new IntersectionObserver(
   (entries, observer) => {
