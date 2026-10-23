@@ -283,6 +283,7 @@ img {
 .reveal-item:nth-child(5) { animation-delay: .34s; }
 .reveal-item:nth-child(6) { animation-delay: .42s; }
 .reveal-item:nth-child(7) { animation-delay: .5s; }
+.reveal-item:nth-child(8) { animation-delay: .58s; }
 
 /* --- 10. Tiêu đề form --- */
 .form-heading {
@@ -645,7 +646,78 @@ img {
   animation: form-shake .38s ease;
 }
 
-/* --- 18. Thông báo nổi (toast) ở góc dưới bên phải --- */
+/* --- 18. Khối chọn vai trò "Bạn là ai?" (chỉ để chọn, không liên kết) --- */
+.role-picker {
+  align-self: center;
+  background: #fbf7ef;
+  border-radius: 22px;
+  box-shadow: 0 12px 30px rgba(16, 29, 51, .05);
+  padding: 16px 18px 20px;
+  width: min(100%, 400px);
+}
+
+.role-picker__title {
+  color: var(--navy);
+  font: 400 20px "Instrument Serif:Regular", Georgia, serif;
+  letter-spacing: .06em;
+  margin: 0 0 14px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Lưới 3 cột: pill thứ tư tự xuống dòng dưới và canh giữa theo cột giữa */
+.role-picker__options {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(3, max-content);
+  justify-content: center;
+}
+
+.role-pill {
+  cursor: pointer;
+  position: relative;
+}
+
+/* Ẩn radio gốc nhưng vẫn giữ được thao tác bàn phím (Tab + mũi tên) */
+.role-pill input {
+  height: 1px;
+  opacity: 0;
+  position: absolute;
+  width: 1px;
+}
+
+.role-pill span {
+  border-radius: 9px;
+  color: var(--navy);
+  display: block;
+  font: 600 12px "Inter:Semi Bold", Arial, sans-serif;
+  padding: 8px 14px;
+  transition: box-shadow .2s ease, transform .2s ease;
+}
+
+.role-pill:hover span {
+  transform: translateY(-1px);
+}
+
+/* Pill đang chọn: viền navy vẽ bằng box-shadow để không nhảy bố cục */
+.role-pill input:checked + span {
+  box-shadow: inset 0 0 0 2px rgba(16, 29, 51, .55);
+}
+
+.role-pill input:focus-visible + span {
+  box-shadow: 0 0 0 4px rgba(36, 107, 206, .35);
+}
+
+.role-pill--admin {
+  grid-column: 2;
+}
+
+.role-pill--user span { background: #c9a15f; }
+.role-pill--staff span { background: #a9c8e6; }
+.role-pill--manager span { background: #4f9c74; color: #0e2b1d; }
+.role-pill--admin span { background: #cfc7bb; }
+
+/* --- 19. Thông báo nổi (toast) ở góc dưới bên phải --- */
 .toast {
   align-items: center;
   background: var(--navy);
@@ -683,7 +755,7 @@ img {
   width: 22px;
 }
 
-/* --- 19. Định nghĩa các hiệu ứng động (keyframes) --- */
+/* --- 20. Định nghĩa các hiệu ứng động (keyframes) --- */
 @keyframes fade-down {
   from { opacity: 0; transform: translateY(-16px); }
   to { opacity: 1; transform: translateY(0); }
@@ -711,7 +783,7 @@ img {
   80% { transform: translateX(3px); }
 }
 
-/* --- 20. Responsive: điều chỉnh bố cục theo kích thước màn hình --- */
+/* --- 21. Responsive: điều chỉnh bố cục theo kích thước màn hình --- */
 @media (max-width: 900px) {
   .login-page {
     grid-template-columns: minmax(330px, 42vw) 1fr;
@@ -796,6 +868,16 @@ img {
   .ux-note {
     align-self: stretch;
     line-height: 1.4;
+  }
+
+  /* Màn hình hẹp: thu nhỏ pill để 3 pill vẫn vừa một hàng */
+  .role-picker {
+    padding: 14px 12px 18px;
+  }
+
+  .role-pill span {
+    font-size: 11px;
+    padding: 7px 10px;
   }
 
   .toast {

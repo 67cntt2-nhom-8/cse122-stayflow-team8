@@ -1,12 +1,6 @@
 /* ============================================================================
  * auth-ui.js — Tiện ích DÙNG CHUNG cho 3 trang xác thực StayFlow
-<<<<<<< HEAD:shared/auth-ui.js
- *   login/login.html, sign-up/sighup.html,
- *   forgot-password/forgot-password.html
-=======
- *   pages/login.html, trang-dang-ky/signup.html,
- *   trang-quen-mat-khau/quenmatkhau.html
->>>>>>> 49a844f8a9319b01d5624decc66c819623bb0bce:trang-dung-chung/auth-ui.js
+ *   pages/login.html, pages/sign-up.html, pages/forgot-password.html
  *
  * Nạp TRƯỚC script của trang (login.js / sign-up.js / forgot-password.js).
  * Trước đây 3 file tự copy lại 4 đoạn y hệt nhau; nay chỉ còn 1 bản ở đây:

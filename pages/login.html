@@ -29,11 +29,7 @@
         <div class="brand-panel__overlay"></div>
 
         <!-- Logo StayFlow: bấm vào quay về trang giới thiệu -->
-<<<<<<< HEAD
         <a class="brand" href="about.html" aria-label="StayFlow">
-=======
-        <a class="brand" href="../index.html" aria-label="StayFlow">
->>>>>>> 49a844f8a9319b01d5624decc66c819623bb0bce
           <span class="brand__mark">S</span>
           <span class="brand__name">StayFlow</span>
         </a>
@@ -145,6 +141,30 @@
             <span></span>
             Trạng thái lỗi: email hoặc mật khẩu không hợp lệ!
           </div>
+
+          <!-- Khối chọn vai trò: chỉ để nhấp chọn cho biết bạn là ai,
+               không phải liên kết, không tham gia kiểm tra đăng nhập -->
+          <section class="role-picker reveal-item" aria-labelledby="role-title">
+            <h3 class="role-picker__title" id="role-title">Bạn là ai?</h3>
+            <div class="role-picker__options" role="radiogroup" aria-labelledby="role-title">
+              <label class="role-pill role-pill--user">
+                <input type="radio" name="role" value="user" />
+                <span>Người dùng</span>
+              </label>
+              <label class="role-pill role-pill--staff">
+                <input type="radio" name="role" value="staff" />
+                <span>Nhân viên</span>
+              </label>
+              <label class="role-pill role-pill--manager">
+                <input type="radio" name="role" value="manager" />
+                <span>Quản lý</span>
+              </label>
+              <label class="role-pill role-pill--admin">
+                <input type="radio" name="role" value="admin" />
+                <span>Quản trị viên</span>
+              </label>
+            </div>
+          </section>
         </form>
 
         <!-- Thông báo nổi (toast) hiện ở góc dưới khi có sự kiện -->
@@ -156,13 +176,8 @@
     </main>
 
     <!-- Nạp script xử lý tương tác của trang đăng nhập -->
-<<<<<<< HEAD
-    <!-- Tiện ích dùng chung (ẩn/hiện mật khẩu, rung form, toast) -->
-    <script src="../shared/auth-ui.js"></script>
-=======
     <!-- Tiện ích dùng chung (vệt sáng theo con trỏ, ẩn/hiện mật khẩu, rung form, toast) -->
-    <script src="../trang-dung-chung/auth-ui.js"></script>
->>>>>>> 49a844f8a9319b01d5624decc66c819623bb0bce
+    <script src="../shared/auth-ui.js"></script>
     <script src="../js/login.js"></script>
   </body>
 </html>
