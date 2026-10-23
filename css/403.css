@@ -13,7 +13,7 @@
 }
 
 /* --- B.2 Khối ảnh trái: ảnh hành lang bo góc + icon "từ chối truy cập" ---
-   Icon (assets/image1.png) có sẵn nền tối ở 4 góc nên được bo tròn
+   Icon (assets/images/403-image1.png) có sẵn nền tối ở 4 góc nên được bo tròn
    (border-radius 29%) để chỉ còn phần thẻ trắng khiên như thiết kế. */
 .access-visual {
   border-radius: 23px;

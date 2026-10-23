@@ -10,14 +10,14 @@
     <title>Không có quyền truy cập · StayFlow</title>
     <!-- Khung trang lỗi dùng chung (font, biến màu, header, bộ nút) -->
     <link rel="stylesheet" href="../shared/error-page.css" />
-    <link rel="stylesheet" href="403.css" />
+    <link rel="stylesheet" href="../css/403.css" />
   </head>
   <body>
     <!-- Khung trang chung: header trên, nội dung giữa, footer dưới -->
     <div class="error-page">
       <!-- HEADER: logo StayFlow (o trang giới thiệu) + liên kết trợ giúp -->
       <header class="page-header">
-        <a class="brand" href="../pages/about.html" aria-label="StayFlow">
+        <a class="brand" href="about.html" aria-label="StayFlow">
           <span class="brand__mark">S</span>
           <span class="brand__name">StayFlow</span>
         </a>
@@ -31,13 +31,13 @@
         <section class="access-visual" aria-label="Khu vực bị hạn chế truy cập">
           <img
             class="access-visual__image"
-            src="./assets/image.png"
+            src="../assets/images/403-image.png"
             alt="Hành lang khách sạn với cửa phòng 302"
           />
           <!-- icon có sẵn nền tối ở 4 góc, được CSS bo tròn để chỉ còn thẻ trắng -->
           <img
             class="access-visual__badge"
-            src="./assets/image1.png"
+            src="../assets/images/403-image1.png"
             alt="Biểu tượng không có quyền truy cập"
           />
         </section>
@@ -53,7 +53,7 @@
 
           <div class="access-actions">
             <!-- Nút chính: về trang giới thiệu (trang chủ của StayFlow) -->
-            <a class="button button--primary" href="../pages/about.html">
+            <a class="button button--primary" href="about.html">
               <svg
                 class="button__icon"
                 viewBox="0 0 24 24"
@@ -95,6 +95,6 @@
         </section>
       </main>
 
-    <script src="403.js"></script>
+    <script src="../js/403.js"></script>
   </body>
 </html>
