@@ -1,12 +1,11 @@
-/* =========================================================================
+﻿/* =========================================================================
  * login.js — Tương tác trang Đăng nhập (StayFlow)
  * -------------------------------------------------------------------------
  * Nhiệm vụ:
- *   1. Hiệu ứng vệt sáng đi theo con trỏ trên panel giới thiệu (bên trái).
- *   2. Ẩn/hiện mật khẩu khi bấm nút con mắt.
- *   3. Kiểm tra thông tin đăng nhập (demo) và hiển thị trạng thái lỗi/thành công.
- *   4. Hiện toast thông báo và hiệu ứng rung form khi đăng nhập sai.
- *   5. Đăng nhập thành công → chuyển thẳng sang trang tổng quan.
+ *   1. Ẩn/hiện mật khẩu khi bấm nút con mắt.
+ *   2. Kiểm tra thông tin đăng nhập (demo) và hiển thị trạng thái lỗi/thành công.
+ *   3. Hiện toast thông báo và hiệu ứng rung form khi đăng nhập sai.
+ *   4. Đăng nhập thành công → chuyển thẳng sang trang tổng quan.
  * ========================================================================= */
 
 /* --- 1. Tham chiếu các phần tử DOM (lấy một lần, dùng lại nhiều lần) --- */
@@ -32,16 +31,12 @@ let redirectTimer; // id của setTimeout chuyển sang trang tổng quan
 const validIdentity = "thuha.nguyen@email.com";
 const validPassword = "StayFlow2026";
 // Trang tổng quan cần chuyển tới ngay sau khi đăng nhập thành công.
-const OVERVIEW_URL = "../trang-tong-quan/tongquan.html";
+const OVERVIEW_URL = "guest-dashboard.html";
 
-/* --- 3. Hiệu ứng vệt sáng đi theo con trỏ trên panel trái ---
-   Hàm dùng chung với trang Đăng ký / Quên mật khẩu: xem trang-dung-chung/auth-ui.js */
-setupBrandSpotlight(brandPanel, 45);
-
-/* --- 4. Ẩn / hiện mật khẩu (dùng chung: auth-ui.js) --- */
+/* --- 3. Ẩn / hiện mật khẩu (dùng chung: auth-ui.js) --- */
 setupPasswordToggle(passwordToggle, passwordInput);
 
-/* --- 5. Xoá trạng thái lỗi khi người dùng bắt đầu nhập lại --- */
+/* --- 4. Xoá trạng thái lỗi khi người dùng bắt đầu nhập lại --- */
 // Ô mật khẩu: bỏ viền đỏ/xanh, ẩn thông báo lỗi và ghi chú cuối form
 passwordInput.addEventListener("input", () => {
   passwordShell.classList.remove("input-shell--error", "input-shell--success");
@@ -58,11 +53,11 @@ identityInput.addEventListener("input", () => {
   uxNote.classList.add("is-hidden");
 });
 
-/* --- 6. Link "Quên mật khẩu?" --- */
-// Không cần JS: link là thẻ <a> trỏ tới ../trang-quen-mat-khau/quenmatkhau.html,
+/* --- 5. Link "Quên mật khẩu?" --- */
+// Không cần JS: link là thẻ <a> trỏ tới forgot-password.html,
 // trình duyệt tự điều hướng khi click hoặc bấm Enter.
 
-/* --- 7. Xử lý khi bấm nút "Đăng nhập" --- */
+/* --- 6. Xử lý khi bấm nút "Đăng nhập" --- */
 loginForm.addEventListener("submit", (event) => {
   event.preventDefault(); // tự kiểm tra bằng JS, không để form tải lại trang
 
@@ -139,4 +134,4 @@ loginForm.addEventListener("submit", (event) => {
 });
 
 /* Ghi chú: shakeForm() và showToast() là hàm dùng chung, đã chuyển sang
-   ../trang-dung-chung/auth-ui.js (nạp trước file này trong login.html). */
+   ../shared/auth-ui.js (nạp trước file này trong login.html). */

@@ -1269,4 +1269,3 @@ svg {
     .sched-range { width: 100%; text-align: center; }
     .sched--month { grid-template-columns: repeat(7, minmax(96px, 1fr)); }
 }
-

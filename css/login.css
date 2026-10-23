@@ -112,11 +112,8 @@ img {
   min-height: 100dvh;
 }
 
-/* --- 4. Panel trái: ảnh nền, lớp phủ tối và vệt sáng theo con trỏ --- */
-/* --mouse-x/--mouse-y do login.js cập nhật liên tục khi rê chuột */
+/* --- 4. Panel trái: ảnh nền và lớp phủ tối --- */
 .brand-panel {
-  --mouse-x: 50%;
-  --mouse-y: 45%;
   background: var(--navy);
   color: #fff;
   display: flex;
@@ -131,14 +128,12 @@ img {
 }
 
 .brand-panel__image,
-.brand-panel__overlay,
-.brand-panel__glow {
+.brand-panel__overlay {
   inset: 0;
   position: absolute;
 }
 
 .brand-panel__image {
-  animation: image-breathe 16s ease-in-out infinite alternate;
   height: 100%;
   object-fit: cover;
   object-position: center;
@@ -151,17 +146,6 @@ img {
     linear-gradient(180deg, rgba(16, 29, 51, .38), rgba(16, 29, 51, .68) 48%, rgba(16, 29, 51, .97)),
     linear-gradient(90deg, rgba(16, 29, 51, .12), rgba(16, 29, 51, .58));
   z-index: -3;
-}
-
-.brand-panel__glow {
-  background: radial-gradient(
-    420px circle at var(--mouse-x) var(--mouse-y),
-    rgba(224, 191, 123, .19),
-    transparent 58%
-  );
-  opacity: .9;
-  transition: opacity .4s ease;
-  z-index: -2;
 }
 
 .brand-panel::after {
@@ -253,54 +237,6 @@ img {
   color: #fff;
 }
 
-/* --- 7. Các chấm sáng bay lơ lửng (hiệu ứng nền) --- */
-.floating-lights {
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  position: absolute;
-  z-index: -1;
-}
-
-.floating-lights span {
-  animation: float-light 9s linear infinite;
-  background: rgba(242, 231, 207, .55);
-  border-radius: 50%;
-  bottom: -20px;
-  filter: blur(.2px);
-  height: 3px;
-  left: 15%;
-  opacity: 0;
-  position: absolute;
-  width: 3px;
-}
-
-.floating-lights span:nth-child(2) {
-  animation-delay: -2s;
-  animation-duration: 12s;
-  left: 34%;
-}
-
-.floating-lights span:nth-child(3) {
-  animation-delay: -5s;
-  animation-duration: 10s;
-  height: 5px;
-  left: 59%;
-  width: 5px;
-}
-
-.floating-lights span:nth-child(4) {
-  animation-delay: -7s;
-  animation-duration: 14s;
-  left: 76%;
-}
-
-.floating-lights span:nth-child(5) {
-  animation-delay: -3s;
-  animation-duration: 11s;
-  left: 88%;
-}
-
 /* --- 8. Panel phải: khung chứa form đăng nhập --- */
 .form-panel {
   align-items: center;
@@ -325,32 +261,6 @@ img {
   right: -260px;
   top: -240px;
   width: 430px;
-}
-
-.form-ambient {
-  border-radius: 50%;
-  filter: blur(10px);
-  opacity: .5;
-  pointer-events: none;
-  position: absolute;
-}
-
-.form-ambient--one {
-  animation: drift-one 12s ease-in-out infinite alternate;
-  background: rgba(184, 145, 74, .08);
-  height: 240px;
-  left: 10%;
-  top: 8%;
-  width: 240px;
-}
-
-.form-ambient--two {
-  animation: drift-two 14s ease-in-out infinite alternate;
-  background: rgba(36, 107, 206, .055);
-  bottom: 4%;
-  height: 300px;
-  right: 7%;
-  width: 300px;
 }
 
 /* --- 9. Form đăng nhập & hiệu ứng xuất hiện lần lượt --- */
@@ -497,22 +407,6 @@ img {
 .input-shell input::placeholder {
   color: #1b2535;
   opacity: 1;
-}
-
-.input-shine {
-  background: linear-gradient(90deg, transparent, rgba(184, 145, 74, .22), transparent);
-  height: 100%;
-  left: -55%;
-  pointer-events: none;
-  position: absolute;
-  top: 0;
-  transform: skewX(-22deg);
-  transition: left .7s ease;
-  width: 34%;
-}
-
-.input-shell:focus-within .input-shine {
-  left: 125%;
 }
 
 /* --- 13. Nút ẩn/hiện mật khẩu (icon con mắt) --- */
@@ -737,7 +631,6 @@ img {
 }
 
 .ux-note span {
-  animation: pulse-dot 1.7s ease-in-out infinite;
   background: var(--error);
   border-radius: 50%;
   height: 5px;
@@ -791,11 +684,6 @@ img {
 }
 
 /* --- 19. Định nghĩa các hiệu ứng động (keyframes) --- */
-@keyframes image-breathe {
-  from { transform: scale(1.02) translate3d(0, 0, 0); }
-  to { transform: scale(1.11) translate3d(-1.8%, -1%, 0); }
-}
-
 @keyframes fade-down {
   from { opacity: 0; transform: translateY(-16px); }
   to { opacity: 1; transform: translateY(0); }
@@ -811,23 +699,6 @@ img {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes float-light {
-  0% { opacity: 0; transform: translate3d(0, 0, 0) scale(.6); }
-  15% { opacity: .65; }
-  75% { opacity: .25; }
-  100% { opacity: 0; transform: translate3d(30px, -105vh, 0) scale(1.4); }
-}
-
-@keyframes drift-one {
-  from { transform: translate3d(-20px, -10px, 0); }
-  to { transform: translate3d(60px, 35px, 0); }
-}
-
-@keyframes drift-two {
-  from { transform: translate3d(25px, 20px, 0); }
-  to { transform: translate3d(-60px, -30px, 0); }
-}
-
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
@@ -838,11 +709,6 @@ img {
   40% { transform: translateX(6px); }
   60% { transform: translateX(-4px); }
   80% { transform: translateX(3px); }
-}
-
-@keyframes pulse-dot {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(180, 61, 69, 0); }
-  50% { box-shadow: 0 0 0 5px rgba(180, 61, 69, .12); }
 }
 
 /* --- 20. Responsive: điều chỉnh bố cục theo kích thước màn hình --- */
