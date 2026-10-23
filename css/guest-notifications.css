@@ -1,0 +1,63 @@
+/* ============================================================================
+   StayFlow — notifications.css (chỉ còn phần RIÊNG của trang "Trung tâm thông báo")
+   ----------------------------------------------------------------------------
+   Khối dùng chung (font, biến màu, reset, sidebar, topbar, dropdown, lời chào
+   .welcome, chip lọc .filter-tab, thanh tìm/lọc .request-toolbar, nút, trạng thái
+   trống .empty-state, toast, responsive khung...) đã nằm ở
+   ../shared/dashboard.css và được nạp TRƯỚC file này.
+
+   File này chỉ giữ: danh sách thông báo (một thẻ, nhiều dòng), dòng chưa đọc,
+   nút trong dòng, dải trống kiểu mockup và responsive của danh sách.
+   ============================================================================ */
+
+
+/* --- 1. Danh sách: một thẻ duy nhất, các dòng ngăn bằng đường kẻ --- */
+.notice-list { background: var(--paper); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+.notice-list:empty { display: none; } /* chưa có dòng nào thì không để lại khung rỗng */
+.notice-item { align-items: center; display: flex; gap: 14px; padding: 18px 20px; transition: background .2s ease; }
+.notice-item[hidden] { display: none; } /* display:flex ở trên sẽ đè thuộc tính hidden nếu thiếu dòng này */
+.notice-item + .notice-item { border-top: 1px solid var(--border); }
+.notice-item.is-first { border-top: 0; } /* dòng hiện đầu tiên không cần đường kẻ trên */
+.notice-item:not(.is-unread):hover { background: var(--cream); }
+/* Dòng chưa đọc: nền xanh nhạt + nhãn "Chưa đọc" (chữ, không chỉ dựa vào màu). */
+.notice-item.is-unread { background: #e7eefb; }
+.notice-item.is-unread:hover { background: #dde8f9; }
+
+/* --- 2. Ô icon theo loại thông báo --- */
+.notice-item__icon { align-items: center; background: #f2e7cf; border-radius: 10px; color: var(--green); display: flex; flex: 0 0 auto; height: 36px; justify-content: center; width: 36px; }
+.notice-item__icon svg { height: 18px; width: 18px; }
+.notice-item[data-kind="service"] .notice-item__icon { color: var(--orange); }
+.notice-item[data-kind="offer"] .notice-item__icon { color: var(--gold); }
+.notice-item[data-kind="system"] .notice-item__icon { color: var(--blue); }
+
+/* --- 3. Nội dung một dòng: tiêu đề + nhãn, mô tả, mốc thời gian --- */
+.notice-item__main { flex: 1; min-width: 0; }
+.notice-item__title { align-items: center; display: flex; flex-wrap: wrap; font: 700 13px "Inter:Bold"; gap: 8px; margin: 0 0 4px; }
+.notice-item__badge { align-items: center; color: var(--blue); display: inline-flex; font: 700 11px "Inter:Bold"; gap: 5px; }
+.notice-item__badge[hidden] { display: none; } /* display:inline-flex ở trên sẽ đè thuộc tính hidden nếu thiếu dòng này */
+.notice-item__badge::before { background: currentColor; border-radius: 50%; content: ""; height: 6px; width: 6px; }
+.notice-item__body { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 0 0 4px; }
+.notice-item__time { color: #8793a3; font-size: 11px; }
+
+/* --- 4. Hành động trong dòng: nút đọc (JS bật/tắt .secondary-button hoặc .text-button) + nút Xóa --- */
+.notice-item__actions { align-items: center; display: flex; flex: 0 0 auto; gap: 10px; }
+/* Nút trong dòng nhỏ hơn nút ở đầu trang cho cân với chiều cao dòng. */
+.notice-item .secondary-button,
+.notice-item .text-button { font-size: 12px; }
+.notice-item .secondary-button { height: 36px; padding: 0 14px; }
+.notice-item .secondary-button svg { height: 14px; width: 14px; }
+
+/* --- 5. Dải trống kiểu mockup: nền kem, icon + một câu giải thích --- */
+.empty-state--bar { align-items: center; background: #f2e7cf; border: 0; border-radius: 12px; display: none; gap: 10px; padding: 14px 16px; text-align: left; }
+.empty-state--bar.show { display: flex; }
+.empty-state--bar svg { color: var(--muted); flex: 0 0 auto; height: 16px; width: 16px; }
+
+/* Chấm đỏ trên chuông là phần tử SVG: cần luật riêng thì [hidden] mới ẩn được. */
+#bell-dot[hidden] { display: none; }
+
+/* --- 6. Responsive riêng của danh sách --- */
+@media (max-width: 760px) {
+  .notice-item { align-items: flex-start; flex-wrap: wrap; }
+  .notice-item__main { flex-basis: calc(100% - 50px); }
+  .notice-item__actions { justify-content: flex-end; width: 100%; }
+}

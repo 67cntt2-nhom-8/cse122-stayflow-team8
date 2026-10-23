@@ -1,5 +1,5 @@
 /* =========================================================================
- * script.js — Tương tác trang Giới thiệu khách sạn Aurora Grand
+ * about.js — Tương tác trang Giới thiệu khách sạn Aurora Grand
  * -------------------------------------------------------------------------
  * Nhiệm vụ:
  *   1. Mở/đóng menu điều hướng trên màn hình nhỏ (mobile).

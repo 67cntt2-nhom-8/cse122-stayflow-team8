@@ -1,4 +1,4 @@
-<!Doctype html>
+﻿<!Doctype html>
 <!-- ======================================================================
      login.html — Trang Đăng nhập StayFlow
      Bố cục 2 cột: bên trái là panel giới thiệu thương hiệu (ảnh nền),
@@ -18,27 +18,18 @@
   <body>
     <!-- Khung trang: 2 cột (panel giới thiệu | form đăng nhập) -->
     <main class="login-page">
-      <!-- PANEL TRÁI: ảnh nền khách sạn + lớp phủ tối + hiệu ứng ánh sáng -->
+      <!-- PANEL TRÁI: ảnh nền khách sạn + lớp phủ tối -->
       <section class="brand-panel" aria-label="Giới thiệu StayFlow">
-        <!-- Các lớp nền trang trí: ảnh, lớp phủ tối, vệt sáng theo chuột, chấm sáng -->
+        <!-- Các lớp nền: ảnh và lớp phủ tối -->
         <img
           class="brand-panel__image"
           src="../assets/images/58c4c.png"
           alt="Không gian sảnh khách sạn sang trọng"
         />
         <div class="brand-panel__overlay"></div>
-        <div class="brand-panel__glow" aria-hidden="true"></div>
-        <!-- 5 chấm sáng bay lơ lửng (thuần trang trí, đã ẩn với trình đọc màn hình) -->
-        <div class="floating-lights" aria-hidden="true">
-          <span></span><span></span><span></span><span></span><span></span>
-        </div>
 
-<<<<<<< HEAD:trang-dang-nhap/login.html
         <!-- Logo StayFlow: bấm vào quay về trang giới thiệu -->
-        <a class="brand" href="../trang-gioi-thieu/index.html" aria-label="StayFlow">
-=======
         <a class="brand" href="about.html" aria-label="StayFlow">
->>>>>>> dev:pages/login.html
           <span class="brand__mark">S</span>
           <span class="brand__name">StayFlow</span>
         </a>
@@ -63,10 +54,6 @@
 
       <!-- PANEL PHẢI: khu vực form đăng nhập -->
       <section class="form-panel">
-        <!-- Hai vệt sáng mờ trang trí nền -->
-        <div class="form-ambient form-ambient--one" aria-hidden="true"></div>
-        <div class="form-ambient form-ambient--two" aria-hidden="true"></div>
-
         <!-- Form đăng nhập. novalidate: để tự kiểm tra bằng JS (login.js) -->
         <form class="login-form" id="login-form" novalidate>
           <!-- Tiêu đề form -->
@@ -89,7 +76,6 @@
                 autocomplete="username"
                 aria-describedby="identity-message"
               />
-              <span class="input-shine" aria-hidden="true"></span>
             </div>
             <!-- Dòng báo lỗi của ô email/SĐT (được JS điền nội dung) -->
             <p class="field-message" id="identity-message"></p>
@@ -99,7 +85,7 @@
           <div class="field field--password reveal-item">
             <div class="field__label-row">
               <label for="password">Mật khẩu</label>
-              <a href="../trang-quen-mat-khau/quenmatkhau.html" id="forgot-password">Quên mật khẩu?</a>
+              <a href="forgot-password.html" id="forgot-password">Quên mật khẩu?</a>
             </div>
             <div class="input-shell" id="password-shell">
               <input
@@ -120,7 +106,6 @@
               >
                 <img src="../assets/images/5b24c.svg" alt="" />
               </button>
-              <span class="input-shine" aria-hidden="true"></span>
             </div>
             <!-- Khối báo lỗi mật khẩu (mặc định ẩn, JS sẽ hiện khi cần) -->
             <p class="error-message is-hidden" id="password-message">
@@ -148,7 +133,7 @@
           <!-- Link chuyển sang trang tạo tài khoản -->
           <p class="register-link reveal-item">
             Chưa có tài khoản?
-            <a href="../trang-dang-ky/signup.html">Tạo tài khoản</a>
+            <a href="sign-up.html">Tạo tài khoản</a>
           </p>
 
           <!-- Ghi chú trạng thái lỗi cuối form (mặc định ẩn) -->
@@ -166,13 +151,9 @@
       </section>
     </main>
 
-<<<<<<< HEAD:trang-dang-nhap/login.html
     <!-- Nạp script xử lý tương tác của trang đăng nhập -->
-    <!-- Tiện ích dùng chung (vệt sáng theo con trỏ, ẩn/hiện mật khẩu, rung form, toast) -->
-    <script src="../trang-dung-chung/auth-ui.js"></script>
-    <script src="login.js"></script>
-=======
+    <!-- Tiện ích dùng chung (ẩn/hiện mật khẩu, rung form, toast) -->
+    <script src="../shared/auth-ui.js"></script>
     <script src="../js/login.js"></script>
->>>>>>> dev:pages/login.html
   </body>
 </html>

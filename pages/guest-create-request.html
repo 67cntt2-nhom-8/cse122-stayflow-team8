@@ -1,0 +1,285 @@
+﻿<!Doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Gửi yêu cầu dịch vụ mới cho phòng 1208 tại Aurora Grand Đà Nẵng."
+    />
+    <title>Tạo yêu cầu mới · StayFlow</title>
+    <!-- Khung dashboard dùng chung (sidebar, topbar, thẻ, toast...) -->
+    <link rel="stylesheet" href="../shared/dashboard.css" />
+    <!-- Chỉ phần riêng của trang Tạo yêu cầu; nạp SAU để có thể ghi đè khối chung -->
+    <link rel="stylesheet" href="../css/guest-create-request.css" />
+  </head>
+  <body>
+    <div class="dashboard-shell">
+      <!-- Khối điều hướng: dùng lại nguyên mẫu của service-requests -->
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <span class="brand__mark">S</span>
+          <span>StayFlow</span>
+        </div>
+
+        <div class="role-card">
+          <small>AURORA GRAND · ĐÀ NẴNG</small>
+          <strong>Khách lưu trú</strong>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Điều hướng chính">
+          <a class="nav-item" href="guest-dashboard.html">
+            <img src="../assets/images/b5398.svg" alt="" /><span>Tổng quan</span>
+          </a>
+          <!-- Trang này là bước tiếp theo của mục "Yêu cầu" nên vẫn để mục đó đang mở. -->
+          <a class="nav-item active" href="guest-service-requests.html" aria-current="page">
+            <img src="../assets/images/5605b.svg" alt="" /><span>Yêu cầu</span>
+          </a>
+          <button class="nav-item" type="button" data-section="Chi tiết">
+            <img src="../assets/images/ec848.svg" alt="" /><span>Chi tiết</span>
+          </button>
+          <a class="nav-item" href="guest-notifications.html">
+            <img src="../assets/images/27592.svg" alt="" /><span>Thông báo</span>
+          </a>
+          <a class="nav-item" href="guest-profile.html">
+            <img src="../assets/images/3f703.svg" alt="" /><span>Hồ sơ</span>
+          </a>
+        </nav>
+
+        <div class="help-card">
+          <strong>Cần trợ giúp?</strong>
+          <p>Trung tâm vận hành hỗ trợ 24/7</p>
+          <a href="tel:188">Máy lẻ 188</a>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <div class="topbar__left">
+            <button class="menu-button" id="menu-button" type="button" aria-label="Mở menu">
+              <span></span><span></span><span></span>
+            </button>
+            <div class="page-context">
+              <small>Phòng 1208</small>
+              <strong id="page-title">Tạo yêu cầu mới</strong>
+            </div>
+          </div>
+
+          <!-- Trang này là một biểu mẫu nên không có ô tìm kiếm như các trang danh sách. -->
+          <div class="user-tools">
+            <div class="dropdown-wrap">
+              <button class="icon-button" id="notification-button" type="button" aria-label="Thông báo">
+                <!-- Bản sao ../assets/images/f92f1.svg đã bỏ chấm đỏ "chưa đọc": trang này chỉ gửi yêu cầu. -->
+                <svg aria-hidden="true" fill="none" height="38" preserveAspectRatio="none" style="display: block" viewBox="0 0 38 38" width="38" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="38" height="38" rx="10" fill="#F7F3EA" />
+                  <path d="M17.7723 25.3756C17.8966 25.5909 18.0755 25.7698 18.2908 25.8941C18.5062 26.0184 18.7505 26.0839 18.9991 26.0839C19.2478 26.0839 19.4921 26.0184 19.7075 25.8941C19.9228 25.7698 20.1017 25.5909 20.226 25.3756M12.8101 21.3561C12.7175 21.4576 12.6565 21.5837 12.6343 21.7192C12.6121 21.8547 12.6298 21.9937 12.6852 22.1194C12.7406 22.245 12.8313 22.3518 12.9463 22.4269C13.0612 22.5019 13.1955 22.5419 13.3328 22.542H24.6664C24.8037 22.542 24.938 22.5022 25.0531 22.4273C25.1681 22.3524 25.2589 22.2457 25.3145 22.1202C25.37 21.9946 25.3878 21.8556 25.3659 21.7201C25.3439 21.5846 25.283 21.4584 25.1906 21.3569C24.2485 20.3856 23.2497 19.3535 23.2497 16.1665C23.2497 15.0392 22.8019 13.9581 22.0049 13.161C21.2078 12.3639 20.1268 11.9161 18.9996 11.9161C17.8724 11.9161 16.7914 12.3639 15.9943 13.161C15.1973 13.9581 14.7495 15.0392 14.7495 16.1665C14.7495 19.3535 13.75 20.3856 12.8101 21.3561Z" stroke="#101D33" stroke-linecap="round" />
+                </svg>
+              </button>
+              <div class="dropdown notification-dropdown" id="notification-dropdown">
+                <div class="dropdown__heading">
+                  <strong>Thông báo</strong><span hidden></span>
+                </div>
+                <!-- Yêu cầu vừa gửi hiện thành dòng ở trang "Yêu cầu của bạn" (service-requests.js dựng). -->
+                <p class="dropdown__empty">Yêu cầu vừa gửi sẽ hiện ở trang Yêu cầu của bạn.</p>
+              </div>
+            </div>
+
+            <img class="tool-divider" src="../assets/images/06eb2.svg" alt="" />
+
+            <div class="dropdown-wrap">
+              <button class="profile-button" id="profile-button" type="button">
+                <img src="../assets/images/images.jpg" alt="Ảnh đại diện người dùng" />
+                <span><b>Thu Hà</b><small>Khách lưu trú</small></span>
+              </button>
+              <div class="dropdown profile-dropdown" id="profile-dropdown">
+                <a href="guest-profile.html">Thông tin cá nhân</a>
+                <button type="button">Cài đặt thông báo</button>
+                <a href="login.html">Đăng xuất</a>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main class="content">
+          <section class="welcome reveal">
+            <div>
+              <span class="eyebrow">PHÒNG 1208 · AURORA GRAND</span>
+              <h1>Tạo yêu cầu mới</h1>
+              <p>Chọn dịch vụ, mô tả nhu cầu và gửi tới bộ phận phụ trách.</p>
+            </div>
+            <!-- Mũi tên vẽ thẳng trong HTML để không phải thêm asset mới. -->
+            <a class="secondary-button" id="back-to-list" href="guest-service-requests.html">
+              <svg aria-hidden="true" fill="none" height="16" viewBox="0 0 16 16" width="16">
+                <path d="M9.5 3.5 5 8l4.5 4.5M5 8h7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4" />
+              </svg>
+              Quay lại danh sách
+            </a>
+          </section>
+
+          <div class="create-grid">
+            <!-- Cột trái: biểu mẫu. Chưa có backend nên JS tự xử lý khi submit. -->
+            <form class="card create-form reveal" id="create-request-form" novalidate>
+              <div class="form-block">
+                <div class="form-block__head">
+                  <h2>1. Chọn dịch vụ</h2>
+                  <p>Mỗi dịch vụ có đội phụ trách và thời gian phản hồi riêng.</p>
+                </div>
+                <!-- create-request.js dựng các nút chọn từ bảng chung SERVICE_META (dashboard.js) -->
+                <div class="service-picker" id="service-picker" role="radiogroup" aria-label="Loại dịch vụ"></div>
+              </div>
+
+              <div class="form-block">
+                <div class="form-block__head">
+                  <h2>2. Nội dung yêu cầu</h2>
+                  <p>Nêu rõ số lượng và vị trí để nhân viên xử lý một lần là xong.</p>
+                </div>
+                <label class="field-label" for="request-note">Ghi chú cho nhân viên *</label>
+                <textarea
+                  class="field-input"
+                  id="request-note"
+                  maxlength="300"
+                  rows="5"
+                  placeholder="Ví dụ: Xin thêm 2 khăn tắm và 2 khăn mặt, để ở bàn cạnh cửa."
+                ></textarea>
+                <div class="field-foot">
+                  <span class="field-error" id="note-error" hidden>Vui lòng mô tả yêu cầu (ít nhất 3 ký tự).</span>
+                  <span class="field-count" id="note-count"></span>
+                </div>
+                <p class="field-hint">Gợi ý nhanh theo dịch vụ đang chọn:</p>
+                <div class="chip-row" id="suggest-row"></div>
+              </div>
+
+              <div class="form-actions">
+                <button class="primary-button" id="send-request" type="submit">
+                  <span>Gửi yêu cầu</span><b></b>
+                </button>
+                <a class="secondary-button" href="guest-service-requests.html">Huỷ</a>
+                <small>Mã yêu cầu được cấp tự động khi gửi.</small>
+              </div>
+            </form>
+
+            <!-- Cột phải: xem trước đúng thẻ mà trang Yêu cầu sẽ dựng lại. -->
+            <aside class="create-side">
+              <section class="card preview-card reveal">
+                <h2>Xem trước yêu cầu</h2>
+                <div class="preview-card__head">
+                  <span class="preview-card__icon"><img id="preview-icon" src="../assets/images/ccf51.svg" alt="" /></span>
+                  <div>
+                    <span class="preview-card__code" id="preview-code"></span>
+                    <strong id="preview-title"></strong>
+                  </div>
+                </div>
+                <p class="preview-card__meta" id="preview-meta"></p>
+                <p class="preview-card__note" id="preview-note"></p>
+                <div class="preview-card__rows">
+                  <div><small>PHÒNG</small><strong>1208 · Aurora Grand</strong></div>
+                  <div><small>PHỤ TRÁCH</small><strong id="preview-owner"></strong></div>
+                  <div><small>DỰ KIẾN</small><strong id="preview-eta"></strong></div>
+                </div>
+              </section>
+
+              <section class="card tip-card reveal">
+                <h2>Trước khi gửi</h2>
+                <ul>
+                  <li>Mỗi yêu cầu chỉ nên gồm một việc để theo dõi tiến độ cho rõ ràng.</li>
+                  <li>Cần gấp ngoài giờ, gọi máy lẻ <a href="tel:188">188</a> để gặp trực lễ tân.</li>
+                  <li>Yêu cầu đã gửi nằm ở đầu danh sách <a href="guest-service-requests.html">Yêu cầu của bạn</a>.</li>
+                </ul>
+              </section>
+            </aside>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite">
+      <span>✓</span><p></p>
+    </div>
+
+    <!-- Trợ lý AI GIẢ LẬP: dữ liệu trả lời nằm nguyên trong khối JSON dưới đây.
+         Không fetch() vì mở trực tiếp file .html (file://) trình duyệt chặn fetch;
+         thẻ script application/json vẫn là JSON tách riêng, đổi câu trả lời chỉ cần
+         sửa JSON, không đụng logic JS. -->
+    <script type="application/json" id="assistant-data">
+    {
+      "assistant": {
+        "name": "Trợ lý StayFlow",
+        "greeting": "Chào Thu Hà 👋 Kể tôi nghe bạn cần gì — tôi sẽ chọn giúp dịch vụ, soạn ghi chú và gợi ý mức ưu tiên.",
+        "typing": "Đang soạn trả lời…",
+        "fallback": "Tôi chưa chắc dịch vụ nào phù hợp. Bạn thử nói rõ hơn (ví dụ: điều hoà, khăn, ăn uống, dọn phòng) hoặc tự chọn ở bước 1 nhé."
+      },
+      "quickPrompts": [
+        "Điều hoà phòng không mát",
+        "Thêm 2 khăn tắm",
+        "Đặt bữa sáng 7:00",
+        "Dọn phòng giúp tôi"
+      ],
+      "replies": [
+        {
+          "keywords": ["điều hoà", "điều hòa", "máy lạnh", "không mát", "nóng", "lạnh", "quạt", "đèn", "bóng đèn", "vòi", "nước nóng", "chảy", "rò rỉ", "hỏng", "không sáng", "không chạy", "cửa khoá", "thang máy", "ổ cắm", "điện"],
+          "service": "Báo sự cố",
+          "priority": "Cao",
+          "reason": "Thiết bị hỏng ảnh hưởng trực tiếp đến chỗ nghỉ nên cần kỹ thuật vào sớm.",
+          "answer": "Đây là sự cố thiết bị — tôi đã chọn “Báo sự cố”, Kỹ thuật toà nhà sẽ vào trong 15 phút.",
+          "note": "Phòng 1208 gặp sự cố thiết bị (điều hoà/đèn/vòi nước), nhờ kỹ thuật kiểm tra sớm."
+        },
+        {
+          "keywords": ["khăn", "gối", "ga giường", "chăn", "khăn tắm", "khăn mặt"],
+          "service": "Yêu cầu khăn",
+          "priority": "Bình thường",
+          "reason": "Vật phẩm tiêu hao, đội buồng phòng xử lý rất nhanh (dưới 10 phút).",
+          "answer": "Đã chọn “Yêu cầu khăn” — Đội buồng phòng mang lên trong 10 phút.",
+          "note": "Xin thêm 2 khăn tắm và 2 khăn mặt, để ở bàn cạnh cửa."
+        },
+        {
+          "keywords": ["ăn", "uống", "bữa", "sáng", "trưa", "tối", "cơm", "trà", "cà phê", "nước cam", "đồ ăn", "gọi món", "phở", "mì"],
+          "service": "Đặt bữa",
+          "priority": "Theo giờ hẹn",
+          "reason": "Có giờ hẹn cụ thể nên bếp chuẩn bị theo khung giờ bạn nêu.",
+          "answer": "Đã chọn “Đặt bữa” — Bếp Aurora xác nhận trong 40 phút.",
+          "note": "Đặt bữa sáng cho 2 người lúc 7:00."
+        },
+        {
+          "keywords": ["dọn phòng", "dọn", "rác", "thu gom", "vệ sinh", "lau"],
+          "service": "Gọi dọn phòng",
+          "priority": "Bình thường",
+          "reason": "Dọn phòng theo lượt thường lệ của đội buồng phòng.",
+          "answer": "Đã chọn “Gọi dọn phòng” — đội buồng phòng lên trong 20 phút.",
+          "note": "Nhờ dọn phòng và thay ga giường."
+        }
+      ]
+    }
+    </script>
+
+    <!-- Giao diện trợ lý: bong bóng góc dưới phải, bấm để mở/đóng hộp thoại. -->
+    <div class="ai-assistant">
+      <section class="ai-panel" id="ai-panel" aria-label="Trợ lý AI StayFlow" hidden>
+        <header class="ai-panel__head">
+          <span class="ai-panel__avatar" aria-hidden="true">✦</span>
+          <div>
+            <strong>Trợ lý StayFlow</strong>
+            <small>AI giả lập · trả lời từ JSON mẫu</small>
+          </div>
+          <button id="ai-close" type="button" aria-label="Đóng trợ lý">✕</button>
+        </header>
+        <div class="ai-panel__log" id="ai-log" aria-live="polite"></div>
+        <div class="ai-panel__chips" id="ai-chips"></div>
+        <form class="ai-panel__form" id="ai-form">
+          <input id="ai-input" type="text" placeholder="Ví dụ: điều hoà không mát…" autocomplete="off" />
+          <button class="ai-panel__send" type="submit" aria-label="Gửi">→</button>
+        </form>
+      </section>
+      <!-- Icon vẽ thẳng trong HTML để không phải thêm asset mới (giữ nguyên tắc của trang). -->
+      <button class="ai-bubble" id="ai-bubble" type="button" aria-expanded="false" aria-label="Mở trợ lý AI">
+        <svg aria-hidden="true" fill="none" height="22" viewBox="0 0 22 22" width="22">
+          <path d="M11 3c-4.7 0-8.5 3.1-8.5 7 0 2.2 1.2 4.1 3.1 5.4-.2 1-.7 2-1.6 2.9 1.6-.1 3-.7 4-1.5 1 .3 2 .4 3 .4 4.7 0 8.5-3.1 8.5-7S15.7 3 11 3Z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.5" />
+          <path d="M7.5 9.5h7M7.5 12.5h4" stroke="currentColor" stroke-linecap="round" stroke-width="1.5" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Hành vi khung dashboard dùng chung, phải nạp TRƯỚC script của trang -->
+    <script src="../shared/dashboard.js"></script>
+    <script src="../js/guest-create-request.js"></script>
+  </body>
+</html>

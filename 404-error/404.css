@@ -1,12 +1,3 @@
-/* ============================================================================
-   404.css — Giao diện trang 404 "Không tìm thấy trang" (StayFlow)
-   ----------------------------------------------------------------------------
-   Phần dùng chung (font, biến màu, reset, khung trang, header, bộ nút) đã chuyển
-   sang ../trang-dung-chung/error-page.css và được nạp TRƯỚC file này.
-   File này chỉ giữ: ảnh 404 + tiêu đề/mô tả, footer bản quyền, mũi tên trong nút
-   phụ và responsive riêng.
-   ============================================================================ */
-
 /* --- 1. Footer bản quyền sát đáy trang --- */
 .page-footer {
   color: var(--muted);

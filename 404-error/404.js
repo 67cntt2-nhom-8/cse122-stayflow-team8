@@ -1,5 +1,5 @@
-const backButton = document.getElementById("back-button");
-const HOME_URL = "../trang-gioi-thieu/index.html";
+﻿const backButton = document.getElementById("back-button");
+const HOME_URL = "../pages/about.html";
 
 backButton.addEventListener("click", () => {
   // ponytail: history.length > 1 chỉ là ước lượng "có trang trước"; trình duyệt

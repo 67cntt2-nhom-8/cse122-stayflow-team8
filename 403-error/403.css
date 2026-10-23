@@ -1,18 +1,3 @@
-/* ============================================================================
-   403.css — Giao diện trang 403 "Bạn không có quyền truy cập" (StayFlow)
-   ----------------------------------------------------------------------------
-   Bố cục: header (logo + trợ giúp) -> khối giữa 2 CỘT (ảnh hành lang có icon từ
-   chối truy cập | nội dung lỗi + 2 nút) -> footer (mã tham chiếu).
-
-   Phần dùng chung (font, biến màu, reset, khung trang, header, bộ nút) đã chuyển
-   sang ../trang-dung-chung/error-page.css và được nạp TRƯỚC file này.
-   File này chỉ giữ bố cục riêng của trang 403.
-   ============================================================================ */
-
-/* ========================================================================
- * PHẦN B — PHẦN RIÊNG CỦA TRANG 403
- * ======================================================================== */
-
 /* --- B.1 Khối nội dung giữa: bố cục 2 cột (ảnh | nội dung) ---
    404 xếp nội dung dọc ở giữa trang; 403 chia 2 cột như thiết kế riêng.
    Cột dùng minmax(0, …) thay vì chiều rộng tối thiểu cố định để grid luôn

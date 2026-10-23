@@ -1,0 +1,183 @@
+﻿<!Doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Tạo tài khoản StayFlow để nhận trải nghiệm lưu trú cá nhân hóa."
+    />
+    <title>Tạo tài khoản · StayFlow</title>
+    <link rel="stylesheet" href="../css/sign-up.css" />
+  </head>
+  <body>
+    <main class="register-page">
+      <section class="brand-panel" aria-label="Giới thiệu StayFlow">
+        <img
+          class="brand-panel__image"
+          src="../assets/images/58c4c.png"
+          alt="Sảnh khách sạn StayFlow"
+        />
+        <div class="brand-panel__overlay"></div>
+
+        <a class="brand" href="about.html" aria-label="StayFlow">
+          <span class="brand__mark">S</span>
+          <span class="brand__name">StayFlow</span>
+        </a>
+
+        <div class="brand-content">
+          <p class="eyebrow">ĐIỀU PHỐI DỊCH VỤ LƯU TRÚ</p>
+          <h1>Mỗi khoảnh khắc lưu trú đều được chăm sóc.</h1>
+          <p>
+            StayFlow kết nối khách lưu trú và đội ngũ khách sạn trong một trải
+            nghiệm liền mạch, tin cậy.
+          </p>
+          <small>
+            © 2026 StayFlow · <a href="#">Quyền riêng tư</a> ·
+            <a href="#">Trợ giúp</a>
+          </small>
+        </div>
+      </section>
+
+      <section class="form-panel">
+        <form class="register-form" id="register-form" novalidate>
+          <div class="form-heading reveal-item">
+            <span>STAYFLOW MEMBERSHIP</span>
+            <h2>Tạo tài khoản</h2>
+            <p>Kết nối mã đặt phòng để nhận dịch vụ cá nhân hóa.</p>
+          </div>
+
+          <div class="field-row reveal-item">
+            <div class="field">
+              <label for="full-name">Họ và tên</label>
+              <div class="input-shell" id="name-shell">
+                <input
+                  id="full-name"
+                  name="full-name"
+                  type="text"
+                  placeholder="Nguyễn Thu Hà"
+                  autocomplete="name"
+                />
+              </div>
+              <p class="field-error" id="name-error"></p>
+            </div>
+
+            <div class="field">
+              <label for="phone">Số điện thoại</label>
+              <div class="input-shell" id="phone-shell">
+                <input
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  placeholder="090 123 4567"
+                  autocomplete="tel"
+                />
+              </div>
+              <p class="field-error" id="phone-error"></p>
+            </div>
+          </div>
+
+          <div class="field reveal-item">
+            <label for="email">Email</label>
+            <div class="input-shell" id="email-shell">
+              <img src="../assets/images/ebb71-sign-up.svg" alt="" />
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="thuha.nguyen@email.com"
+                autocomplete="email"
+              />
+            </div>
+            <p class="field-error" id="email-error"></p>
+          </div>
+
+          <div class="field reveal-item">
+            <label for="password">Mật khẩu</label>
+            <div class="input-shell" id="password-shell">
+              <img src="../assets/images/276b2.svg" alt="" />
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="••••••••••"
+                autocomplete="new-password"
+              />
+              <button
+                class="password-toggle"
+                type="button"
+                aria-label="Hiện mật khẩu"
+                aria-pressed="false"
+              >
+                <span></span>
+              </button>
+            </div>
+          </div>
+
+          <div class="strength reveal-item" aria-live="polite">
+            <div class="strength__bars" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <p id="strength-label">Nhập mật khẩu để kiểm tra độ mạnh</p>
+          </div>
+
+          <div class="field reveal-item">
+            <label for="confirm-password">Xác nhận mật khẩu</label>
+            <div class="input-shell" id="confirm-shell">
+              <img src="../assets/images/276b2.svg" alt="" />
+              <input
+                id="confirm-password"
+                name="confirm-password"
+                type="password"
+                placeholder="••••••••••"
+                autocomplete="new-password"
+                aria-describedby="confirm-error"
+              />
+              <img
+                class="alert-icon is-hidden"
+                id="confirm-alert"
+                src="../assets/images/9edec.svg"
+                alt=""
+              />
+            </div>
+            <p class="field-error" id="confirm-error"></p>
+          </div>
+
+          <label class="terms reveal-item">
+            <input id="terms" type="checkbox" />
+            <span class="terms__box"><b>✓</b></span>
+            <span>
+              Tôi đồng ý với <a href="#">Điều khoản sử dụng</a> và Chính sách
+              quyền riêng tư.
+            </span>
+          </label>
+
+          <button class="submit-button reveal-item" type="submit" disabled>
+            <span class="submit-button__text">Tạo tài khoản</span>
+            <span class="submit-button__loader" aria-hidden="true"></span>
+          </button>
+
+          <p class="login-link reveal-item">
+            Đã có tài khoản?
+            <a href="login.html">
+              Đăng nhập <img src="../assets/images/27105.svg" alt="" />
+            </a>
+          </p>
+        </form>
+
+        <div class="success-card" aria-live="polite">
+          <div class="success-card__ring">
+            <span>✓</span>
+          </div>
+          <h3>Tài khoản đã sẵn sàng</h3>
+          <p>Chào mừng bạn đến với trải nghiệm StayFlow.</p>
+          <a href="guest-dashboard.html">Vào trang tổng quan</a>
+        </div>
+      </section>
+    </main>
+
+    <!-- Tiện ích dùng chung (ẩn/hiện mật khẩu, rung form) -->
+    <script src="../shared/auth-ui.js"></script>
+    <script src="../js/sign-up.js"></script>
+  </body>
+</html>
