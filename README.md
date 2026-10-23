@@ -15,6 +15,9 @@ cse122-stayflow-team8/
 │   ├── about.html               (Trang giới thiệu)
 │   ├── manager-dispatch-board.html
 │   ├── manager-sla-monitor.html
+│   ├── manager-service-report.html
+│   ├── manager-staff-management.html
+│   ├── manager-settings.html
 │   ├── admin-service-type-management.html
 │   └── admin-user-management.html
 │
@@ -27,6 +30,9 @@ cse122-stayflow-team8/
 │   ├── main.js                  (JS xử lý chung)
 │   ├── manager-dispatch-board.js
 │   ├── manager-sla-monitor.js
+│   ├── manager-service-report.js
+│   ├── manager-staff-management.js
+│   ├── manager-settings.js
 │   ├── admin-service-type-management.js
 │   └── admin-user-management.js
 │
@@ -43,6 +49,8 @@ cse122-stayflow-team8/
 
 Mở `index.html` để vào trang chủ. Dữ liệu giả lập hiện được khai báo trong
 `js/data.js`; hình ảnh dùng chung nằm trong `assets/images/`.
+Các màn hình quản lý và quản trị dùng chung `css/manager-admin.css` và
+`js/manager-admin.js`.
 
 ## Kiểm tra nhanh (không cần framework)
 
@@ -86,7 +94,7 @@ Khám phá / đăng nhập → Thực hiện nghiệp vụ chính theo vai trò 
 
 1. **Khách lưu trú:** Guest Dashboard (`guest-dashboard.html`), Service Request (`guest-service-request.html`), My Requests (`guest-my-requests.html`)
 2. **Nhân viên vận hành:** Task Board (`staff-task-board.html`), Task Detail (`staff-task-detail.html`), Shift View (`staff-shift-view.html`)
-3. **Quản lý khách sạn:** Dispatch Board (`manager-dispatch-board.html`), SLA Monitor (`manager-sla-monitor.html`), Service Report (`manager-service-report.html`)
+3. **Quản lý khách sạn:** Dispatch Board (`manager-dispatch-board.html`), SLA Monitor (`manager-sla-monitor.html`), Service Report (`manager-service-report.html`), Staff Management (`manager-staff-management.html`), Settings (`manager-settings.html`)
 4. **Quản trị viên:** Dashboard (`admin-dashboard.html`), Service Type Management (`admin-service-type-management.html`), User Management (`admin-user-management.html`)
 
 ## Tính năng AI
