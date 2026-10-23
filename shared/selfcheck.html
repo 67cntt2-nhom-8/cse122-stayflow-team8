@@ -1,0 +1,259 @@
+﻿<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <title>StayFlow — tự kiểm tra khối dùng chung</title>
+    <style>
+      body { font: 13px/1.6 Consolas, monospace; margin: 24px; }
+      #log { white-space: pre-wrap; }
+    </style>
+  </head>
+  <body>
+    <h1>Tự kiểm tra khối dùng chung</h1>
+    <p>
+      Mở file này bằng trình duyệt (double-click). Mọi dòng phải là PASS, dòng cuối là
+      <code>TONG: n/n PASS</code>. Trang chỉ đọc/ghi localStorage của chính nó, không ảnh hưởng
+      dữ liệu bạn đang dùng.
+    </p>
+    <pre id="log">đang chạy…</pre>
+    <iframe id="frame" style="width: 1280px; height: 900px"></iframe>
+
+    <script>
+      /* Kiểm tra nhanh sau khi tách code dùng chung ra khỏi 2 trang dashboard và 2 trang lỗi:
+         nạp từng trang vào iframe rồi thao tác trên DOM của iframe đó. */
+      const lines = [];
+      const say = (ok, name, extra = "") =>
+        lines.push(`${ok ? "PASS" : "FAIL"} · ${name}${extra ? " · " + extra : ""}`);
+      const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+      const frame = document.getElementById("frame");
+      const doc = () => frame.contentDocument;
+      const win = () => frame.contentWindow;
+      const load = (url) =>
+        new Promise((res) => {
+          frame.onload = () => res();
+          frame.src = url;
+        });
+      const submitModal = () =>
+        doc()
+          .querySelector("#request-form")
+          .dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+
+      /* Trang Yêu cầu lúc mới mở: 2 yêu cầu mẫu (#SF-3182 đang xử lý, #SF-3171 hoàn thành)
+         sẵn trong HTML; kho phiên vẫn trống nên đếm all = 2 và chưa có thông báo. */
+      async function yeucauInitial() {
+        await load("../pages/guest-service-requests.html");
+        await sleep(300);
+        say(doc().querySelectorAll("#request-list .request-item").length === 2, "yeucau: 2 thẻ mẫu sẵn có");
+        say(doc().querySelector("#empty-state").classList.contains("show") === false, "yeucau: không hiện trạng thái trống");
+        say(doc().querySelector('[data-count="all"]').textContent === "2", "yeucau: đếm all = 2");
+        say(doc().querySelectorAll("#request-pager .pager-button").length >= 3, "yeucau: pager do JS dựng");
+        say(doc().querySelector(".dropdown__empty").hidden === false, "yeucau: thông báo rỗng");
+      }
+
+      /* Trang Yêu cầu: nút "Tạo yêu cầu mới" là liên kết dẫn sang trang tạo yêu cầu. */
+      async function taoyeucau() {
+        const btn = doc().querySelector("#new-request");
+        say(btn.tagName === "A", "yeucau: nút Tạo yêu cầu mới là liên kết");
+        say(
+          btn.getAttribute("href") === "../pages/guest-create-request.html",
+          "yeucau: liên kết tới trang tạo yêu cầu",
+        );
+      }
+      /* Trang Tạo yêu cầu: trợ lý AI giả lập đọc JSON nhúng trong HTML, trả lời và
+          tự điền dịch vụ + ghi chú vào biểu mẫu. */
+      async function taoyeucauAssistant() {
+        await load("../pages/guest-create-request.html");
+        await sleep(300);
+        say(doc().querySelector("#ai-panel").hidden === true, "taoyeucau: hộp trợ lý đóng lúc mới mở trang");
+        doc().querySelector("#ai-bubble").click();
+        say(doc().querySelector("#ai-panel").hidden === false, "taoyeucau: bong bóng mở được hộp trợ lý");
+        say(doc().querySelectorAll("#ai-log .ai-msg--bot").length === 1, "taoyeucau: trợ lý chào khi vừa mở hộp");
+        /* Khoá đúng lỗi đã gặp: thư mục assets/ của trang rỗng -> icon hỏng âm thầm. */
+        const icons = [...doc().querySelectorAll(".sidebar-nav img, .tool-divider, .profile-button img, .service-option img, #preview-icon")];
+        say(icons.length >= 10 && icons.every((img) => img.naturalWidth > 0), "taoyeucau: cả bộ icon/ảnh tải được từ ./assets", String(icons.length));
+        doc().querySelector("#ai-input").value = "Thêm 2 khăn tắm";
+        doc().querySelector("#ai-form").dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        await sleep(900);
+        const picked = [...doc().querySelectorAll(".service-option")].find((o) => o.dataset.service === "Yêu cầu khăn");
+        say(picked && picked.classList.contains("is-selected"), "taoyeucau: AI chọn đúng dịch vụ Yêu cầu khăn");
+        say(doc().querySelector("#request-note").value.length > 0, "taoyeucau: AI soạn sẵn ghi chú ở bước 2");
+        say(doc().querySelectorAll("#ai-log .ai-msg--bot").length === 2, "taoyeucau: có trả lời sau tin nhắn");
+      }
+
+      /* Trang Tổng quan: CSS chung áp dụng, gửi yêu cầu ghi vào cùng kho -> mã 01. */
+      async function tongquan() {
+        await load("../pages/guest-dashboard.html");
+        await sleep(300);
+        const bg = win().getComputedStyle(doc().querySelector(".sidebar")).backgroundColor;
+        say(bg === "rgb(16, 29, 51)", "tongquan: dashboard.css áp dụng", bg);
+        const thongbaoNav = [...doc().querySelectorAll(".nav-item")].find((n) => n.textContent.trim() === "Thông báo");
+        say(thongbaoNav.tagName === "A" && thongbaoNav.getAttribute("href").includes("notifications.html"), "tongquan: mục Thông báo liên kết sang trang thông báo");
+        const heroParts = doc().querySelectorAll(".welcome > *").length;
+        say(heroParts === 1, "tongquan: khối lời chào đã bỏ nút Yêu cầu dịch vụ", String(heroParts));
+        doc().querySelector(".service-card button").click();
+        say(doc().querySelector("#request-modal").classList.contains("open"), "tongquan: modal mở từ thẻ dịch vụ");
+        submitModal();
+        await sleep(1300);
+        say(doc().querySelector("#latest-request-title").textContent.length > 0, "tongquan: cập nhật yêu cầu gần nhất");
+        const stored = JSON.parse(win().sessionStorage.getItem("stayflow_requests") || "[]");
+        say(stored.length === 1, "kho chung: 1 yêu cầu", String(stored.length));
+        say(stored[0] && stored[0].code === "#REQ-1208-01", "kho chung: mã 01");
+      }
+
+      /* Mở lại trang Yêu cầu: đọc từ kho, mới nhất lên đầu, không nhân đôi thẻ. */
+      async function yeucauRestore() {
+        await load("../pages/guest-service-requests.html");
+        await sleep(400);
+        const codes = [...doc().querySelectorAll(".request-item__code")].map((e) => e.textContent);
+        say(codes.length === 3, "yeucau: 2 mẫu + 1 mới = 3 thẻ", codes.join(","));
+        say(new Set(codes).size === codes.length, "yeucau: không nhân đôi mã");
+        say(codes[0] === "#REQ-1208-01", "yeucau: mới nhất lên đầu");
+        say(doc().querySelector(".dropdown__heading span").textContent === "1 mới", "yeucau: badge 1 mới");
+      }
+
+      /* Trang Hồ sơ cá nhân: dùng chung khung dashboard + profile.css, lưu/hủy hồ sơ. */
+      async function hosoProfile() {
+        await load("../pages/guest-profile.html");
+        await sleep(300);
+        const before = win().localStorage.getItem("stayflow_profile");
+        const beforeName = win().localStorage.getItem("stayflow_user_name");
+
+        const columns = win().getComputedStyle(doc().querySelector(".profile-grid")).gridTemplateColumns;
+        say(columns.split(" ").length >= 2, "hoso: profile.css dựng lưới 2 cột", columns);
+        say(doc().querySelector("#full-name").value.length > 0, "hoso: điền sẵn thông tin đã lưu");
+        say(doc().querySelector("#save-banner").hidden === true, "hoso: chưa lưu thì ẩn dải xác nhận");
+
+        doc().querySelector("#full-name").value = "Nguyễn Thu Hà (đã sửa)";
+        doc().querySelector("#profile-form").dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        await sleep(50);
+        const saved = JSON.parse(win().localStorage.getItem("stayflow_profile") || "{}");
+        say(saved.fullName === "Nguyễn Thu Hà (đã sửa)", "hoso: lưu hồ sơ vào stayflow_profile");
+        say(
+          doc().querySelector("#save-banner").hidden === false &&
+            doc().querySelector("#save-banner span").textContent.startsWith("Đã lưu thay đổi lúc"),
+          "hoso: hiện dải xác nhận kèm mốc thời gian",
+        );
+        say(doc().querySelector("#profile-card-name").textContent === "Nguyễn Thu Hà (đã sửa)", "hoso: danh thiếp đổi theo tên");
+        say(win().localStorage.getItem("stayflow_user_name") === "Nguyễn Thu Hà (đã sửa)", "hoso: đồng bộ tên lên topbar");
+        say(doc().querySelector("#toast").classList.contains("show"), "hoso: toast hiện");
+
+        doc().querySelector("#full-name").value = "Tên tạm";
+        doc().querySelector("#reset-profile").click();
+        say(doc().querySelector("#full-name").value === "Nguyễn Thu Hà (đã sửa)", "hoso: Hủy trả về dữ liệu đã lưu");
+
+        // Trả lại dữ liệu cũ để lần chạy sau vẫn bắt đầu từ trạng thái thật của người dùng
+        [
+          ["stayflow_profile", before],
+          ["stayflow_user_name", beforeName],
+        ].forEach(([key, value]) => {
+          if (value === null) win().localStorage.removeItem(key);
+          else win().localStorage.setItem(key, value);
+        });
+      }
+
+      /* Trang Thông báo: dựng 4 thông báo mẫu, lọc theo chip, đọc/xoá, đồng bộ số đếm. */
+      async function thongbaoCenter() {
+        await load("../pages/guest-notifications.html");
+        await sleep(300);
+        const before = win().localStorage.getItem("stayflow_notifications");
+        const rows = () => doc().querySelectorAll("#notice-list .notice-item");
+        const shown = () => doc().querySelectorAll("#notice-list .notice-item:not([hidden])").length;
+
+        say(rows().length === 4, "thongbao: dựng 4 dòng từ dữ liệu mẫu", String(rows().length));
+        say(doc().querySelectorAll("#notice-list .is-unread").length === 2, "thongbao: 2 dòng chưa đọc");
+        say(doc().querySelector("#notice-unread").textContent === "2", "thongbao: phụ đề đếm 2 chưa đọc");
+        say(doc().querySelector("#bell-dot").hidden === false, "thongbao: chuông còn chấm đỏ");
+        say(doc().querySelector('[data-count="system"]').textContent === "1", "thongbao: chip Hệ thống đếm 1");
+        const navHrefs = [...doc().querySelectorAll(".sidebar-nav .nav-item")].map((n) => n.getAttribute("href"));
+        say(
+          ["../pages/guest-dashboard.html", "../pages/guest-service-requests.html", "../pages/guest-profile.html"].every((h) => navHrefs.includes(h)),
+          "thongbao: sidebar liên kết tới Tổng quan / Yêu cầu / Hồ sơ",
+        );
+
+        doc().querySelector('[data-filter="unread"]').click();
+        say(shown() === 2, "thongbao: chip Chưa đọc lọc còn 2 dòng", String(shown()));
+
+        doc().querySelector("#notice-list .notice-item .notice-item__read").click();
+        await sleep(50);
+        say(doc().querySelector("#notice-unread").textContent === "1" && shown() === 1, "thongbao: đánh dấu đã đọc thì rời danh sách chưa đọc");
+
+        doc().querySelector("#mark-all").click();
+        await sleep(50);
+        say(doc().querySelector("#bell-dot").hidden === true, "thongbao: đọc hết thì ẩn chấm đỏ");
+        say(
+          doc().querySelector("#notice-empty").classList.contains("show") &&
+            doc().querySelector("#notice-empty span").textContent === "Bạn đã xem hết thông báo chưa đọc.",
+          "thongbao: báo đúng 'đã xem hết thông báo chưa đọc'",
+        );
+
+        doc().querySelector('[data-filter="all"]').click();
+        let asked = false;
+        win().confirm = () => {
+          asked = true;
+          return true;
+        };
+        doc().querySelector('#notice-list .notice-item [data-action="delete"]').click();
+        await sleep(50);
+        say(asked && rows().length === 3, "thongbao: xoá phải hỏi lại rồi bỏ dòng", String(rows().length));
+
+        // Trả lại dữ liệu cũ để lần chạy sau vẫn bắt đầu từ trạng thái thật của người dùng
+        if (before === null) win().localStorage.removeItem("stayflow_notifications");
+        else win().localStorage.setItem("stayflow_notifications", before);
+      }
+
+      /* Hai trang lỗi dùng error-page.css. */
+      async function errorPages() {
+        for (const page of ["../pages/403.html", "../pages/404.html"]) {
+          await load(page);
+          await sleep(200);
+          const bg = win().getComputedStyle(doc().querySelector(".brand__mark")).backgroundColor;
+          say(bg === "rgb(16, 29, 51)", `${page}: error-page.css áp dụng`, bg);
+        }
+      }
+
+      /* Ba trang xác thực dùng auth-ui.js. */
+      async function authPages() {
+        await load("../pages/login.html");
+        await sleep(200);
+        const pwd = doc().querySelector("#password");
+        doc().querySelector(".password-toggle").click();
+        say(pwd.type === "text", "login: nút ẩn/hiện mật khẩu");
+
+        await load("../pages/sign-up.html");
+        await sleep(200);
+        const pwd2 = doc().querySelector("#password");
+        doc().querySelector(".password-toggle").click();
+        say(pwd2.type === "text", "signup: nút ẩn/hiện mật khẩu");
+        say(doc().querySelector(".submit-button").disabled === true, "signup: nút gửi khoá khi form trống");
+
+        await load("../pages/forgot-password.html");
+        await sleep(200);
+
+      }
+
+      (async () => {
+        /* Kho yêu cầu là dữ liệu thật của người dùng: sao lưu, chạy trên kho trống rồi trả
+           lại như cũ — cùng cách bước thongbao làm với stayflow_notifications. Không có
+           bước này thì máy nào đã có yêu cầu sẵn sẽ báo FAIL hàng loạt. */
+        await load("../pages/guest-service-requests.html");
+        const savedRequests = win().sessionStorage.getItem("stayflow_requests");
+        win().sessionStorage.removeItem("stayflow_requests");
+
+        const steps = [yeucauInitial, taoyeucau, tongquan, yeucauRestore, hosoProfile, thongbaoCenter, errorPages, authPages, taoyeucauAssistant];
+        for (const step of steps) {
+          try {
+            await step();
+          } catch (e) {
+            say(false, `${step.name} lỗi`, e.message);
+          }
+        }
+        const failed = lines.filter((l) => l.startsWith("FAIL")).length;
+        lines.push(`TONG: ${lines.length - failed}/${lines.length} PASS`);
+        document.getElementById("log").textContent = lines.join("\n");
+
+        if (savedRequests === null) win().sessionStorage.removeItem("stayflow_requests");
+        else win().sessionStorage.setItem("stayflow_requests", savedRequests);
+      })();
+    </script>
+  </body>
+</html>
