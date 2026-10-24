@@ -3,9 +3,9 @@
  * -------------------------------------------------------------------------
  * Nhiệm vụ:
  *   1. Ẩn/hiện mật khẩu khi bấm nút con mắt.
- *   2. Kiểm tra thông tin đăng nhập (demo) và hiển thị trạng thái lỗi/thành công.
+ *   2. Kiểm tra vai trò và thông tin đăng nhập (demo), rồi hiển thị trạng thái.
  *   3. Hiện toast thông báo và hiệu ứng rung form khi đăng nhập sai.
- *   4. Đăng nhập thành công → chuyển thẳng sang trang tổng quan.
+ *   4. Đăng nhập thành công → chuyển tới trang đúng với vai trò đã chọn.
  * ========================================================================= */
 
 /* --- 1. Tham chiếu các phần tử DOM (lấy một lần, dùng lại nhiều lần) --- */
@@ -23,15 +23,20 @@ const submitButton = document.querySelector(".submit-button"); // nút "Đăng n
 const submitLabel = document.querySelector(".submit-button__label"); // phần chữ của nút
 const toast = document.querySelector(".toast"); // thông báo nổi ở góc dưới
 const uxNote = document.querySelector("#ux-note"); // ghi chú trạng thái lỗi cuối form
+const roleInputs = [...document.querySelectorAll('input[name="role"]')];
 
 /* --- 2. Biến trạng thái dùng chung --- */
 let attemptsRemaining = 4; // số lần còn được nhập sai mật khẩu (demo)
-let redirectTimer; // id của setTimeout chuyển sang trang tổng quan
+let redirectTimer; // id của setTimeout chuyển tới dashboard theo vai trò
 // Tài khoản hợp lệ giả lập chỉ phục vụ demo (không dùng cho thực tế)
 const validIdentity = "thuha.nguyen@email.com";
 const validPassword = "StayFlow2026";
-// Trang tổng quan cần chuyển tới ngay sau khi đăng nhập thành công.
-const OVERVIEW_URL = "guest-dashboard.html";
+const roleHome = {
+  user: "guest-dashboard.html",
+  staff: "staff-task-board.html",
+  manager: "manager-dispatch-board.html",
+  admin: "admin-user-management.html",
+};
 
 /* --- 3. Ẩn / hiện mật khẩu (dùng chung: auth-ui.js) --- */
 setupPasswordToggle(passwordToggle, passwordInput);
@@ -63,6 +68,7 @@ loginForm.addEventListener("submit", (event) => {
 
   const identity = identityInput.value.trim();
   const password = passwordInput.value;
+  const selectedRole = roleInputs.find((input) => input.checked)?.value;
 
   // Hiện trạng thái đang tải (spinner) trên nút và tạm khoá nút
   submitButton.classList.add("is-loading");
@@ -76,9 +82,10 @@ loginForm.addEventListener("submit", (event) => {
     // So sánh với tài khoản demo (email không phân biệt hoa/thường)
     const isIdentityValid = identity.toLowerCase() === validIdentity;
     const isPasswordValid = password === validPassword;
+    const isRoleValid = Boolean(selectedRole && roleHome[selectedRole]);
 
-    // --- Trường hợp đúng cả email và mật khẩu ---
-    if (isIdentityValid && isPasswordValid) {
+    // --- Trường hợp đúng cả vai trò, email và mật khẩu ---
+    if (isRoleValid && isIdentityValid && isPasswordValid) {
       identityShell.classList.remove("input-shell--error");
       identityShell.classList.add("input-shell--success");
       passwordShell.classList.remove("input-shell--error");
@@ -99,7 +106,7 @@ loginForm.addEventListener("submit", (event) => {
       // Chờ một nhịp ngắn để người dùng thấy thông báo rồi vào trang tổng quan
       window.clearTimeout(redirectTimer);
       redirectTimer = window.setTimeout(() => {
-        window.location.href = OVERVIEW_URL;
+        window.location.href = roleHome[selectedRole];
       }, 1200);
       return;
     }
