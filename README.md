@@ -8,7 +8,7 @@
 ```text
 cse122-stayflow-team8/
 │
-├── index.html                   (Trang chủ / trang chính)
+├── index.html                   (Trang chủ, điều hướng tới các khu vực theo 4 vai trò)
 │
 ├── pages/                       (Gom TẤT CẢ các file .html vào đây)
 │   ├── login.html               (Trang đăng nhập)
