@@ -45,39 +45,11 @@ cse122-stayflow-team8/
 │
 └── README.md
 
-```
-
-Chạy dự án qua một máy chủ HTTP cục bộ (ví dụ **Live Server** trong VS Code), sau đó
-mở `index.html`. Các trang dùng `fetch()` nên không thể đọc file JSON khi mở trực tiếp
-bằng `file://`.
-
-Dữ liệu mẫu duy nhất nằm trong `assets/data/stayflow.mock.json`. `js/data.js`
-kiểm tra ID và các quan hệ, chuyển đổi dữ liệu một lần, rồi cung cấp cùng một
-`StayFlowData` / `StayFlowStore` cho Khách, Nhân viên, Quản lý và Quản trị.
-Các thay đổi nghiệp vụ được lưu trong `localStorage` tại khóa `sf_db`; tải lại
-trang không nạp đè dữ liệu đã sửa. Đây là dữ liệu mô phỏng chỉ dùng trong cùng
-trình duyệt và origin, không đồng bộ giữa người dùng/thiết bị và không ghi ngược
-vào tệp JSON hay máy chủ. Dùng nút **Đặt lại dữ liệu mẫu** ở khu vực Quản lý để
-khởi tạo lại.
-
-JSON có danh sách `users` gồm tài khoản demo liên kết bằng `personId` với 12 hồ sơ
-nhân viên (gồm nhân viên, quản lý, quản trị viên) và 4 hồ sơ khách. Trạng thái
-tài khoản `active` độc lập với trạng thái ca làm hoặc lưu trú. Khi cập nhật dữ liệu
-mẫu, các tài khoản mới được thêm vào dữ liệu trình duyệt đã lưu mà vẫn giữ trạng
-thái và quyền đã chỉnh sửa. Đây chỉ là dữ liệu phân quyền demo: không chứa mật khẩu
-và không cấp quyền đăng nhập thật; luồng đăng nhập/đăng ký hiện vẫn là demo phía
-trình duyệt, không dùng cho môi trường thật.
-Hình ảnh dùng chung nằm trong `assets/images/`. Các màn hình quản lý và quản trị
-dùng chung `css/manager-admin.css` và `js/manager-admin.js`.
-
 ## Kiểm tra nhanh (không cần framework)
-
-```bash
 node js/selfcheck.js     # logic lọc/trạng thái thuần của main.js
 node js/domcheck.js      # render bảng nhiệm vụ trên DOM giả
 node js/detailcheck.js   # trang chi tiết nhiệm vụ: đổ dữ liệu, đổi trạng thái, ghi chú
 node js/shiftcheck.js    # lịch ca trực và tương thích giao diện
-```
 
 ## Ngữ cảnh
 Khách lưu trú phải gọi lễ tân cho nhiều yêu cầu nhỏ. Bộ phận vận hành lại thiếu trạng thái thống nhất để theo dõi xử lý và SLA.
@@ -129,7 +101,6 @@ Khám phá / đăng nhập → Thực hiện nghiệp vụ chính theo vai trò 
 
 ## Thành viên nhóm
 | STT | Họ và Tên | Vai Trò | Mã Sinh Viên | GitHub |
-| :---: | :--- | :---: | :---: | :--- |
 | 1 | **Nguyễn Ninh Hải** | SV1 | `[2551060609]` | `[https://github.com/hainguyenninh1-oss]` |
 | 2 | **Nguyễn Huy Thành** | SV2 | `[2551060690]` | `[https://github.com/Huythanh-07]` |
 | 3 | **Phùng Xuân Thành** | SV3 | `[2551060691]` | `[https://github.com/phungxthanh07-ux]` |
