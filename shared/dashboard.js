@@ -16,6 +16,61 @@
  * #profile-dropdown, #toast.
  * ========================================================================= */
 
+/* --- 0. Giao diện sáng/tối: chạy trước mọi thứ để trang không nháy sai màu ---
+ * Lựa chọn lưu ở localStorage nên giữ nguyên khi đổi trang hoặc tải lại. Nút bấm
+ * được chèn vào .user-tools của topbar nên 5 trang khách không phải sửa HTML.
+ * Bọc trong IIFE để không lộ biến ra phạm vi toàn cục dùng chung với script trang. */
+(() => {
+  const THEME_KEY = "stayflow_theme"; // khoá riêng, không dính tới kho yêu cầu
+  const root = document.documentElement;
+
+  // localStorage có thể bị chặn (chế độ riêng tư) -> lỗi đọc/ghi không được làm sập trang.
+  const readTheme = () => {
+    try { return localStorage.getItem(THEME_KEY); } catch (error) { return null; }
+  };
+  const saveTheme = (value) => {
+    try { localStorage.setItem(THEME_KEY, value); } catch (error) { /* không lưu được thì thôi */ }
+  };
+
+  // Gắn ngay khi script chạy: shared/dashboard.css đọc thuộc tính này (mục 2b + 14).
+  root.setAttribute("data-theme", readTheme() === "dark" ? "dark" : "light");
+
+  // Icon vẽ bằng SVG nội tuyến + currentColor nên tự đổi màu theo giao diện.
+  const ICON_MOON = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.5 14.6A8.6 8.6 0 1 1 9.4 3.5a6.9 6.9 0 0 0 11.1 11.1Z" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const ICON_SUN = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.7"/><path d="M12 2.8v2.2M12 19v2.2M2.8 12h2.2M19 12h2.2M5.5 5.5l1.6 1.6M16.9 16.9l1.6 1.6M18.5 5.5l-1.6 1.6M7.1 16.9l-1.6 1.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
+
+  const themeButton = document.createElement("button");
+  themeButton.type = "button";
+  themeButton.className = "theme-toggle";
+
+  // Nút hiện icon của giao diện SẼ chuyển sang: đang sáng -> mặt trăng, đang tối -> mặt trời.
+  const renderThemeButton = () => {
+    const isDark = root.getAttribute("data-theme") === "dark";
+    const label = isDark ? "Chuyển sang giao diện sáng" : "Chuyển sang giao diện tối";
+    themeButton.innerHTML = isDark ? ICON_SUN : ICON_MOON;
+    themeButton.setAttribute("aria-label", label);
+    themeButton.setAttribute("aria-pressed", String(isDark));
+    themeButton.title = label;
+  };
+
+  themeButton.addEventListener("click", () => {
+    const nextTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", nextTheme);
+    saveTheme(nextTheme);
+    renderThemeButton();
+  });
+
+  renderThemeButton();
+
+  // Đặt ngay bên trái chuông thông báo; trang nào không có .user-tools thì chỉ đổi giao diện.
+  const userTools = document.querySelector(".user-tools");
+  if (userTools) {
+    const bellButton = document.querySelector("#notification-button");
+    const bellWrap = bellButton && bellButton.closest(".dropdown-wrap");
+    userTools.insertBefore(themeButton, bellWrap || userTools.firstChild);
+  }
+})();
+
 /* --- 1. Tham chiếu phần tử khung dashboard (lấy một lần, dùng lại nhiều lần) --- */
 const sidebar = document.querySelector("#sidebar"); // aside điều hướng bên trái
 const menuButton = document.querySelector("#menu-button"); // nút 3 gạch trên mobile
