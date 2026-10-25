@@ -18,7 +18,7 @@ const SF = {
   },
   NAV: {
     manager: [["Điều phối", "manager-dispatch-board.html", "dispatch", "▦"], ["Theo dõi SLA", "manager-sla-monitor.html", "sla", "◷"], ["Báo cáo", "manager-service-report.html", "report", "▮"], ["Nhân sự", "manager-staff-management.html", "hr", "☺"], ["Cấu hình", "manager-settings.html", "cfg", "⚙"]],
-    admin: [["Tổng quan", "", "home", "▦"], ["Người dùng", "admin-user-management.html", "user", "☺"], ["Loại dịch vụ", "admin-service-type-management.html", "svc", "☰"], ["Khách sạn", "", "hotel", "⌂"], ["Nhật ký hệ thống", "", "log", "≡"]],
+    admin: [["Tổng quan", "admin-dashboard.html", "home", "▦"], ["Người dùng", "admin-user-management.html", "user", "☺"], ["Loại dịch vụ", "admin-service-type-management.html", "svc", "☰"], ["Khách sạn", "admin-hotel.html", "hotel", "⌂"], ["Nhật ký hệ thống", "admin-system-log.html", "log", "≡"]],
   },
   shell(role, page, crumb, title) {
     const admin = role === "admin", who = admin ? "Quản trị viên" : "Quản lý";
