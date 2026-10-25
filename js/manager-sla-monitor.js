@@ -17,7 +17,7 @@
       .map(([n, v, c, h]) => `<div class="card kpi"><span>${n}</span><b>${v}</b><small><span class="chip ${c}">${h}</span></small></div>`).join("");
     document.getElementById("c").innerHTML = `<h3>Xu hướng SLA theo giờ</h3><p class="muted">Tỷ lệ hoàn thành trong SLA (dữ liệu minh họa). Thanh đỏ: dưới mục tiêu ${TARGET}%.</p><div class="chart" role="img" aria-label="Biểu đồ SLA theo giờ, từ 8:00 đến 17:00">${HOURS.map((v, i) => `<div><small>${v}%</small><i class="${v < TARGET ? "low" : ""}" style="height:${(v - 80) * 4}%"></i>${8 + i}:00</div>`).join("")}</div>`;
     const l = list();
-    document.getElementById("t").innerHTML = `<table><thead><tr><th>Mã</th><th>Dịch vụ</th><th>Phòng</th><th>Nhân viên</th><th>Thời gian còn lại</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>${l.map((r) => { const [lb, c] = SF.state(r), closed = lb === "Đã đóng";
+    document.getElementById("t").innerHTML = `<table><thead><tr><th>Id</th><th>Dịch vụ</th><th>Phòng</th><th>Nhân viên</th><th>Thời gian còn lại</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>${l.map((r) => { const [lb, c] = SF.state(r), closed = lb === "Đã đóng";
       return `<tr class="${lb === "Quá hạn" ? "bad-r" : lb === "Sắp hạn" ? "warn-r" : ""}"><td><strong>${r.id}</strong></td><td>${SF.esc(r.svc)}</td><td>${r.room}</td><td>${r.staff ? SF.esc(r.staff.name) : "Chưa phân công"}</td><td class="num"${closed ? "" : ` data-due="${r.due}"`}>${closed ? "—" : SF.fmt(SF.left(r))}</td><td><span class="chip ${c}">${lb}</span></td><td>${closed ? "" : `${r.staff ? `<button class="btn sm" data-n="${r.id}"${cool[r.id] ? " disabled" : ""}>${cool[r.id] ? "Đã nhắc" : "Nhắc nhân viên"}</button> ` : ""}<button class="btn sm" data-r="${r.id}">${r.staff ? "Điều phối lại" : "Phân công"}</button>`}</td></tr>`; }).join("")}</tbody></table>${l.length ? "" : SF.empty()}`;
   }
   function pickStaff(r) {
@@ -33,7 +33,7 @@
     const b = e.target.closest("[data-n],[data-r],#csv"); if (!b) return;
     if (b.id === "csv") {
       const q = (v) => `"${String(v).replace(/"/g, '""')}"`, rows = list().map((r) => [r.id, r.svc, r.room, r.staff?.name || "Chưa phân công", S(r) === "Đã đóng" ? "" : SF.fmt(SF.left(r)), S(r)].map(q).join(","));
-      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + ["Mã,Dịch vụ,Phòng,Nhân viên,Còn lại,Trạng thái", ...rows].join("\n")], { type: "text/csv" })); a.download = "sla-hom-nay.csv"; a.click(); SF.toast(`Đã xuất ${rows.length} dòng`);
+      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + ["Id,Dịch vụ,Phòng,Nhân viên,Còn lại,Trạng thái", ...rows].join("\n")], { type: "text/csv" })); a.download = "sla-hom-nay.csv"; a.click(); SF.toast(`Đã xuất ${rows.length} dòng`);
     } else if (b.dataset.n) { const r = list().find((x) => x.id === b.dataset.n); cool[r.id] = 1; setTimeout(() => { delete cool[r.id]; draw(); }, 30000); SF.log(db, `Nhắc ${r.staff.name} xử lý ${r.id}`); SF.save(db); draw(); SF.toast(`Đã nhắc ${r.staff.name} xử lý ${r.id}`); }
     else pickStaff(list().find((x) => x.id === b.dataset.r));
   };
