@@ -27,6 +27,11 @@ function formatDateTime(iso) {
         ' ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
 }
 
+function formatClock(value) {
+    const match = String(value == null ? '' : value).match(/(\d{2}:\d{2})$/);
+    return match ? match[1] : String(value == null ? '—' : value);
+}
+
 if (typeof document !== 'undefined' && typeof window !== 'undefined') {
 
     const DEFAULT_CODE = '#SF-3192';
@@ -95,17 +100,22 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
         setAll('[data-service]', task.service);
         setAll('[data-department]', task.department);
         setAll('[data-priority]', priority);
-        setAll('[data-received]', formatDateTime(task.receivedAt));
+        const receivedAt = formatDateTime(task.receivedAt);
+        setAll('[data-received]', receivedAt);
+        setAll('[data-received-clock]', formatClock(receivedAt));
         setAll('[data-sla]', task.sla + ' phút');
         setAll('[data-remaining]', remaining);
         setAll('[data-assignee]', task.assignee || 'Chưa nhận');
         setAll('[data-status-row]', statusName);
         setAll('[data-status-text]', statusName);
 
+        setAll('[data-location-room]', task.room);
+        setAll('[data-location-floor]', 'Tầng ' + task.floor + ' · Cánh Đông');
+
         const pill = $('#statusPill');
         if (pill) {
             pill.dataset.status = task.status;
-            pill.className = 'status-pill status-pill--' + task.status;
+            pill.className = 'task-chip task-chip--status status-pill status-pill--' + task.status;
         }
 
         document.title = 'StayFlow - ' + task.code + ' · ' + task.title;
@@ -118,7 +128,8 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
         const btnReopen = $('#btnReopen');
 
         if (btnProcessing) {
-            btnProcessing.hidden = task.status !== 'new';
+            btnProcessing.hidden = false;
+            btnProcessing.disabled = task.status !== 'new';
         }
         if (btnCompleted) {
             btnCompleted.hidden = task.status === 'completed';
@@ -140,7 +151,7 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
         }
         host.innerHTML = log.map(function (entry) {
             return '<li class="timeline__item timeline__item--' + esc(entry.status) + '">' +
-                '<p class="timeline__when">' + esc(entry.when) + '</p>' +
+                '<p class="timeline__when">' + esc(formatClock(entry.when)) + '</p>' +
                 '<p class="timeline__what">' + esc(entry.what) + '</p>' +
                 '<p class="timeline__who">' + esc(entry.who) + '</p>' +
                 (entry.note ? '<p class="timeline__note">' + esc(entry.note) + '</p>' : '') +
@@ -240,6 +251,8 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
                 const note = readNote();
                 // Hoàn tất mà chưa ghi chú -> chặn lại và báo lỗi
                 if (button.dataset.action === 'completed' && !note) {
+                    const notePanel = $('#notePanel');
+                    if (notePanel) notePanel.hidden = false;
                     showNoteError(true);
                     const field = $('#staffNote');
                     if (field && field.focus) {
@@ -253,6 +266,15 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
         });
 
         const save = $('#btnSaveNote');
+        const showNote = $('#btnShowNote');
+        if (showNote) {
+            showNote.addEventListener('click', function () {
+                const notePanel = $('#notePanel');
+                if (notePanel) notePanel.hidden = false;
+                const field = $('#staffNote');
+                if (field && field.focus) field.focus();
+            });
+        }
         if (save) {
             save.addEventListener('click', function () {
                 const note = readNote();
@@ -265,6 +287,64 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
                 flash('#noteField');
                 toast('Đã lưu ghi chú cho ' + task.code);
                 announce('Đã lưu ghi chú xử lý');
+            });
+        }
+
+        const reportModal = $('#reportModal');
+        const reportButton = $('#btnReportIssue');
+        const reportForm = $('#reportForm');
+        const reportClose = $('#reportClose');
+        const reportCancel = $('#reportCancel');
+        const reportAttachment = $('#reportAttachment');
+        const reportAttachmentName = $('#reportAttachmentName');
+
+        function setReportOpen(open) {
+            if (reportModal) {
+                reportModal.hidden = !open;
+            }
+            if (reportButton) {
+                reportButton.setAttribute('aria-expanded', String(open));
+            }
+        }
+
+        if (reportButton) {
+            reportButton.addEventListener('click', function () {
+                setReportOpen(true);
+                const description = $('#reportDescription');
+                if (description && description.focus) description.focus();
+            });
+        }
+        [reportClose, reportCancel].forEach(function (button) {
+            if (button) button.addEventListener('click', function () { setReportOpen(false); });
+        });
+
+        if (reportAttachment && reportAttachmentName) {
+            reportAttachment.addEventListener('change', function () {
+                const file = reportAttachment.files && reportAttachment.files[0];
+                reportAttachmentName.textContent = file ? file.name : 'Đính kèm ảnh hiện trường';
+            });
+        }
+
+        if (reportForm) {
+            reportForm.addEventListener('submit', function (event) {
+                event.preventDefault();
+                const type = $('#reportType');
+                const impact = $('#reportImpact');
+                const description = $('#reportDescription');
+                const details = description ? String(description.value || '').trim() : '';
+                if (!details) {
+                    if (description && description.focus) description.focus();
+                    return;
+                }
+                const reportType = type ? type.value : 'Sự cố';
+                const reportImpact = impact ? impact.value : 'Trung bình';
+                addLog(task.status, 'Đã báo sự cố: ' + reportType, reportImpact + ' · ' + details);
+                flash('#reportModal');
+                toast('Đã gửi báo cáo sự cố cho ' + task.code);
+                announce('Đã gửi báo cáo sự cố cho nhiệm vụ ' + task.code);
+                reportForm.reset();
+                if (reportAttachmentName) reportAttachmentName.textContent = 'Đính kèm ảnh hiện trường';
+                setReportOpen(false);
             });
         }
     }

@@ -124,6 +124,7 @@ assert.match(dataNodes['[data-timeline]'][0].innerHTML, /Tiếp nhận yêu cầ
 
 /* Nút theo trạng thái: 'new' -> hiện Bắt đầu / Hoàn tất, ẩn Mở lại */
 assert.strictEqual(byId.btnProcessing.hidden, false, 'Trạng thái Mới: hiện nút Bắt đầu');
+assert.strictEqual(byId.btnProcessing.disabled, false, 'Trạng thái Mới: nút Bắt đầu khả dụng');
 assert.strictEqual(byId.btnCompleted.hidden, false, 'Trạng thái Mới: hiện nút Hoàn tất');
 assert.strictEqual(byId.btnReopen.hidden, true, 'Trạng thái Mới: ẩn nút Mở lại');
 
@@ -133,7 +134,8 @@ assert.strictEqual(dataNodes['[data-status-row]'][0].textContent, 'Đang xử l�
 assert.strictEqual(dataNodes['[data-assignee]'][0].textContent, 'Minh Anh', 'Nhận việc tự gán nhân viên đang đăng nhập');
 assert.match(dataNodes['[data-timeline]'][0].innerHTML, /Mới → Đang xử lý/, 'Nhật ký ghi chuyển trạng thái');
 assert.strictEqual(byId.toasts.children.length, 1, 'Đổi trạng thái thành công sinh 1 toast');
-assert.strictEqual(byId.btnProcessing.hidden, true, 'Sau khi đang xử lý: ẩn nút Bắt đầu');
+assert.strictEqual(byId.btnProcessing.hidden, false, 'Sau khi đang xử lý: vẫn hiện nút Bắt đầu');
+assert.strictEqual(byId.btnProcessing.disabled, true, 'Sau khi đang xử lý: nút Bắt đầu bị vô hiệu hóa');
 assert.ok(dataNodes['[data-status-text]'][0].textContent === 'Đang xử lý', 'Nhãn trạng thái trong pill cập nhật');
 
 /* ---------- Hoàn tất khi chưa ghi chú -> bị chặn ---------- */
