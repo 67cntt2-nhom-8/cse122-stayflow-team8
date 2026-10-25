@@ -12,9 +12,11 @@ const source = require('node:fs').readFileSync(path.join(__dirname, 'main.js'), 
 // nên chỉ có dữ liệu + hàm thuần được đưa vào phạm vi chạy.
 const load = new Function(source + `
     return { tasks, filters, profile, SHIFTS, NEXT_STATUS,
-             filterTasks, countByStatus, isOverdue, zoneOf, liveMinutes, applyStatus };
+             filterTasks, countByStatus, isOverdue, zoneOf, liveMinutes, applyStatus,
+             tasksFromMockData };
 `);
 const api = load();
+const mockData = require('../assets/data/stayflow.mock.json');
 
 /* --- 1. Đếm nhiệm vụ theo trạng thái --- */
 const counts = api.countByStatus(api.filterTasks(api.tasks, Date.now()));
@@ -76,3 +78,13 @@ api.applyStatus(reopened, 'new');
 assert.strictEqual(reopened.minutes, 12, 'Mở lại việc quá hạn thì bỏ dấu âm');
 
 console.log('✓ selfcheck: 9 nhóm kiểm tra logic đều đạt');
+
+/* --- 10. Bảng nhân viên dùng cùng bản ghi và quan hệ từ mock JSON --- */
+const importedTasks = api.tasksFromMockData(mockData);
+assert.strictEqual(importedTasks.length, 5, 'Bỏ yêu cầu đã huỷ, giữ các yêu cầu còn hoạt động');
+assert.ok(importedTasks.every((task) => task.code.startsWith('#REQ-')), 'Mã trên bảng được tạo từ ID yêu cầu JSON');
+assert.strictEqual(importedTasks.find((task) => task.code === '#REQ-2026-3001').guest, 'Nguyễn Thu Hà',
+    'Thông tin khách lấy theo stayId liên kết trong JSON');
+assert.strictEqual(importedTasks.find((task) => task.code === '#REQ-2026-3003').service, 'Báo sự cố',
+    'Tên dịch vụ lấy theo serviceTypeId liên kết trong JSON');
+console.log('✓ selfcheck: dữ liệu mock JSON nối với bảng nhiệm vụ');

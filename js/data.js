@@ -1,11 +1,10 @@
 /* =========================================================================
-   StayFlow – Dữ liệu giả lập tập trung (mock data)
+   StayFlow – Bộ chuyển đổi dữ liệu mock JSON dùng chung
    -------------------------------------------------------------------------
-   Dữ liệu này phục vụ riêng màn hình nhân viên; các trang quản lý/quản trị
-   đọc assets/data/stayflow.mock.json.
-   Chạy được cả trên trình duyệt (file:// hoặc http://) lẫn trong Node.
+   Trình duyệt đọc assets/data/stayflow.mock.json qua HTTP và chuyển đổi sang
+   cấu trúc mà các trang Nhân viên đang dùng. Node đọc cùng JSON trực tiếp.
 
-   - Trình duyệt: <script src="js/data.js"></script>  -> window.StayFlowData
+   - Trình duyệt: <script src="../js/data.js"></script> -> window.StayFlowDataReady
    - Node:        require('./js/data.js')              -> module.exports
    ========================================================================= */
 (function (root, factory) {
@@ -15,10 +14,32 @@
     // Trình duyệt
     if (typeof window !== 'undefined') {
         window.StayFlowData = data;
+        if (typeof window.fetch === 'function') {
+            window.StayFlowDataReady = window.fetch('../assets/data/stayflow.mock.json')
+                .then(function (response) {
+                    if (!response.ok) {
+                        throw new Error('HTTP ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(function (source) {
+                    const converted = convertMockData(source);
+                    Object.keys(data).forEach(function (key) {
+                        delete data[key];
+                    });
+                    Object.assign(data, converted);
+                    window.StayFlowMockData = source;
+                    return data;
+                })
+                .catch(function (error) {
+                    console.error('Không thể tải assets/data/stayflow.mock.json:', error);
+                    throw error;
+                });
+        }
     }
     // Node (selfcheck / domcheck)
     if (typeof module !== 'undefined' && module.exports) {
-        module.exports = data;
+        module.exports = convertMockData(require('../assets/data/stayflow.mock.json'));
     }
 })(typeof self !== 'undefined' ? self : this, function () {
     'use strict';
@@ -141,3 +162,124 @@
         feedback: feedback
     };
 });
+
+function convertMockData(source) {
+    const requiredLists = ['staff', 'serviceTypes', 'stays', 'requests', 'tasks', 'feedback'];
+    if (!source || requiredLists.some(function (key) { return !Array.isArray(source[key]); })) {
+        throw new Error('stayflow.mock.json thiếu một hoặc nhiều danh sách dữ liệu bắt buộc.');
+    }
+
+    const indexes = {};
+    ['staff', 'serviceTypes', 'stays', 'requests', 'tasks'].forEach(function (key) {
+        indexes[key] = new Map();
+        source[key].forEach(function (item) {
+            if (!item.id || indexes[key].has(item.id)) {
+                throw new Error('ID bị thiếu hoặc trùng trong danh sách ' + key + ': ' + item.id);
+            }
+            indexes[key].set(item.id, item);
+        });
+    });
+    source.requests.forEach(function (request) {
+        if (!indexes.stays.has(request.stayId) || !indexes.serviceTypes.has(request.serviceTypeId)) {
+            throw new Error('Yêu cầu ' + request.id + ' đang tham chiếu đến lưu trú hoặc dịch vụ không tồn tại.');
+        }
+    });
+    source.tasks.forEach(function (task) {
+        if (!indexes.requests.has(task.requestId) || (task.assignedTo && !indexes.staff.has(task.assignedTo))) {
+            throw new Error('Nhiệm vụ ' + task.id + ' đang tham chiếu đến yêu cầu hoặc nhân viên không tồn tại.');
+        }
+    });
+    source.feedback.forEach(function (entry) {
+        if (!indexes.stays.has(entry.stayId) || (entry.requestId && !indexes.requests.has(entry.requestId))) {
+            throw new Error('Phản hồi ' + entry.id + ' đang tham chiếu đến lưu trú hoặc yêu cầu không tồn tại.');
+        }
+    });
+    source.stays.forEach(function (stay) {
+        if (stay.status !== 'checked_in' && stay.status !== 'checked_out') {
+            throw new Error('Lưu trú ' + stay.id + ' có trạng thái không được hỗ trợ: ' + stay.status);
+        }
+    });
+
+    const shifts = [
+        { id: 'morning', name: 'Ca sáng', start: '06:00', end: '14:00' },
+        { id: 'afternoon', name: 'Ca chiều', start: '14:00', end: '22:00' },
+        { id: 'night', name: 'Ca đêm', start: '22:00', end: '06:00' }
+    ];
+    const shiftNames = { morning: 'Ca sáng', afternoon: 'Ca chiều', day: 'Ca ngày', evening: 'Ca chiều', night: 'Ca đêm' };
+    const departments = {
+        Housekeeping: 'Buồng phòng',
+        Engineering: 'Kỹ thuật',
+        'Food & Beverage': 'F&B',
+        'Room Service': 'F&B',
+        'Front Desk': 'Lễ tân',
+        Operations: 'Vận hành',
+        Administration: 'Quản trị'
+    };
+    const statusNames = { on_duty: 'Đang trực', off_duty: 'Nghỉ' };
+
+    return {
+        staff: source.staff.filter(function (person) { return person.role === 'staff'; }).map(function (person) {
+            if (!shiftNames[person.shift] || !statusNames[person.status]) {
+                throw new Error('Nhân viên ' + person.id + ' có ca hoặc trạng thái không được hỗ trợ.');
+            }
+            return {
+                id: person.id,
+                name: person.name,
+                role: departments[person.department] || person.department,
+                status: statusNames[person.status],
+                shift: shiftNames[person.shift],
+                phone: person.phone,
+                email: person.email
+            };
+        }),
+        shifts: shifts,
+        serviceTypes: source.serviceTypes.map(function (service) {
+            return {
+                id: service.id,
+                categoryName: service.name,
+                description: service.description,
+                expectedSLA: service.defaultSlaMinutes,
+                department: departments[service.department] || service.department
+            };
+        }),
+        stays: source.stays.map(function (stay) {
+            return {
+                id: stay.id,
+                guestName: stay.guestName,
+                roomNumber: stay.roomNumber,
+                checkInDate: stay.checkInAt,
+                checkOutDate: stay.checkOutAt,
+                status: stay.status === 'checked_in' ? 'Đang lưu trú' : 'Đã trả phòng',
+                guestPhone: stay.guestPhone,
+                specialRequests: ''
+            };
+        }),
+        requests: source.requests.map(function (request) {
+            return {
+                id: request.id,
+                stayId: request.stayId,
+                serviceTypeId: request.serviceTypeId,
+                title: request.title,
+                content: request.description,
+                status: request.status,
+                createdAt: request.createdAt,
+                ai_classification: request.serviceTypeId,
+                priority: request.priority,
+                ai_priority_reason: request.notes || ''
+            };
+        }),
+        tasks: source.tasks.map(function (task) {
+            return {
+                id: task.id,
+                requestId: task.requestId,
+                staffId: task.assignedTo,
+                status: task.status,
+                priority: task.priority,
+                ai_priority_reason: task.internalNote || '',
+                assignedAt: task.createdAt,
+                completedAt: task.completedAt
+            };
+        }),
+        feedback: source.feedback
+    };
+}

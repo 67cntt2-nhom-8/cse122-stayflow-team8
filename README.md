@@ -8,7 +8,7 @@
 ```text
 cse122-stayflow-team8/
 │
-├── index.html                   (Trang chủ / trang chính)
+├── index.html                   (Trang chủ, điều hướng tới các khu vực theo 4 vai trò)
 │
 ├── pages/                       (Gom TẤT CẢ các file .html vào đây)
 │   ├── login.html               (Trang đăng nhập)
@@ -47,8 +47,16 @@ cse122-stayflow-team8/
 
 ```
 
-Mở `index.html` để vào trang chủ. Dữ liệu giả lập hiện được khai báo trong
-`js/data.js`; hình ảnh dùng chung nằm trong `assets/images/`.
+Chạy dự án qua một máy chủ HTTP cục bộ (ví dụ **Live Server** trong VS Code), sau đó
+mở `index.html`. Các trang dùng `fetch()` nên không thể đọc file JSON khi mở trực tiếp
+bằng `file://`.
+
+Dữ liệu mẫu dùng chung nằm trong `assets/data/stayflow.mock.json`. `js/data.js`
+chuyển đổi dữ liệu này sang cấu trúc mà các màn hình Nhân viên sử dụng;
+`js/manager-admin.js` chuyển đổi cho màn hình Quản lý/Quản trị; các trang Khách
+khởi tạo danh sách yêu cầu từ cùng dữ liệu JSON. Khi sửa dữ liệu, giữ nguyên các ID
+được tham chiếu giữa `stays`, `requests`, `tasks`, `staff` và `serviceTypes`.
+Hình ảnh dùng chung nằm trong `assets/images/`.
 Các màn hình quản lý và quản trị dùng chung `css/manager-admin.css` và
 `js/manager-admin.js`.
 
@@ -118,7 +126,7 @@ Khám phá / đăng nhập → Thực hiện nghiệp vụ chính theo vai trò 
 ## Phân công công việc
 - **Nguyễn Ninh Hải (SV1):** Phụ trách chính Quản lý khách sạn + Quản trị viên, chịu trách nhiệm tích hợp bố cục và điều hướng. Chịu trách nhiệm phát hành và đảm bảo chất lượng.
 - **Nguyễn Huy Thành (SV2):** Phụ trách chính Nhân viên vận hành, đồng phụ trách tương tác JavaScript / dữ liệu giả lập. Phụ trách tương tác AI.
-- **Phùng Xuân Thành (SV3):** Phụ trách chính Khách lưu trú, đồng phụ trách một phần giao diện dùng chung. Chịu trách nhiệm responsive, hệ thống thiết kế và điều hướng. Phụ trách chính Quản lý khách sạn + Quản trị viên, chịu trách nhiệm tích hợp bố cục và điều hướng. Chịu trách nhiệm phát hành và đảm bảo chất lượng.
+- **Phùng Xuân Thành (SV3):** Phụ trách chính Khách lưu trú, đồng phụ trách một phần giao diện dùng chung. Chịu trách nhiệm responsive, hệ thống thiết kế và điều hướng.
 
 ## Quy trình Git
 Quy trình làm việc nhóm tuân thủ nghiêm ngặt qua các bước:  

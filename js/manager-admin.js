@@ -18,7 +18,7 @@ const SF = {
   },
   NAV: {
     manager: [["Điều phối", "manager-dispatch-board.html", "dispatch", "▦"], ["Theo dõi SLA", "manager-sla-monitor.html", "sla", "◷"], ["Báo cáo", "manager-service-report.html", "report", "▮"], ["Nhân sự", "manager-staff-management.html", "hr", "☺"], ["Cấu hình", "manager-settings.html", "cfg", "⚙"]],
-    admin: [["Tổng quan", "", "home", "▦"], ["Người dùng", "admin-user-management.html", "user", "☺"], ["Loại dịch vụ", "admin-service-type-management.html", "svc", "☰"], ["Khách sạn", "", "hotel", "⌂"], ["Nhật ký hệ thống", "", "log", "≡"]],
+    admin: [["Tổng quan", "admin-dashboard.html", "home", "▦"], ["Người dùng", "admin-user-management.html", "user", "☺"], ["Loại dịch vụ", "admin-service-type-management.html", "svc", "☰"], ["Khách sạn", "admin-hotel.html", "hotel", "⌂"], ["Nhật ký hệ thống", "admin-system-log.html", "log", "≡"]],
   },
   shell(role, page, crumb, title) {
     const admin = role === "admin", who = admin ? "Quản trị viên" : "Quản lý";
@@ -35,6 +35,16 @@ const SF = {
     const showError = (message) => {
       document.getElementById("main").innerHTML = `<div class="card"><h3>Không tải được dữ liệu</h3><p class="muted">${SF.esc(message)}</p></div>`;
     };
+    let source;
+    try {
+      if (!window.StayFlowDataReady) throw new Error("Bộ tải dữ liệu dùng chung chưa được nạp.");
+      await window.StayFlowDataReady;
+      source = window.StayFlowMockData;
+    } catch (error) {
+      const message = `Không thể đọc assets/data/stayflow.mock.json (${error.message}). Hãy chạy dự án bằng Live Server hoặc máy chủ HTTP.`;
+      showError(message);
+      throw new Error(message, { cause: error });
+    }
     let d;
     const saved = localStorage.getItem("sf_db");
     if (saved) {
@@ -46,16 +56,6 @@ const SF = {
         throw new Error(message, { cause: error });
       }
     } else {
-      let source;
-      try {
-        const response = await fetch("../assets/data/stayflow.mock.json");
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        source = await response.json();
-      } catch (error) {
-        const message = `Không thể đọc assets/data/stayflow.mock.json (${error.message}). Hãy chạy dự án bằng Live Server hoặc máy chủ HTTP.`;
-        showError(message);
-        throw new Error(message, { cause: error });
-      }
       const requireMapped = (value, mapping, field) => {
         if (!Object.prototype.hasOwnProperty.call(mapping, value)) {
           const message = `Giá trị "${value}" không hợp lệ trong trường ${field} của dữ liệu mock.`;
@@ -79,7 +79,7 @@ const SF = {
         waiting_guest: "Chờ khách",
         completed: "Hoàn tất",
       }, "tasks.status");
-      const shift = (value) => requireMapped(value, { morning: "Ca sáng", day: "Ca ngày", evening: "Ca chiều", night: "Ca đêm" }, "staff.shift");
+      const shift = (value) => requireMapped(value, { morning: "Ca sáng", afternoon: "Ca chiều", day: "Ca ngày", evening: "Ca chiều", night: "Ca đêm" }, "staff.shift");
       if (!source || typeof source !== "object") {
         const message = "Tệp assets/data/stayflow.mock.json phải chứa một đối tượng JSON.";
         showError(message);

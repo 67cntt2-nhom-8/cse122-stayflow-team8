@@ -137,7 +137,7 @@ createForm.addEventListener("submit", (event) => {
   sendButton.disabled = true;
 
   window.setTimeout(() => {
-    const record = { code: nextRequestCode(), title: selectedService, note, time: nowClock() };
+    const record = { code: nextRequestCode(), title: selectedService, serviceName: selectedService, note, time: nowClock(), status: "in_progress" };
     saveRequest(record);
     showToast(`Đã gửi yêu cầu ${record.code}. Đang quay về danh sách…`);
     window.setTimeout(() => {
@@ -153,6 +153,14 @@ selectService(selectedService);
 previewCode.textContent = nextRequestCode(); // mã sẽ được cấp nếu bấm gửi ngay bây giờ
 noteInput.addEventListener("input", syncNote);
 syncNote();
+sendButton.disabled = true;
+STAYFLOW_REQUESTS_READY.then(() => {
+  if (!SERVICE_META[selectedService]) selectedService = Object.keys(SERVICE_META)[0];
+  renderServicePicker();
+  selectService(selectedService);
+  previewCode.textContent = nextRequestCode();
+  sendButton.disabled = false;
+});
 
 /* --- 8. Trợ lý AI giả lập ---
  * Toàn bộ dữ liệu (lời chào, câu hỏi nhanh, từ khoá -> dịch vụ/ưu tiên/ghi chú) nằm

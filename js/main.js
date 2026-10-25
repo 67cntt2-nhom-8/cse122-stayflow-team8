@@ -89,6 +89,61 @@ const tasks = taskRecords.map(function (task) {
     return Object.assign({}, task);
 });
 
+/* Chuyển các yêu cầu trong JSON sang bản ghi Kanban mà giao diện nhân viên dùng. */
+function tasksFromMockData(source) {
+    const stays = new Map(source.stays.map(function (stay) { return [stay.id, stay]; }));
+    const services = new Map(source.serviceTypes.map(function (service) { return [service.id, service]; }));
+    const staff = new Map(source.staff.map(function (person) { return [person.id, person]; }));
+    const workByRequest = new Map(source.tasks.map(function (task) { return [task.requestId, task]; }));
+    const suggestions = source.aiMocks && source.aiMocks.priorityAssistant || [];
+    const now = Date.parse(source.meta && source.meta.updatedAt) || Date.now();
+    const statusMap = {
+        new: 'new',
+        assigned: 'new',
+        in_progress: 'processing',
+        waiting_guest: 'processing',
+        completed: 'completed',
+        cancelled: 'completed'
+    };
+    const priorityMap = { high: 'high', normal: 'medium', low: 'low' };
+
+    return source.requests.filter(function (request) {
+        return request.status !== 'cancelled';
+    }).map(function (request) {
+        const stay = stays.get(request.stayId);
+        const service = services.get(request.serviceTypeId);
+        const work = workByRequest.get(request.id);
+        if (!stay || !service || !statusMap[request.status] || !priorityMap[request.priority]) {
+            throw new Error('Yêu cầu ' + request.id + ' thiếu liên kết hợp lệ tới lưu trú, dịch vụ hoặc trạng thái.');
+        }
+        const dueAt = Date.parse(request.dueAt);
+        const sla = Number(service.defaultSlaMinutes) || 30;
+        const minutes = Number.isFinite(dueAt) ? Math.floor((dueAt - now) / 60000) : sla;
+        const floor = Math.floor(Number(stay.roomNumber) / 100) || 1;
+        const assignee = work && staff.get(work.assignedTo);
+        const suggestion = suggestions.find(function (item) { return item.requestId === request.id; });
+
+        return {
+            id: work ? work.id : request.id,
+            code: request.code || '#' + request.id,
+            title: request.title,
+            room: stay.roomNumber,
+            floor: floor,
+            guest: stay.guestName,
+            service: service.name,
+            department: service.department,
+            sla: sla,
+            status: statusMap[request.status],
+            priority: priorityMap[request.priority],
+            assignee: assignee ? assignee.name : null,
+            minutes: minutes,
+            receivedAt: request.createdAt,
+            note: request.description,
+            reason: suggestion ? suggestion.reason : request.notes || ''
+        };
+    });
+}
+
 /* Dữ liệu tra cứu: nhân viên, loại dịch vụ, lưu trú, yêu cầu, phản hồi */
 const mockData = (typeof window !== 'undefined' && window.StayFlowData) ||
     (typeof require === 'function' ? require('./data.js') : null) ||
@@ -624,27 +679,58 @@ if (typeof document !== 'undefined') {
         }
     }
 
-    /* ---- API dùng chung cho các trang nhân viên khác ----
-       Trang chi tiết nhiệm vụ (staff-task-detail.html) tái dùng đúng
-       nguồn dữ liệu và quy tắc nghiệp vụ ở đây thay vì chép lại. */
-    window.StaffFlow = {
-        tasks: tasks,
-        profile: profile,
-        PRIORITY: PRIORITY,
-        STATUS_TEXT: STATUS_TEXT,
-        STATUS_LABELS: STATUS_LABELS,
-        NEXT_STATUS: NEXT_STATUS,
-        ACTION_TEXT: ACTION_TEXT,
-        findTask: findTask,
-        applyStatus: applyStatus,
-        isOverdue: isOverdue,
-        liveMinutes: liveMinutes,
-        timeLabel: timeLabel,
-        initials: initials,
-        toast: toast
-    };
+    /* API dùng chung cho trang chi tiết; chỉ sẵn sàng sau khi dữ liệu JSON tải xong. */
+    function publishApi() {
+        return window.StaffFlow = {
+            tasks: tasks,
+            profile: profile,
+            PRIORITY: PRIORITY,
+            STATUS_TEXT: STATUS_TEXT,
+            STATUS_LABELS: STATUS_LABELS,
+            NEXT_STATUS: NEXT_STATUS,
+            ACTION_TEXT: ACTION_TEXT,
+            findTask: findTask,
+            applyStatus: applyStatus,
+            isOverdue: isOverdue,
+            liveMinutes: liveMinutes,
+            timeLabel: timeLabel,
+            initials: initials,
+            toast: toast
+        };
+    }
 
-    /* Đăng ký chạy khi DOM sẵn sàng */
-    document.addEventListener('DOMContentLoaded', init);
+    const mockReady = window.StayFlowDataReady
+        ? window.StayFlowDataReady.then(function () {
+            const records = tasksFromMockData(window.StayFlowMockData);
+            tasks.splice.apply(tasks, [0, tasks.length].concat(records));
+            const currentStaff = window.StayFlowMockData.staff.find(function (person) {
+                return person.role === 'staff';
+            });
+            if (currentStaff) {
+                profile.id = currentStaff.id;
+                profile.name = currentStaff.name;
+                profile.fullName = currentStaff.name;
+            }
+            return publishApi();
+        })
+        : Promise.resolve(publishApi());
+    window.StaffFlowReady = mockReady;
+
+    function showLoadError(error) {
+        console.error('Không thể khởi tạo bảng nhiệm vụ từ dữ liệu mock:', error);
+        const message = document.createElement('p');
+        message.setAttribute('role', 'alert');
+        message.textContent = 'Không thể tải dữ liệu nhiệm vụ. Hãy kiểm tra assets/data/stayflow.mock.json và chạy trang qua Live Server.';
+        document.body.prepend(message);
+    }
+
+    /* Đăng ký chạy khi DOM và dữ liệu sẵn sàng. */
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.StayFlowDataReady) {
+            mockReady.then(init).catch(showLoadError);
+        } else {
+            init();
+        }
+    });
 
 }

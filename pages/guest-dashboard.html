@@ -121,22 +121,22 @@
                 </span>
               </div>
               <div class="stay-dates">
-                <div><small>NHẬN PHÒNG</small><strong>02 Thg 10 · 14:00</strong></div>
-                <div><small>TRẢ PHÒNG</small><strong>06 Thg 10 · 12:00</strong></div>
+                <div><small>NHẬN PHÒNG</small><strong id="stay-checkin">—</strong></div>
+                <div><small>TRẢ PHÒNG</small><strong id="stay-checkout">—</strong></div>
               </div>
-              <div class="stay-progress"><span></span></div>
-              <p class="card-note">Đêm 2/4 · Còn 2 đêm lưu trú</p>
+              <div class="stay-progress"><span id="stay-progress"></span></div>
+              <p class="card-note" id="stay-nights">Đang tải thông tin lưu trú…</p>
             </article>
 
             <div class="metric-grid">
               <article class="card metric-card reveal searchable" data-search="đang xử lý yêu cầu">
                 <div><strong>Đang xử lý</strong><span class="metric-icon metric-icon--warning"><img src="../assets/images/2b8b2.svg" alt="" /></span></div>
-                <b class="counter" data-target="2">00</b>
-                <p>1 yêu cầu sắp hoàn thành</p>
+                <b class="counter" data-target="0">00</b>
+                <p id="processing-summary">Yêu cầu đang được xử lý</p>
               </article>
               <article class="card metric-card reveal searchable" data-search="hoàn thành yêu cầu">
                 <div><strong>Hoàn thành</strong><span class="metric-icon metric-icon--success"><img src="../assets/images/ad18b.svg" alt="" /></span></div>
-                <b class="counter" data-target="7">00</b>
+                <b class="counter" data-target="0">00</b>
                 <p>Trong kỳ lưu trú này</p>
               </article>
             </div>
@@ -167,12 +167,24 @@
               <p>Hỗ trợ ưu tiên</p>
               <button type="button">Bắt đầu <img src="../assets/images/27105.svg" alt="" /></button>
             </article>
+            <article class="card service-card reveal searchable" data-service="Đặt xe" data-search="đặt xe phương tiện đi lại">
+              <span class="service-icon"><img src="../assets/images/9e188.svg" alt="" /></span>
+              <h3>Đặt xe</h3>
+              <p>Đưa đón sân bay và taxi</p>
+              <button type="button">Bắt đầu <img src="../assets/images/27105.svg" alt="" /></button>
+            </article>
+            <article class="card service-card reveal searchable" data-service="Hỗ trợ lễ tân" data-search="hỗ trợ lễ tân hỏi đáp lưu trú">
+              <span class="service-icon"><img src="../assets/images/f8914.svg" alt="" /></span>
+              <h3>Hỗ trợ lễ tân</h3>
+              <p>Giải đáp và hỗ trợ lưu trú</p>
+              <button type="button">Bắt đầu <img src="../assets/images/27105.svg" alt="" /></button>
+            </article>
           </section>
 
           <section class="bottom-grid searchable-group">
-            <article class="card request-card reveal searchable" data-search="sf-3184 bổ sung khăn tắm đang xử lý">
+            <article class="card request-card reveal searchable" data-search="">
               <div class="request-card__heading">
-                <div><small>YÊU CẦU GẦN NHẤT · #SF-3184</small><h3 id="latest-request-title">Bổ sung khăn tắm</h3></div>
+                <div><small>YÊU CẦU GẦN NHẤT · <span id="latest-request-code">—</span></small><h3 id="latest-request-title">Đang tải…</h3></div>
                 <span class="status status--warning" id="request-status"><img src="../assets/images/979b6.svg" alt="" />Đang xử lý</span>
               </div>
 
@@ -251,6 +263,7 @@
     </div>
 
     <!-- Hành vi khung dashboard dùng chung, phải nạp TRƯỚC script của trang -->
+    <script src="../js/data.js"></script>
     <script src="../shared/dashboard.js"></script>
     <script src="../js/guest-dashboard.js"></script>
   </body>

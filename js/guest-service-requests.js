@@ -217,30 +217,53 @@ function markCancelled(item) {
 /* --- 6. Dựng thẻ yêu cầu từ <template> ---
  * Dùng chung cho yêu cầu vừa tạo và yêu cầu đọc lại từ kho của phiên,
  * nhờ vậy thẻ mới và thẻ sau khi tải lại trang trông giống hệt nhau. */
-function renderRequest({ code, title, note, time }) {
-  const meta = SERVICE_META[title] || SERVICE_META["Gọi dọn phòng"];
+function renderRequest({ code, title, serviceName, note, time, day = "today", dayLabel = "hôm nay" }) {
+  const meta = SERVICE_META[serviceName] || SERVICE_META[title] || SERVICE_META["Gọi dọn phòng"];
   const node = requestTemplate.content.firstElementChild.cloneNode(true);
   const field = (name) => node.querySelector(`[data-field="${name}"]`);
+  const request = readRequests().find((record) => record.code === code);
+  const status = request && request.status === "completed"
+    ? "done"
+    : request && request.status === "cancelled"
+      ? "cancelled"
+      : "processing";
 
   field("title").textContent = title;
   field("code").textContent = code;
-  field("meta").textContent = `Gửi ${time} hôm nay · Phòng 1208 · Ưu tiên bình thường`;
+  field("meta").textContent = `Gửi ${time} ${dayLabel} · Phòng 1208 · Ưu tiên bình thường`;
   field("owner").textContent = meta.owner;
   field("note").textContent = note || "Không có ghi chú.";
   field("eta").textContent = meta.eta;
   node.querySelector(".request-item__icon img").src = meta.icon;
   node.querySelector(".timeline-step small").textContent = `Đã gửi · ${time}`;
+  node.dataset.status = status;
+  node.dataset.search = `${title} ${code} ${note}`;
+
+  const statusPill = node.querySelector(".status");
+  statusPill.className = `status ${status === "done" ? "status--success" : status === "cancelled" ? "status--muted" : "status--warning"}`;
+  statusPill.textContent = status === "done" ? "Hoàn thành" : status === "cancelled" ? "Đã huỷ" : "Đang xử lý";
+  const steps = Array.from(node.querySelectorAll(".timeline-step"));
+  const completedSteps = status === "done" ? steps.length : status === "processing" ? 2 : 1;
+  steps.forEach((step, index) => {
+    step.classList.toggle("done", index < completedSteps);
+    step.classList.toggle("active", status === "processing" && index === completedSteps);
+  });
+  if (status === "cancelled" && steps.length) {
+    steps[steps.length - 1].querySelector("small").textContent = "Đã huỷ";
+  }
+  if (status !== "processing") {
+    node.querySelector('[data-action="cancel"]')?.remove();
+  }
 
   /* data-day / data-search là dữ liệu cho bộ lọc ở matchesFilters(). */
-  node.dataset.day = "today";
-  node.dataset.search = `${title} ${code} ${note}`;
+  node.dataset.day = day;
 
   requestList.prepend(node); // yêu cầu mới nhất luôn nằm đầu danh sách
 }
 
 /* Yêu cầu mới: cấp mã kế tiếp, lưu vào kho chung, rồi hiện lên đầu danh sách. */
 function createRequest(title, note) {
-  const record = { code: nextRequestCode(), title, note, time: nowClock() };
+  const record = { code: nextRequestCode(), title, serviceName: title, note, time: nowClock(), status: "in_progress" };
   saveRequest(record);
   renderRequest(record);
 
@@ -277,8 +300,9 @@ function renderNotifications() {
     item.className = "notification-item";
     item.type = "button";
     item.innerHTML = "<b></b><small></small>";
-    item.querySelector("b").textContent = `${record.title} đang được xử lý`;
-    item.querySelector("small").textContent = `Gửi ${record.time} hôm nay · ${record.code}`;
+    const state = record.status === "completed" ? "đã hoàn thành" : record.status === "cancelled" ? "đã huỷ" : "đang được xử lý";
+    item.querySelector("b").textContent = `${record.title} ${state}`;
+    item.querySelector("small").textContent = `Gửi ${record.time} ${record.dayLabel || "hôm nay"} · ${record.code}`;
     item.addEventListener("click", () => {
       notificationDropdown.classList.remove("open");
       showRequest(record.code);
@@ -316,8 +340,10 @@ function showRequest(code) {
 /* --- 7. Khởi động trang ---
  * Thứ tự quan trọng: đọc lại dữ liệu trước, rồi mới đếm và chia trang, để số trên
  * tab luôn khớp với danh sách đang hiển thị. */
-restoreRequests();
-renderNotifications();
-syncToggleLabels();
-refreshCounts();
-applyFilters();
+STAYFLOW_REQUESTS_READY.then(() => {
+  restoreRequests();
+  renderNotifications();
+  syncToggleLabels();
+  refreshCounts();
+  applyFilters();
+});

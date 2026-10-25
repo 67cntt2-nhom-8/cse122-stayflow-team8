@@ -290,3 +290,31 @@ markAllButton.addEventListener("click", () => {
 
 /* --- 7. Khởi động: dựng danh sách, rồi applyFilters() lo phần lọc + số đếm --- */
 renderNotices();
+
+STAYFLOW_REQUESTS_READY.then(() => {
+  try {
+    if (localStorage.getItem(NOTICE_KEY) !== null) return;
+    const stay = window.StayFlowMockData?.stays.find((item) => item.roomNumber === "1208");
+    const imported = stay
+      ? window.StayFlowMockData.requests
+          .filter((request) => request.stayId === stay.id)
+          .map((request, index) => {
+            const createdAt = new Date(request.createdAt);
+            return {
+              id: `mock-${request.id}`,
+              kind: "request",
+              title: `Yêu cầu #${request.id} ${request.status === "completed" ? "đã hoàn thành" : "đang được xử lý"}`,
+              body: request.description,
+              minutes: Math.max(0, Math.floor((Date.now() - createdAt.getTime()) / 60000)),
+              read: index > 0,
+            };
+          })
+      : [];
+    notices = [...imported, ...NOTICE_SEED.filter((notice) => notice.kind !== "request" && notice.kind !== "service")];
+    saveNotices(notices);
+    renderNotices();
+  } catch (error) {
+    console.error("Không thể nạp thông báo từ dữ liệu mock:", error);
+    showToast("Không thể tải thông báo mẫu.");
+  }
+});

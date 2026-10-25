@@ -44,6 +44,8 @@ const SERVICE_META = {
   "Yêu cầu khăn": { icon: "../assets/images/f8914.svg", owner: "Đội buồng phòng", eta: "Trong 10 phút" },
   "Đặt bữa": { icon: "../assets/images/9e188.svg", owner: "Bếp Aurora", eta: "Trong 40 phút" },
   "Báo sự cố": { icon: "../assets/images/3df7f.svg", owner: "Kỹ thuật toà nhà", eta: "Trong 15 phút" },
+  "Đặt xe": { icon: "../assets/images/9e188.svg", owner: "Lễ tân", eta: "Trong 60 phút" },
+  "Hỗ trợ lễ tân": { icon: "../assets/images/f8914.svg", owner: "Lễ tân", eta: "Trong 20 phút" },
 };
 
 /* Đọc danh sách yêu cầu; JSON hỏng hoặc sessionStorage bị chặn thì trả mảng rỗng để
@@ -64,6 +66,103 @@ function saveRequest(record) {
     /* sessionStorage bị chặn thì bỏ qua: phần còn lại của trang vẫn hoạt động. */
   }
 }
+
+/* Khởi tạo danh sách khách từ cùng mock JSON mà các màn hình vận hành sử dụng. */
+const STAYFLOW_REQUESTS_READY = (window.StayFlowDataReady || Promise.resolve(null))
+  .then(() => {
+    const source = window.StayFlowMockData;
+    if (!source) return null;
+    const iconByService = {
+      "SVC-ROOM-SERVICE": "../assets/images/9e188.svg",
+      "SVC-HOUSEKEEPING": "../assets/images/ccf51.svg",
+      "SVC-TOWELS": "../assets/images/f8914.svg",
+      "SVC-MAINTENANCE": "../assets/images/3df7f.svg",
+      "SVC-TRANSPORT": "../assets/images/9e188.svg",
+      "SVC-FRONT-DESK": "../assets/images/f8914.svg",
+    };
+    const ownerByDepartment = {
+      "Ẩm thực": "Bếp Aurora",
+      "Buồng phòng": "Đội buồng phòng",
+      "Kỹ thuật": "Kỹ thuật toà nhà",
+      "Lễ tân": "Lễ tân",
+    };
+    Object.keys(SERVICE_META).forEach((name) => delete SERVICE_META[name]);
+    source.serviceTypes.forEach((service) => {
+      SERVICE_META[service.name] = {
+        icon: iconByService[service.id] || "../assets/images/ccf51.svg",
+        owner: ownerByDepartment[service.department] || service.department,
+        eta: `Trong ${service.defaultSlaMinutes} phút`,
+      };
+    });
+    let records = readRequests();
+    if (sessionStorage.getItem(REQUEST_KEY) === null) {
+      const stay = source.stays.find((item) => item.roomNumber === "1208");
+      records = stay
+        ? source.requests
+          .filter((request) => request.stayId === stay.id)
+          .reverse()
+          .map((request) => {
+            const createdAt = new Date(request.createdAt);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
+            const sameDate = (a, b) =>
+              a.getFullYear() === b.getFullYear() &&
+              a.getMonth() === b.getMonth() &&
+              a.getDate() === b.getDate();
+            const day = sameDate(createdAt, today) ? "today" : sameDate(createdAt, yesterday) ? "yesterday" : "older";
+            const dayLabel = day === "today" ? "hôm nay" : day === "yesterday" ? "hôm qua" : new Intl.DateTimeFormat("vi-VN").format(createdAt);
+            return {
+              code: `#${request.id}`,
+              title: request.title,
+              serviceName: source.serviceTypes.find((service) => service.id === request.serviceTypeId)?.name,
+              note: request.description,
+              time: new Intl.DateTimeFormat("vi-VN", { hour: "2-digit", minute: "2-digit" }).format(createdAt),
+              day,
+              dayLabel,
+              status: request.status,
+            };
+            })
+        : [];
+      sessionStorage.setItem(REQUEST_KEY, JSON.stringify(records));
+    }
+    if (!document.querySelector("#request-list")) {
+      const dropdown = document.querySelector("#notification-dropdown");
+      if (dropdown) {
+        const heading = dropdown.querySelector(".dropdown__heading");
+        const empty = dropdown.querySelector(".dropdown__empty");
+        if (heading && empty) {
+          let badge = heading.querySelector("span");
+          if (!badge) {
+            badge = document.createElement("span");
+            heading.appendChild(badge);
+          }
+          badge.hidden = records.length === 0;
+          badge.textContent = `${records.length} mới`;
+          empty.hidden = records.length > 0;
+          [...records].reverse().forEach((record) => {
+            const item = document.createElement("button");
+            item.className = "notification-item";
+            item.type = "button";
+            item.innerHTML = "<b></b><small></small>";
+            const state = record.status === "completed" ? "đã hoàn thành" : record.status === "cancelled" ? "đã huỷ" : "đang được xử lý";
+            item.querySelector("b").textContent = `${record.title} ${state}`;
+            item.querySelector("small").textContent = `Gửi ${record.time} ${record.dayLabel} · ${record.code}`;
+            item.addEventListener("click", () => {
+              window.location.href = "guest-service-requests.html";
+            });
+            dropdown.appendChild(item);
+          });
+        }
+      }
+    }
+    return source;
+  })
+  .catch((error) => {
+    console.error("Không thể khởi tạo yêu cầu khách từ dữ liệu mock:", error);
+    showToast("Không tải được dữ liệu mẫu. Hãy kiểm tra file JSON và chạy qua Live Server.");
+    return null;
+  });
 
 /* Mã kế tiếp: lấy số lớn nhất đang có trong kho rồi cộng 1 -> không trùng mã cũ. */
 function nextRequestCode() {

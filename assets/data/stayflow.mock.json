@@ -2,7 +2,7 @@
   "meta": {
     "app": "StayFlow",
     "version": 1,
-    "description": "Mock data for hotel stay service coordination",
+    "description": "Dữ liệu mẫu điều phối dịch vụ trong thời gian lưu trú tại StayFlow",
     "updatedAt": "2026-10-14T08:00:00+07:00",
     "currency": "VND",
     "timeZone": "Asia/Ho_Chi_Minh"
@@ -11,8 +11,8 @@
     {
       "id": "STY-2026-1042",
       "guestId": "GST-001",
-      "guestName": "Nguyen Minh Anh",
-      "guestEmail": "minhanh@example.com",
+      "guestName": "Nguyễn Thu Hà",
+      "guestEmail": "thuha@example.com",
       "guestPhone": "+84 912 345 678",
       "roomNumber": "1208",
       "roomType": "Deluxe King",
@@ -24,7 +24,7 @@
     {
       "id": "STY-2026-1043",
       "guestId": "GST-002",
-      "guestName": "Tran Quoc Bao",
+      "guestName": "Trần Quốc Bảo",
       "guestEmail": "quocbao@example.com",
       "guestPhone": "+84 903 111 204",
       "roomNumber": "0815",
@@ -37,7 +37,7 @@
     {
       "id": "STY-2026-1044",
       "guestId": "GST-003",
-      "guestName": "Le Thu Ha",
+      "guestName": "Lê Thu Hà",
       "guestEmail": "thuha@example.com",
       "guestPhone": "+84 987 450 112",
       "roomNumber": "1502",
@@ -50,13 +50,13 @@
     {
       "id": "STY-2026-1045",
       "guestId": "GST-004",
-      "guestName": "Pham Duc Long",
+      "guestName": "Phạm Đức Long",
       "guestEmail": "duclong@example.com",
       "guestPhone": "+84 936 222 815",
       "roomNumber": "0603",
       "roomType": "Standard Queen",
       "checkInAt": "2026-10-11T14:00:00+07:00",
-      "checkOutAt": "2026-10-14T12:00:00+07:00",
+      "checkOutAt": "2026-10-14T06:00:00+07:00",
       "status": "checked_out",
       "isVip": false
     }
@@ -66,8 +66,8 @@
       "id": "REQ-2026-3001",
       "stayId": "STY-2026-1042",
       "serviceTypeId": "SVC-ROOM-SERVICE",
-      "title": "Bring two bottles of drinking water",
-      "description": "Please bring two bottles of mineral water to the room.",
+      "title": "Bổ sung nước suối",
+      "description": "Vui lòng mang hai chai nước suối đến phòng.",
       "status": "in_progress",
       "priority": "normal",
       "source": "guest_portal",
@@ -75,14 +75,14 @@
       "updatedAt": "2026-10-14T08:20:00+07:00",
       "dueAt": "2026-10-14T08:42:00+07:00",
       "assignedStaffId": "STF-002",
-      "notes": "Guest prefers contactless delivery."
+      "notes": "Khách ưu tiên giao đồ không tiếp xúc."
     },
     {
       "id": "REQ-2026-3002",
       "stayId": "STY-2026-1043",
       "serviceTypeId": "SVC-HOUSEKEEPING",
-      "title": "Extra towels",
-      "description": "Requesting three clean bath towels.",
+      "title": "Bổ sung khăn tắm",
+      "description": "Khách cần thêm ba khăn tắm sạch.",
       "status": "assigned",
       "priority": "normal",
       "source": "guest_portal",
@@ -96,8 +96,8 @@
       "id": "REQ-2026-3003",
       "stayId": "STY-2026-1044",
       "serviceTypeId": "SVC-MAINTENANCE",
-      "title": "Air conditioner is not cooling",
-      "description": "The room is warm even at the lowest temperature setting.",
+      "title": "Điều hòa không mát",
+      "description": "Phòng vẫn nóng dù đã đặt điều hòa ở mức nhiệt độ thấp nhất.",
       "status": "new",
       "priority": "high",
       "source": "guest_portal",
@@ -105,14 +105,14 @@
       "updatedAt": "2026-10-14T08:34:00+07:00",
       "dueAt": "2026-10-14T09:04:00+07:00",
       "assignedStaffId": null,
-      "notes": "VIP stay; prioritize dispatch."
+      "notes": "Khách VIP; ưu tiên điều phối."
     },
     {
       "id": "REQ-2026-3004",
       "stayId": "STY-2026-1042",
       "serviceTypeId": "SVC-ROOM-SERVICE",
-      "title": "Breakfast for tomorrow",
-      "description": "Please confirm breakfast delivery for two at 07:30.",
+      "title": "Đặt bữa sáng ngày mai",
+      "description": "Vui lòng xác nhận giao bữa sáng cho hai người lúc 07:30.",
       "status": "completed",
       "priority": "normal",
       "source": "guest_portal",
@@ -120,14 +120,14 @@
       "updatedAt": "2026-10-13T19:28:00+07:00",
       "dueAt": "2026-10-13T19:40:00+07:00",
       "assignedStaffId": "STF-003",
-      "notes": "Confirmed with the restaurant."
+      "notes": "Đã xác nhận với nhà hàng."
     },
     {
       "id": "REQ-2026-3005",
       "stayId": "STY-2026-1043",
       "serviceTypeId": "SVC-TRANSPORT",
-      "title": "Book airport transfer",
-      "description": "Need a sedan to the airport at 05:30 on checkout day.",
+      "title": "Đặt xe ra sân bay",
+      "description": "Cần xe sedan đưa ra sân bay lúc 05:30 vào ngày trả phòng.",
       "status": "waiting_guest",
       "priority": "normal",
       "source": "guest_portal",
@@ -135,14 +135,14 @@
       "updatedAt": "2026-10-14T08:05:00+07:00",
       "dueAt": "2026-10-14T08:50:00+07:00",
       "assignedStaffId": "STF-003",
-      "notes": "Waiting for the guest to confirm the fare."
+      "notes": "Đang chờ khách xác nhận giá."
     },
     {
       "id": "REQ-2026-3006",
       "stayId": "STY-2026-1045",
       "serviceTypeId": "SVC-HOUSEKEEPING",
-      "title": "Late checkout request",
-      "description": "Could I check out at 14:00 instead of 12:00?",
+      "title": "Yêu cầu trả phòng muộn",
+      "description": "Khách muốn trả phòng lúc 14:00 thay vì 12:00.",
       "status": "cancelled",
       "priority": "low",
       "source": "front_desk",
@@ -150,7 +150,7 @@
       "updatedAt": "2026-10-14T07:32:00+07:00",
       "dueAt": null,
       "assignedStaffId": "STF-003",
-      "notes": "Guest checked out at the original time."
+      "notes": "Khách đã trả phòng đúng giờ ban đầu."
     }
   ],
   "tasks": [
@@ -166,7 +166,7 @@
         { "label": "Collect requested items", "isDone": true },
         { "label": "Deliver to room", "isDone": false }
       ],
-      "internalNote": "Contactless delivery requested."
+      "internalNote": "Khách đề nghị giao đồ không tiếp xúc."
     },
     {
       "id": "TSK-2026-5002",
@@ -195,7 +195,7 @@
         { "label": "Notify restaurant", "isDone": true },
         { "label": "Send confirmation to guest", "isDone": true }
       ],
-      "internalNote": "Order confirmed for two guests at 07:30."
+      "internalNote": "Đã xác nhận đơn cho hai khách lúc 07:30."
     },
     {
       "id": "TSK-2026-5004",
@@ -210,51 +210,60 @@
         { "label": "Share fare with guest", "isDone": true },
         { "label": "Confirm booking", "isDone": false }
       ],
-      "internalNote": "Guest confirmation is required before booking."
+      "internalNote": "Cần khách xác nhận trước khi đặt xe."
     }
   ],
   "serviceTypes": [
     {
       "id": "SVC-ROOM-SERVICE",
-      "name": "Room Service",
-      "department": "Food & Beverage",
-      "description": "Food, drinks, and in-room amenity requests.",
+      "name": "Đặt bữa",
+      "department": "Ẩm thực",
+      "description": "Đồ ăn, thức uống và các yêu cầu phục vụ tại phòng.",
       "icon": "utensils",
       "defaultSlaMinutes": 30,
       "isActive": true
     },
     {
       "id": "SVC-HOUSEKEEPING",
-      "name": "Housekeeping",
-      "department": "Housekeeping",
-      "description": "Cleaning, towels, linens, and room setup.",
+      "name": "Gọi dọn phòng",
+      "department": "Buồng phòng",
+      "description": "Dọn phòng, khăn, ga giường và chuẩn bị phòng.",
       "icon": "sparkles",
       "defaultSlaMinutes": 30,
       "isActive": true
     },
     {
+      "id": "SVC-TOWELS",
+      "name": "Yêu cầu khăn",
+      "department": "Buồng phòng",
+      "description": "Bổ sung khăn tắm, khăn mặt và đồ vải trong phòng.",
+      "icon": "sparkles",
+      "defaultSlaMinutes": 10,
+      "isActive": true
+    },
+    {
       "id": "SVC-MAINTENANCE",
-      "name": "Maintenance",
-      "department": "Engineering",
-      "description": "Room equipment, fixtures, and facility issues.",
+      "name": "Báo sự cố",
+      "department": "Kỹ thuật",
+      "description": "Sự cố về thiết bị, nội thất và cơ sở vật chất.",
       "icon": "wrench",
       "defaultSlaMinutes": 45,
       "isActive": true
     },
     {
       "id": "SVC-TRANSPORT",
-      "name": "Transportation",
-      "department": "Front Desk",
-      "description": "Airport transfers, taxis, and local transportation.",
+      "name": "Đặt xe",
+      "department": "Lễ tân",
+      "description": "Đưa đón sân bay, taxi và phương tiện đi lại.",
       "icon": "car",
       "defaultSlaMinutes": 60,
       "isActive": true
     },
     {
       "id": "SVC-FRONT-DESK",
-      "name": "Front Desk",
-      "department": "Front Desk",
-      "description": "General questions and stay assistance.",
+      "name": "Hỗ trợ lễ tân",
+      "department": "Lễ tân",
+      "description": "Giải đáp thắc mắc và hỗ trợ trong thời gian lưu trú.",
       "icon": "concierge-bell",
       "defaultSlaMinutes": 20,
       "isActive": true
@@ -266,7 +275,7 @@
       "requestId": "REQ-2026-3004",
       "stayId": "STY-2026-1042",
       "rating": 5,
-      "comment": "Breakfast arrived on time and was still warm. Thank you!",
+      "comment": "Bữa sáng được giao đúng giờ và vẫn còn nóng. Cảm ơn khách sạn!",
       "themes": ["timeliness", "food_quality", "staff_service"],
       "sentiment": "positive",
       "createdAt": "2026-10-14T07:45:00+07:00",
@@ -277,7 +286,7 @@
       "requestId": "REQ-2026-3005",
       "stayId": "STY-2026-1043",
       "rating": 3,
-      "comment": "The transfer quote took a little longer than expected, but the team was helpful.",
+      "comment": "Báo giá xe hơi lâu hơn dự kiến, nhưng nhân viên đã hỗ trợ nhiệt tình.",
       "themes": ["response_time", "staff_service"],
       "sentiment": "mixed",
       "createdAt": "2026-10-13T16:20:00+07:00",
@@ -288,7 +297,7 @@
       "requestId": "REQ-2026-3002",
       "stayId": "STY-2026-1043",
       "rating": 2,
-      "comment": "I had to follow up twice before the towels arrived.",
+      "comment": "Tôi phải nhắc lại hai lần mới được giao khăn.",
       "themes": ["response_time", "request_tracking"],
       "sentiment": "negative",
       "createdAt": "2026-10-12T18:05:00+07:00",
@@ -298,11 +307,11 @@
   "staff": [
     {
       "id": "STF-001",
-      "name": "Vo Thanh Mai",
+      "name": "Nguyễn Thị Mai Anh",
       "email": "thanhmai@stayflow.example",
       "phone": "+84 908 100 201",
       "role": "staff",
-      "department": "Housekeeping",
+      "department": "Buồng phòng",
       "skills": ["housekeeping", "room_setup"],
       "shift": "morning",
       "status": "on_duty",
@@ -310,11 +319,11 @@
     },
     {
       "id": "STF-002",
-      "name": "Nguyen Hoang Nam",
+      "name": "Nguyễn Hoàng Nam",
       "email": "hoangnam@stayflow.example",
       "phone": "+84 909 210 302",
       "role": "staff",
-      "department": "Room Service",
+      "department": "Ẩm thực",
       "skills": ["amenities", "food_delivery"],
       "shift": "morning",
       "status": "on_duty",
@@ -322,11 +331,11 @@
     },
     {
       "id": "STF-003",
-      "name": "Bui Gia Huy",
+      "name": "Bùi Gia Huy",
       "email": "giahuy@stayflow.example",
       "phone": "+84 907 330 403",
       "role": "staff",
-      "department": "Front Desk",
+      "department": "Lễ tân",
       "skills": ["guest_support", "transportation"],
       "shift": "morning",
       "status": "on_duty",
@@ -334,11 +343,11 @@
     },
     {
       "id": "STF-004",
-      "name": "Pham Ngoc Linh",
+      "name": "Phạm Ngọc Linh",
       "email": "ngoclinh@stayflow.example",
       "phone": "+84 906 440 504",
       "role": "manager",
-      "department": "Operations",
+      "department": "Vận hành",
       "skills": ["dispatch", "sla_monitoring", "reporting"],
       "shift": "morning",
       "status": "on_duty",
@@ -346,35 +355,119 @@
     },
     {
       "id": "STF-005",
-      "name": "Do Minh Chau",
+      "name": "Đỗ Minh Châu",
       "email": "minhchau@stayflow.example",
       "phone": "+84 905 550 605",
       "role": "admin",
-      "department": "Administration",
+      "department": "Quản trị",
       "skills": ["user_management", "service_configuration"],
       "shift": "day",
       "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-006",
+      "name": "Trần Thị Lan",
+      "email": "thilan@stayflow.example",
+      "phone": "+84 904 660 706",
+      "role": "staff",
+      "department": "Buồng phòng",
+      "skills": ["housekeeping", "laundry"],
+      "shift": "afternoon",
+      "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-007",
+      "name": "Lê Quang Huy",
+      "email": "quanghuy@stayflow.example",
+      "phone": "+84 903 770 807",
+      "role": "staff",
+      "department": "Kỹ thuật",
+      "skills": ["maintenance", "hvac"],
+      "shift": "afternoon",
+      "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-008",
+      "name": "Phạm Minh Đức",
+      "email": "minhduc@stayflow.example",
+      "phone": "+84 902 880 908",
+      "role": "staff",
+      "department": "Kỹ thuật",
+      "skills": ["electrical", "plumbing"],
+      "shift": "night",
+      "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-009",
+      "name": "Hoàng Ngọc Mai",
+      "email": "ngocmai@stayflow.example",
+      "phone": "+84 901 990 109",
+      "role": "staff",
+      "department": "Buồng phòng",
+      "skills": ["housekeeping", "room_setup"],
+      "shift": "night",
+      "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-010",
+      "name": "Vũ Thanh Tùng",
+      "email": "thanhtung@stayflow.example",
+      "phone": "+84 900 110 210",
+      "role": "staff",
+      "department": "Lễ tân",
+      "skills": ["guest_support", "transportation"],
+      "shift": "afternoon",
+      "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-011",
+      "name": "Đỗ Phương Thảo",
+      "email": "phuongthao@stayflow.example",
+      "phone": "+84 899 220 311",
+      "role": "staff",
+      "department": "Lễ tân",
+      "skills": ["guest_support", "reservations"],
+      "shift": "night",
+      "status": "on_duty",
+      "avatar": ""
+    },
+    {
+      "id": "STF-012",
+      "name": "Bùi Văn Khoa",
+      "email": "vankhoa@stayflow.example",
+      "phone": "+84 898 330 412",
+      "role": "staff",
+      "department": "Buồng phòng",
+      "skills": ["housekeeping", "room_inspection"],
+      "shift": "morning",
+      "status": "off_duty",
       "avatar": ""
     }
   ],
   "aiMocks": {
     "requestClassifier": [
       {
-        "input": "The air conditioner is not cooling and the room is getting warm.",
+        "input": "Điều hòa không mát và căn phòng đang nóng lên.",
         "serviceTypeId": "SVC-MAINTENANCE",
         "confidence": 0.96,
-        "reason": "The request describes a room equipment problem that requires the Engineering team.",
+        "reason": "Yêu cầu mô tả sự cố thiết bị trong phòng, cần bộ phận Kỹ thuật xử lý.",
         "alternatives": ["SVC-FRONT-DESK"],
         "state": "suggested"
       },
       {
-        "input": "I need someone to help with this, but I am not sure what service to choose.",
+        "input": "Tôi cần người hỗ trợ nhưng chưa biết nên chọn dịch vụ nào.",
         "serviceTypeId": null,
         "confidence": 0.38,
-        "reason": "There is not enough detail to identify the right department.",
+        "reason": "Chưa có đủ thông tin để xác định đúng bộ phận.",
         "alternatives": [],
         "state": "uncertain",
-        "fallbackMessage": "Not enough information to make a reliable suggestion. Please add details or choose a service manually."
+        "fallbackMessage": "Chưa đủ thông tin để đưa ra gợi ý đáng tin cậy. Vui lòng bổ sung chi tiết hoặc tự chọn dịch vụ."
       }
     ],
     "priorityAssistant": [
@@ -382,22 +475,22 @@
         "requestId": "REQ-2026-3003",
         "priority": "high",
         "confidence": 0.91,
-        "reason": "The issue affects room comfort, and this is a VIP stay.",
+        "reason": "Sự cố ảnh hưởng đến sự thoải mái trong phòng và đây là khách VIP.",
         "state": "suggested"
       },
       {
         "requestId": "REQ-2026-3002",
         "priority": "normal",
         "confidence": 0.54,
-        "reason": "The request is routine, but no urgency details were provided.",
+        "reason": "Đây là yêu cầu thông thường nhưng chưa có thông tin về mức độ khẩn cấp.",
         "state": "uncertain",
-        "fallbackMessage": "Priority is uncertain. Review the due time and current team workload before dispatching."
+        "fallbackMessage": "Chưa thể xác định mức ưu tiên. Hãy xem hạn xử lý và khối lượng công việc hiện tại trước khi điều phối."
       }
     ],
     "feedbackSummarizer": {
       "generatedAt": "2026-10-14T08:00:00+07:00",
       "feedbackIds": ["FDB-2026-7001", "FDB-2026-7002", "FDB-2026-7003"],
-      "summary": "Guests appreciate friendly service and on-time delivery. Delays and the need to follow up are recurring sources of dissatisfaction.",
+      "summary": "Khách đánh giá cao thái độ thân thiện và việc giao dịch vụ đúng giờ. Chậm trễ và phải nhắc lại là những nguyên nhân gây không hài lòng lặp lại.",
       "themes": [
         { "name": "Timeliness", "count": 2, "sentiment": "mixed" },
         { "name": "Staff service", "count": 2, "sentiment": "positive" },
@@ -405,7 +498,7 @@
       ],
       "confidence": 0.78,
       "state": "suggested",
-      "fallbackMessage": "Unable to summarize because there is not enough feedback data. Try again after collecting more responses."
+      "fallbackMessage": "Chưa đủ dữ liệu phản hồi để tóm tắt. Hãy thử lại sau khi thu thập thêm đánh giá."
     }
   }
 }

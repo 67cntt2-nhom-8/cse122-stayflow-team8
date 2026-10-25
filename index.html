@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="StayFlow kết nối khách lưu trú, nhân viên và quản lý khách sạn trong một trải nghiệm dịch vụ liền mạch."
+    />
+    <meta name="theme-color" content="#f4f5ef" />
+    <title>StayFlow · Điều phối dịch vụ lưu trú</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div class="home">
+      <header class="home__header">
+        <a class="home__brand" href="index.html" aria-label="StayFlow — Trang chủ">
+          <span class="home__brand-mark" aria-hidden="true">S</span>
+          <span class="home__brand-copy">
+            <strong>StayFlow</strong>
+            <small>AURORA GRAND · ĐÀ NẴNG</small>
+          </span>
+        </a>
+
+        <nav class="home__nav" aria-label="Điều hướng chính">
+          <a href="#about">Giới thiệu</a>
+          <a href="#roles">Không gian làm việc</a>
+          <a href="pages/about.html">Aurora Grand</a>
+        </nav>
+
+        <a class="home__login" href="pages/login.html">Đăng nhập <span aria-hidden="true">↗</span></a>
+      </header>
+
+      <main>
+        <section class="home__hero" id="about" aria-labelledby="hero-title">
+          <div class="home__intro">
+            <p class="home__eyebrow"><span></span> ĐIỀU PHỐI DỊCH VỤ LƯU TRÚ</p>
+            <h1 id="hero-title">Một kỳ nghỉ tốt bắt đầu từ <em>sự chăm sóc</em>.</h1>
+            <p class="home__description">
+              Từ yêu cầu nhỏ nhất của khách đến từng công việc phía sau hậu trường,
+              StayFlow giúp mọi người phối hợp nhịp nhàng để mỗi trải nghiệm đều trọn vẹn.
+            </p>
+            <div class="home__actions">
+              <a class="home__primary" href="#roles">Khám phá StayFlow <span aria-hidden="true">→</span></a>
+              <a class="home__text-link" href="pages/about.html">Về khách sạn <span aria-hidden="true">↗</span></a>
+            </div>
+            <div class="home__trust">
+              <span class="home__avatars" aria-hidden="true"><b>K</b><b>N</b><b>Q</b></span>
+              <span><strong>Một đội ngũ, một trải nghiệm</strong><small>Khách · Nhân viên · Quản lý</small></span>
+            </div>
+          </div>
+
+          <div class="home__visual">
+            <img
+              class="home__image"
+              src="assets/images/58c4c.png"
+              alt="Không gian sang trọng tại khách sạn Aurora Grand"
+            />
+            <div class="home__image-shade"></div>
+            <div class="home__hotel-label">
+              <span class="home__live-dot"></span>
+              AURORA GRAND <span>·</span> ĐÀ NẴNG
+            </div>
+            <div class="home__round-note" aria-label="Hỗ trợ 24 giờ mỗi ngày">
+              <span>HỖ TRỢ</span><strong>24<span>/</span>7</strong>
+            </div>
+          </div>
+        </section>
+
+        <section class="home__roles-section" id="roles" aria-labelledby="roles-title">
+          <div class="home__section-heading">
+            <div>
+              <p class="home__eyebrow">MỘT NỀN TẢNG · BỐN VAI TRÒ</p>
+              <h2 id="roles-title">Bạn đang đồng hành với StayFlow ở vai trò nào?</h2>
+            </div>
+            <p>Chọn không gian làm việc để bắt đầu.</p>
+          </div>
+
+          <div class="home__roles">
+            <article class="home__card home__card--guest">
+              <div class="home__card-top"><span class="home__card-icon" aria-hidden="true">⌂</span><span>01 / GUEST</span></div>
+              <h3>Khách lưu trú</h3>
+              <p>Gửi yêu cầu dịch vụ và theo dõi hành trình chăm sóc trong kỳ nghỉ.</p>
+              <a href="pages/guest-dashboard.html" aria-label="Mở tổng quan dành cho khách lưu trú">Mở tổng quan <span aria-hidden="true">↗</span></a>
+              <div class="home__card-links">
+                <a href="pages/guest-service-requests.html">Yêu cầu của tôi</a>
+                <a href="pages/guest-create-request.html">Tạo yêu cầu mới</a>
+              </div>
+            </article>
+
+            <article class="home__card home__card--staff">
+              <div class="home__card-top"><span class="home__card-icon" aria-hidden="true">✳</span><span>02 / STAFF</span></div>
+              <h3>Nhân viên vận hành</h3>
+              <p>Nắm bắt công việc trong ca, cập nhật tiến độ và phối hợp xử lý.</p>
+              <a href="pages/staff-task-board.html" aria-label="Mở bảng nhiệm vụ nhân viên">Mở bảng nhiệm vụ <span aria-hidden="true">↗</span></a>
+              <div class="home__card-links">
+                <a href="pages/staff-shift-view.html">Lịch ca trực</a>
+                <a href="pages/staff-task-detail.html">Chi tiết nhiệm vụ</a>
+              </div>
+            </article>
+
+            <article class="home__card home__card--manager">
+              <div class="home__card-top"><span class="home__card-icon" aria-hidden="true">⌘</span><span>03 / MANAGER</span></div>
+              <h3>Quản lý khách sạn</h3>
+              <p>Điều phối đội ngũ, giám sát SLA và theo dõi chất lượng dịch vụ.</p>
+              <a href="pages/manager-dispatch-board.html" aria-label="Mở bảng điều phối dành cho quản lý">Mở bảng điều phối <span aria-hidden="true">↗</span></a>
+              <div class="home__card-links">
+                <a href="pages/manager-sla-monitor.html">Theo dõi SLA</a>
+                <a href="pages/manager-service-report.html">Báo cáo dịch vụ</a>
+                <a href="pages/manager-staff-management.html">Nhân sự</a>
+              </div>
+            </article>
+
+            <article class="home__card home__card--admin">
+              <div class="home__card-top"><span class="home__card-icon" aria-hidden="true">✣</span><span>04 / ADMIN</span></div>
+              <h3>Quản trị viên</h3>
+              <p>Quản lý danh mục dịch vụ và tài khoản trên hệ thống.</p>
+              <a href="pages/admin-service-type-management.html" aria-label="Mở quản lý loại dịch vụ">Quản lý dịch vụ <span aria-hidden="true">↗</span></a>
+              <div class="home__card-links">
+                <a href="pages/admin-user-management.html">Quản lý người dùng</a>
+                <a href="pages/manager-settings.html">Cài đặt hệ thống</a>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer class="home__footer">
+        <a class="home__brand home__brand--footer" href="index.html" aria-label="StayFlow — Trang chủ">
+          <span class="home__brand-mark" aria-hidden="true">S</span>
+          <span class="home__brand-copy">
+            <strong>StayFlow</strong>
+            <small>AURORA GRAND · ĐÀ NẴNG</small>
+          </span>
+        </a>
+        <p>Chăm sóc kỳ lưu trú, liền mạch trong từng khoảnh khắc.</p>
+        <a href="pages/about.html">Khám phá Aurora Grand <span aria-hidden="true">↗</span></a>
+      </footer>
+    </div>
+  </body>
+</html>
