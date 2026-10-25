@@ -17,7 +17,7 @@ const saveBanner = document.querySelector("#save-banner");
 const cardName = document.querySelector("#profile-card-name"); // tên in trên danh thiếp
 const avatarImage = document.querySelector("#profile-avatar");
 const avatarInput = document.querySelector("#avatar-input");
-const PROFILE_KEY = "stayflow_profile"; // cùng quy ước với stayflow_requests, stayflow_user_name
+const PROFILE_KEY = "stayflow_profile";
 
 /* Thứ tự khoá = thứ tự lấy giá trị từ form; dùng chung cho đọc và ghi. */
 const PROFILE_FIELDS = ["fullName", "phone", "email", "language", "timezone", "emergency"];
@@ -99,7 +99,7 @@ avatarInput.addEventListener("change", () => {
 fillProfile(readProfile());
 
 STAYFLOW_REQUESTS_READY.then(() => {
-  const stay = window.StayFlowMockData?.stays.find((item) => item.roomNumber === "1208");
+  const stay = window.StayFlowData?.stays.find((item) => item.id === GUEST_STAY_ID);
   if (!stay) return;
 
   try {

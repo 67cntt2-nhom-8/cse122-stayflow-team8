@@ -108,14 +108,14 @@ new Function('document', 'window', 'setInterval', 'require', 'module', source)(
 document.ready();
 
 /* ---------- Kiểm tra dữ liệu đổ lên giao diện ---------- */
-assert.strictEqual(dataNodes['[data-code]'][0].textContent, '#SF-3192', 'Mặc định là nhiệm vụ #SF-3192');
-assert.strictEqual(dataNodes['[data-title]'][0].textContent, 'Điều hòa không mát', 'Tiêu đề lấy từ dữ liệu');
-assert.strictEqual(dataNodes['[data-room]'][0].textContent, 'Phòng 305 · Tầng 3', 'Phòng/tầng đúng');
-assert.strictEqual(dataNodes['[data-guest]'][0].textContent, 'Ông Nguyễn Hoàng Long', 'Tên khách đúng');
-assert.strictEqual(dataNodes['[data-priority]'][0].textContent, 'Cao', 'Tag ưu tiên dịch sang tiếng Việt');
+assert.strictEqual(dataNodes['[data-code]'][0].textContent, '#REQ-2026-3002', 'Mặc định là nhiệm vụ từ dữ liệu mock');
+assert.strictEqual(dataNodes['[data-title]'][0].textContent, 'Bổ sung khăn tắm', 'Tiêu đề lấy từ dữ liệu');
+assert.strictEqual(dataNodes['[data-room]'][0].textContent, 'Phòng 0815 · Tầng 8', 'Phòng/tầng đúng');
+assert.strictEqual(dataNodes['[data-guest]'][0].textContent, 'Trần Quốc Bảo', 'Tên khách đúng');
+assert.strictEqual(dataNodes['[data-priority]'][0].textContent, 'Trung bình', 'Tag ưu tiên dịch sang tiếng Việt');
 assert.strictEqual(dataNodes['[data-status-row]'][0].textContent, 'Mới', 'Trạng thái đầu là Mới');
-assert.match(dataNodes['[data-received]'][0].textContent, /07\/10\/2026 11:40/, 'Thời gian tiếp nhận dd/mm/yyyy hh:mm');
-assert.strictEqual(dataNodes['[data-sla]'][0].textContent, '60 phút', 'SLA hiển thị theo phút');
+assert.match(dataNodes['[data-received]'][0].textContent, /14\/10\/2026/, 'Thời gian tiếp nhận theo dữ liệu mock');
+assert.strictEqual(dataNodes['[data-sla]'][0].textContent, '30 phút', 'SLA lấy từ loại dịch vụ liên kết');
 assert.strictEqual(byId.statusPill.dataset.status, 'new', 'Pill trạng thái có data-status');
 assert.match(byId.statusPill.className, /status-pill--new/, 'Pill mang lớp theo trạng thái');
 
@@ -131,7 +131,7 @@ assert.strictEqual(byId.btnReopen.hidden, true, 'Trạng thái Mới: ẩn nút 
 /* ---------- Bấm "Đang xử lý" -> gán người + nhật ký + toast ---------- */
 byId.btnProcessing.handlers.click();
 assert.strictEqual(dataNodes['[data-status-row]'][0].textContent, 'Đang xử lý', 'Bấm Bắt đầu -> Đang xử lý');
-assert.strictEqual(dataNodes['[data-assignee]'][0].textContent, 'Minh Anh', 'Nhận việc tự gán nhân viên đang đăng nhập');
+assert.strictEqual(dataNodes['[data-assignee]'][0].textContent, 'Nguyễn Thị Mai Anh', 'Nhận việc hiển thị nhân viên đang đăng nhập');
 assert.match(dataNodes['[data-timeline]'][0].innerHTML, /Mới → Đang xử lý/, 'Nhật ký ghi chuyển trạng thái');
 assert.strictEqual(byId.toasts.children.length, 1, 'Đổi trạng thái thành công sinh 1 toast');
 assert.strictEqual(byId.btnProcessing.hidden, false, 'Sau khi đang xử lý: vẫn hiện nút Bắt đầu');
@@ -163,8 +163,8 @@ assert.match(dataNodes['[data-timeline]'][0].innerHTML, /Bổ sung thêm 1 remot
 
 /* ---------- Hàm thuần: pickCode đọc tham số URL ---------- */
 const detail = require('./staff-task-detail.js');
-assert.strictEqual(detail.pickCode('?code=%23SF-3177', '#SF-3192'), '#SF-3177', 'Đọc mã từ ?code=');
-assert.strictEqual(detail.pickCode('', '#SF-3192'), '#SF-3192', 'Không có tham số thì dùng mặc định');
+assert.strictEqual(detail.pickCode('?code=%23REQ-2026-3001', '#REQ-2026-3002'), '#REQ-2026-3001', 'Đọc mã từ ?code=');
+assert.strictEqual(detail.pickCode('', '#REQ-2026-3002'), '#REQ-2026-3002', 'Không có tham số thì dùng mặc định');
 assert.strictEqual(detail.formatDateTime('không-phải-ngày'), '—', 'ISO sai trả về dấu gạch');
 
 console.log('✓ detailcheck: đổ dữ liệu, đổi trạng thái, ghi chú và nhật ký đều đạt');

@@ -6,7 +6,7 @@ một bản duy nhất.
 | Tệp | Dùng cho | Nội dung |
 | --- | --- | --- |
 | `dashboard.css` | `guest-dashboard`, `service-requests`, `profile` | font, biến màu, reset, sidebar, topbar, dropdown, lời chào `.welcome`, thẻ, nhãn trạng thái, nút, toast, keyframes, responsive khung |
-| `dashboard.js` | `guest-dashboard`, `service-requests`, `profile` | sidebar mobile, dropdown, Escape, đăng xuất, toast, bỏ dấu tiếng Việt, hiệu ứng hiện dần, kho yêu cầu `stayflow_requests` (sessionStorage), `SERVICE_META`, modal gửi yêu cầu |
+| `dashboard.js` | `guest-dashboard`, `service-requests`, `profile` | sidebar mobile, dropdown, Escape, đăng xuất, toast, bỏ dấu tiếng Việt, hiệu ứng hiện dần, adapter yêu cầu qua `StayFlowStore`, `SERVICE_META`, modal gửi yêu cầu |
 | `error-page.css` | `pages/403.html`, `pages/404.html` | font, biến màu, reset, khung trang lỗi, header logo, footer, bộ nút |
 | `auth-ui.js` | `login`, `sign-up`, `forgot-password` | ẩn/hiện mật khẩu, rung form, toast |
 | `selfcheck.html` | — | trang tự kiểm tra: mở bằng trình duyệt, mọi dòng phải PASS |
@@ -33,12 +33,18 @@ Tệp dùng chung luôn nạp **trước** tệp riêng của trang, để tệp
 
 | Trang | Nạp | Khoá dữ liệu riêng |
 | --- | --- | --- |
-| `pages/guest-dashboard.html` | `dashboard.css` + `guest-dashboard.css`, `dashboard.js` + `guest-dashboard.js` | `stayflow_requests` (sessionStorage) |
-| `pages/guest-service-requests.html` | `dashboard.css` + `guest-service-requests.css`, `dashboard.js` + `guest-service-requests.js` | `stayflow_requests` (sessionStorage) |
+| `pages/guest-dashboard.html` | `dashboard.css` + `guest-dashboard.css`, `dashboard.js` + `guest-dashboard.js` | Yêu cầu chung trong `sf_db` qua `StayFlowStore` |
+| `pages/guest-service-requests.html` | `dashboard.css` + `guest-service-requests.css`, `dashboard.js` + `guest-service-requests.js` | Yêu cầu chung trong `sf_db` qua `StayFlowStore` |
 | `pages/guest-profile.html` | `dashboard.css` + `guest-profile.css`, `dashboard.js` + `guest-profile.js` | `stayflow_profile` |
 
-Yêu cầu dịch vụ lưu trong `sessionStorage` (tự xoá khi đóng tab) thay vì `localStorage`,
-vì đó là dữ liệu phiên lưu trú chứ không phải tuỳ chọn cá nhân.
+`js/data.js` nạp và kiểm tra `assets/data/stayflow.mock.json`, sau đó cung cấp dữ liệu chung qua
+`StayFlowData` và `StayFlowStore`. Các thay đổi nghiệp vụ (yêu cầu, phân công, trạng thái nhiệm vụ,
+loại dịch vụ) được lưu ở `localStorage` dưới khoá `sf_db`, nên các trang trong cùng origin nhìn thấy
+cùng dữ liệu sau khi tải lại. Đây là lưu trữ trên trình duyệt hiện tại, không phải cơ sở dữ liệu máy
+chủ và không đồng bộ giữa thiết bị/người dùng.
+
+Thông tin hồ sơ cá nhân và tên hiển thị vẫn dùng các khoá trình duyệt riêng; chúng không thay thế dữ
+liệu yêu cầu nghiệp vụ trong `sf_db`.
 
 `stayflow_user_name` (tên hiện trên topbar) do 3 trang dùng chung: `profile.js` ghi khi lưu hồ sơ,
 `dashboard.js` đọc để điền tên, và xoá khi bấm Đăng xuất.
@@ -62,4 +68,6 @@ thì tạo thêm bản `…-navy.svg`. Quên bước này thì icon thành navy 
 
 ## Kiểm tra sau khi sửa
 
-Mở `selfcheck.html` bằng trình duyệt. Kỳ vọng: mọi dòng đều là `PASS` và dòng cuối có dạng `TONG: n/n PASS`.
+Phục vụ thư mục dự án qua HTTP rồi mở `shared/selfcheck.html` bằng trình duyệt. Kỳ vọng: mọi dòng
+đều là `PASS` và dòng cuối có dạng `TONG: n/n PASS`; trang sao lưu và khôi phục `sf_db` cùng các
+khoá hồ sơ/thông báo trước khi kết thúc.
