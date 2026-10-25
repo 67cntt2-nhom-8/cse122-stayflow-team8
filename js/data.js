@@ -36,9 +36,9 @@
   const PRIORITY = { high: "Cao", normal: "Trung bình", low: "Thấp" };
 
   function requireLists(source) {
-    const names = ["staff", "serviceTypes", "stays", "requests", "tasks", "feedback"];
+    const names = ["staff", "serviceTypes", "stays", "requests", "tasks", "feedback", "users"];
     if (!source || typeof source !== "object" || names.some((name) => !Array.isArray(source[name]))) {
-      throw new Error("stayflow.mock.json phải có các danh sách staff, serviceTypes, stays, requests, tasks và feedback.");
+      throw new Error("stayflow.mock.json phải có các danh sách staff, stays, users, serviceTypes, requests, tasks và feedback.");
     }
   }
 
@@ -56,7 +56,7 @@
   function validateSource(source) {
     requireLists(source);
     const indexes = {};
-    ["staff", "serviceTypes", "stays", "requests", "tasks", "feedback"].forEach((name) => {
+    ["staff", "serviceTypes", "stays", "requests", "tasks", "feedback", "users"].forEach((name) => {
       indexes[name] = indexById(source[name], name);
     });
     source.requests.forEach((request) => {
@@ -92,6 +92,20 @@
         throw new Error("Lưu trú " + stay.id + " có trạng thái không được hỗ trợ: " + stay.status);
       }
     });
+    const linkedPeople = new Set();
+    source.users.forEach((user) => {
+      if (!user || typeof user.personId !== "string" || typeof user.active !== "boolean") {
+        throw new Error("Tài khoản " + (user && user.id) + " thiếu personId hoặc trạng thái active hợp lệ.");
+      }
+      if (linkedPeople.has(user.personId)) {
+        throw new Error("Hồ sơ có nhiều tài khoản: " + user.personId);
+      }
+      if (!indexes.staff.has(user.personId) &&
+          !source.stays.some((stay) => stay.guestId === user.personId)) {
+        throw new Error("Tài khoản " + user.id + " tham chiếu đến hồ sơ không tồn tại: " + user.personId);
+      }
+      linkedPeople.add(user.personId);
+    });
     return indexes;
   }
 
@@ -103,6 +117,15 @@
     const indexes = {};
     ["staff", "serviceTypes", "stays", "requests", "tasks", "feedback"].forEach((name) => {
       indexes[name] = indexById(data[name], name);
+    });
+    indexes.users = indexById(data.users, "users");
+    data.users.forEach((user) => {
+      if (!["Guest", "Staff", "Manager", "Admin"].includes(user.role) ||
+          typeof user.active !== "boolean" ||
+          !Array.isArray(user.perms) || user.perms.length !== 4 ||
+          user.perms.some((permission) => permission !== 0 && permission !== 1)) {
+        throw new Error("Tài khoản " + user.id + " có vai trò, trạng thái hoặc quyền không hợp lệ.");
+      }
     });
     data.requests.forEach((request) => {
       if (!indexes.stays.has(request.stayId) || !indexes.serviceTypes.has(request.serviceTypeId)) {
@@ -134,6 +157,12 @@
 
   function convertMockData(source) {
     const indexes = validateSource(source);
+    const userPermissions = {
+      Guest: [0, 0, 0, 0],
+      Staff: [0, 0, 0, 0],
+      Manager: [1, 1, 0, 0],
+      Admin: [1, 1, 1, 1],
+    };
     const data = {
       schemaVersion: 1,
       clock: source.meta && source.meta.updatedAt,
@@ -216,7 +245,26 @@
         };
       }),
       feedback: source.feedback.map((entry) => ({ ...entry })),
-      users: Array.isArray(source.users) ? source.users.map((user) => ({ ...user })) : [],
+      users: source.users.map((user) => {
+        const staff = indexes.staff.get(user.personId);
+        const stay = staff ? null : source.stays.find((item) => item.guestId === user.personId);
+        const role = stay ? "Guest" : ({ staff: "Staff", manager: "Manager", admin: "Admin" })[staff.role];
+        if (!role) {
+          throw new Error("Tài khoản " + user.id + " liên kết đến vai trò nhân viên không được hỗ trợ.");
+        }
+        return {
+          id: user.id,
+          personId: user.personId,
+          name: staff ? staff.name : stay.guestName,
+          contact: staff ? staff.email : (stay.guestEmail || stay.guestPhone),
+          role,
+          scope: stay ? "Phòng " + stay.roomNumber : (staff.role === "admin"
+            ? "AURORA GRAND · ĐÀ NẴNG"
+            : staff.department),
+          active: user.active,
+          perms: userPermissions[role].slice(),
+        };
+      }),
       audit: [],
       feedbackSummary: source.aiMocks && source.aiMocks.feedbackSummarizer
         ? source.aiMocks.feedbackSummarizer.summary || ""
@@ -244,7 +292,11 @@
       requests: mergeRecords(initial.requests, saved.requests),
       tasks: mergeRecords(initial.tasks, saved.tasks),
       feedback: mergeRecords(initial.feedback, saved.feedback),
-      users: saved.users || initial.users,
+      users: initial.users.map((user) => ({
+        ...user,
+        ...(saved.users || []).find((savedUser) => savedUser.id === user.id),
+      })).concat((saved.users || []).filter((savedUser) =>
+        !initial.users.some((user) => user.id === savedUser.id))),
       audit: saved.audit || [],
     };
     const mockIds = new Set(source.staff.map((person) => person.id)

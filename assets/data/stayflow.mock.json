@@ -38,7 +38,7 @@
       "id": "STY-2026-1044",
       "guestId": "GST-003",
       "guestName": "Lê Thu Hà",
-      "guestEmail": "thuha@example.com",
+      "guestEmail": "lethuha@example.com",
       "guestPhone": "+84 987 450 112",
       "roomNumber": "1502",
       "roomType": "Executive Suite",
@@ -449,6 +449,24 @@
       "status": "off_duty",
       "avatar": ""
     }
+  ],
+  "users": [
+    { "id": "USR-STF-001", "personId": "STF-001", "active": true },
+    { "id": "USR-STF-002", "personId": "STF-002", "active": true },
+    { "id": "USR-STF-003", "personId": "STF-003", "active": true },
+    { "id": "USR-STF-004", "personId": "STF-004", "active": true },
+    { "id": "USR-STF-005", "personId": "STF-005", "active": true },
+    { "id": "USR-STF-006", "personId": "STF-006", "active": true },
+    { "id": "USR-STF-007", "personId": "STF-007", "active": true },
+    { "id": "USR-STF-008", "personId": "STF-008", "active": true },
+    { "id": "USR-STF-009", "personId": "STF-009", "active": true },
+    { "id": "USR-STF-010", "personId": "STF-010", "active": true },
+    { "id": "USR-STF-011", "personId": "STF-011", "active": true },
+    { "id": "USR-STF-012", "personId": "STF-012", "active": true },
+    { "id": "USR-GST-001", "personId": "GST-001", "active": true },
+    { "id": "USR-GST-002", "personId": "GST-002", "active": true },
+    { "id": "USR-GST-003", "personId": "GST-003", "active": true },
+    { "id": "USR-GST-004", "personId": "GST-004", "active": true }
   ],
   "aiMocks": {
     "requestClassifier": [

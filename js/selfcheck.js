@@ -17,6 +17,7 @@ const load = new Function('require', source + `
 `);
 const api = load(require);
 const mockData = require('./data.js');
+const sourceMock = require('../assets/data/stayflow.mock.json');
 
 /* --- 1. Đếm nhiệm vụ theo trạng thái --- */
 const counts = api.countByStatus(api.filterTasks(api.tasks, Date.now()));
@@ -97,3 +98,24 @@ assert.strictEqual(importedTasks.find((task) => task.code === '#REQ-2026-3001').
 assert.strictEqual(importedTasks.find((task) => task.code === '#REQ-2026-3002').service, 'Gọi dọn phòng',
     'Tên dịch vụ lấy theo serviceTypeId liên kết trong JSON');
 console.log('✓ selfcheck: dữ liệu mock JSON nối với bảng nhiệm vụ');
+
+/* --- 11. Nhân viên, khách và tài khoản mẫu phải liên kết nhất quán --- */
+assert.strictEqual(sourceMock.staff.length, 12, 'Mock có 12 hồ sơ nhân viên gồm Staff/Manager/Admin');
+assert.strictEqual(mockData.staff.length, 10, 'Lịch nhân viên chỉ dùng 10 nhân viên vận hành');
+assert.strictEqual(mockData.stays.length, 4, 'Mock có 4 hồ sơ khách lưu trú');
+assert.strictEqual(mockData.users.length, 16, 'Mỗi hồ sơ nhân viên và khách có một tài khoản demo');
+assert.strictEqual(mockData.users.filter((user) => user.active).length, 16,
+    'Các tài khoản demo ban đầu được kích hoạt');
+assert.strictEqual(new Set(mockData.users.map((user) => user.personId)).size, 16,
+    'Không có hồ sơ nào bị gắn nhiều tài khoản');
+assert.ok(mockData.users.every((user) =>
+    sourceMock.staff.some((person) => person.id === user.personId) ||
+    sourceMock.stays.some((stay) => stay.guestId === user.personId)),
+'Mọi tài khoản phải liên kết đến hồ sơ nhân viên hoặc khách có thật');
+const contacts = sourceMock.staff.map((person) => person.email)
+    .concat(sourceMock.stays.map((stay) => stay.guestEmail)).filter(Boolean);
+assert.strictEqual(new Set(contacts.map((contact) => contact.toLowerCase())).size, contacts.length,
+    'Email nhân viên và khách không bị trùng');
+assert.strictEqual(mockData.users.filter((user) => user.role === 'Admin').length, 1,
+    'Có đúng một tài khoản quản trị mẫu');
+console.log('✓ selfcheck: nhân viên, khách và tài khoản demo liên kết nhất quán');

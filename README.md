@@ -60,9 +60,13 @@ trình duyệt và origin, không đồng bộ giữa người dùng/thiết b�
 vào tệp JSON hay máy chủ. Dùng nút **Đặt lại dữ liệu mẫu** ở khu vực Quản lý để
 khởi tạo lại.
 
-JSON hiện không có danh sách tài khoản xác thực. Vì vậy, trang Quản trị không tự
-coi nhân viên hoặc khách là tài khoản đăng nhập. Đăng nhập/đăng ký vẫn là luồng
-demo phía trình duyệt, không xác thực an toàn và không dùng cho môi trường thật.
+JSON có danh sách `users` gồm tài khoản demo liên kết bằng `personId` với 12 hồ sơ
+nhân viên (gồm nhân viên, quản lý, quản trị viên) và 4 hồ sơ khách. Trạng thái
+tài khoản `active` độc lập với trạng thái ca làm hoặc lưu trú. Khi cập nhật dữ liệu
+mẫu, các tài khoản mới được thêm vào dữ liệu trình duyệt đã lưu mà vẫn giữ trạng
+thái và quyền đã chỉnh sửa. Đây chỉ là dữ liệu phân quyền demo: không chứa mật khẩu
+và không cấp quyền đăng nhập thật; luồng đăng nhập/đăng ký hiện vẫn là demo phía
+trình duyệt, không dùng cho môi trường thật.
 Hình ảnh dùng chung nằm trong `assets/images/`. Các màn hình quản lý và quản trị
 dùng chung `css/manager-admin.css` và `js/manager-admin.js`.
 
