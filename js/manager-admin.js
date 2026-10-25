@@ -179,6 +179,36 @@ const SF = {
       showError(message);
       throw new Error(message);
     }
+    const requestStatuses = {
+      new: "Chờ xử lý",
+      assigned: "Đang thực hiện",
+      in_progress: "Đang thực hiện",
+      waiting_guest: "Đang chờ khách",
+      completed: "Hoàn thành",
+      cancelled: "Đã hủy",
+    };
+    const priorities = { high: "Cao", normal: "Trung bình", low: "Thấp" };
+    let addedMockRequests = false;
+    source.requests.forEach((request) => {
+      if (d.requests.some((item) => item.id === request.id)) return;
+      if (!requestStatuses[request.status] || !priorities[request.priority]) {
+        throw new Error(`Dữ liệu mock không hợp lệ: trạng thái hoặc mức ưu tiên của yêu cầu ${request.id}.`);
+      }
+      d.requests.push({
+        id: request.id,
+        stayId: request.stayId,
+        serviceTypeId: request.serviceTypeId,
+        title: request.title,
+        content: request.description,
+        status: requestStatuses[request.status],
+        priority: priorities[request.priority],
+        createdAt: request.createdAt,
+        dueAt: request.dueAt,
+        ai_priority_reason: request.notes || "",
+      });
+      addedMockRequests = true;
+    });
+    if (addedMockRequests) localStorage.setItem("sf_db", JSON.stringify(d));
     d.users = d.users || [];
     d.audit = d.audit || [];
     if (d.feedback === undefined) d.feedback = [];
