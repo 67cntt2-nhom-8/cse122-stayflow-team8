@@ -35,7 +35,7 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
     /* Nhật ký của phiên xem trang (mỗi lần đổi trạng thái / lưu ghi chú) */
     const log = [];
 
-    const API = window.StaffFlow || null;
+    let API = window.StaffFlow || null;
 
     /* Truy vấn an toàn: dùng querySelector để hợp với DOM thật lẫn DOM giả (domcheck). */
     function $(selector) {
@@ -298,7 +298,19 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
         }
     }
 
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.StayFlowDataReady) {
+            window.StaffFlowReady.then(function (api) {
+                API = api;
+                init();
+            }).catch(function (error) {
+                console.error('Không thể tải dữ liệu chi tiết nhiệm vụ:', error);
+                setAll('[data-title]', 'Không thể tải dữ liệu nhiệm vụ');
+            });
+        } else {
+            init();
+        }
+    });
 }
 
 /* Xuất các hàm thuần để kiểm tra bằng Node (js/detailcheck.js) */

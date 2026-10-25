@@ -86,38 +86,38 @@ const tomorrow = api.daySchedule(staff, api.addDays(friday, 1));
 assert.notStrictEqual(tomorrow.slots.morning[0].id, day.slots.morning[0].id, 'Sang ngày mới ca sáng đổi người');
 
 const onDuty = api.SHIFT_ORDER.flatMap((id) => day.slots[id].map((m) => m.id));
-assert.ok(!onDuty.includes('STF004'), 'Nhân sự `Nghỉ` không được xếp ca');
+assert.ok(!onDuty.includes('STF-012'), 'Nhân sự `Nghỉ` không được xếp ca');
 assert.strictEqual(new Set(onDuty).size, onDuty.length, 'Mỗi người chỉ trực 1 ca trong ngày');
 assert.strictEqual(api.daySchedule([], friday).slots.night.length, 0, 'Không có dữ liệu thì ca rỗng');
 
 /* --- 6. Chuẩn hoá + đối chiếu bộ lọc --- */
 assert.strictEqual(api.normalize(null), '');
 assert.strictEqual(api.normalize('ĐỖ Thị'), 'đỗ thị');
-assert.strictEqual(api.matchStaff(staff[2], { query: 'hoàng', department: 'all', shift: 'all' }), true);
+assert.strictEqual(api.matchStaff(staff[2], { query: 'gia', department: 'all', shift: 'all' }), true);
 assert.strictEqual(api.matchStaff(staff[2], { query: '  ', department: 'all', shift: 'all' }), true,
     'Từ khoá chỉ có khoảng trắng coi như bỏ lọc');
-assert.strictEqual(api.matchStaff(staff[2], { query: '', department: 'Lễ tân', shift: 'all' }), false);
+assert.strictEqual(api.matchStaff(staff[0], { query: '', department: 'Lễ tân', shift: 'all' }), false);
 
 /* Ngày giả để kiểm tra bộ lọc một cách tất định */
 const sample = {
     date: friday,
     slots: {
-        morning: [staff[0], staff[1]],   // STF001 Lễ tân · STF002 Buồng phòng
-        afternoon: [staff[2], staff[9]], // STF003 Kỹ thuật · STF010 Lễ tân
-        night: [staff[6]]                // STF007 Kỹ thuật
+        morning: [staff[2], staff[0]],   // STF-003 Lễ tân · STF-001 Buồng phòng
+        afternoon: [staff[7], staff[4]], // STF-010 Lễ tân · STF-007 Kỹ thuật
+        night: [staff[5]]                // STF-008 Kỹ thuật
     }
 };
 
 api.shiftFilters.department = 'Lễ tân';
 const reception = api.filterDay(sample, api.shiftFilters);
-assert.deepStrictEqual(reception.slots.morning.map((m) => m.id), ['STF001']);
-assert.deepStrictEqual(reception.slots.afternoon.map((m) => m.id), ['STF010']);
+assert.deepStrictEqual(reception.slots.morning.map((m) => m.id), ['STF-003']);
+assert.deepStrictEqual(reception.slots.afternoon.map((m) => m.id), ['STF-010']);
 assert.deepStrictEqual(reception.slots.night, [], 'Ca không còn ai khớp thì rỗng nhưng vẫn hiện');
 api.shiftFilters.department = 'all';
 
-api.shiftFilters.query = 'thu hà';
+api.shiftFilters.query = 'vũ thanh';
 const byName = api.filterDay(sample, api.shiftFilters);
-assert.deepStrictEqual(byName.slots.afternoon.map((m) => m.id), ['STF010'],
+assert.deepStrictEqual(byName.slots.afternoon.map((m) => m.id), ['STF-010'],
     'Tìm theo tên không phân biệt hoa thường');
 assert.deepStrictEqual(byName.slots.morning, []);
 api.shiftFilters.query = '';

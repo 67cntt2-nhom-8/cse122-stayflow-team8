@@ -47,8 +47,16 @@ cse122-stayflow-team8/
 
 ```
 
-Mở `index.html` để vào trang chủ. Dữ liệu giả lập hiện được khai báo trong
-`js/data.js`; hình ảnh dùng chung nằm trong `assets/images/`.
+Chạy dự án qua một máy chủ HTTP cục bộ (ví dụ **Live Server** trong VS Code), sau đó
+mở `index.html`. Các trang dùng `fetch()` nên không thể đọc file JSON khi mở trực tiếp
+bằng `file://`.
+
+Dữ liệu mẫu dùng chung nằm trong `assets/data/stayflow.mock.json`. `js/data.js`
+chuyển đổi dữ liệu này sang cấu trúc mà các màn hình Nhân viên sử dụng;
+`js/manager-admin.js` chuyển đổi cho màn hình Quản lý/Quản trị; các trang Khách
+khởi tạo danh sách yêu cầu từ cùng dữ liệu JSON. Khi sửa dữ liệu, giữ nguyên các ID
+được tham chiếu giữa `stays`, `requests`, `tasks`, `staff` và `serviceTypes`.
+Hình ảnh dùng chung nằm trong `assets/images/`.
 Các màn hình quản lý và quản trị dùng chung `css/manager-admin.css` và
 `js/manager-admin.js`.
 

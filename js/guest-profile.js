@@ -97,3 +97,22 @@ avatarInput.addEventListener("change", () => {
 
 /* --- 6. Khởi động: điền sẵn hồ sơ đã lưu --- */
 fillProfile(readProfile());
+
+STAYFLOW_REQUESTS_READY.then(() => {
+  const stay = window.StayFlowMockData?.stays.find((item) => item.roomNumber === "1208");
+  if (!stay) return;
+
+  try {
+    if (localStorage.getItem(PROFILE_KEY) !== null) return;
+    PROFILE_DEFAULTS.fullName = stay.guestName;
+    PROFILE_DEFAULTS.phone = stay.guestPhone;
+    PROFILE_DEFAULTS.email = stay.guestEmail || PROFILE_DEFAULTS.email;
+    const profile = readProfile();
+    fillProfile(profile);
+    localStorage.setItem("stayflow_user_name", profile.fullName);
+    const profileName = document.querySelector("#profile-button b");
+    if (profileName) profileName.textContent = profile.fullName;
+  } catch (error) {
+    console.error("Không thể nạp hồ sơ khách từ dữ liệu mock:", error);
+  }
+});

@@ -147,107 +147,6 @@
           </section>
 
           <section class="request-list" id="request-list" aria-label="Danh sách yêu cầu">
-            <!-- Hai yêu cầu mẫu để demo bộ lọc/phan trang; cấu trúc giống hệt #request-template
-                 nên mọi nút (xem chi tiết, huỷ...) hoạt động ngay. -->
-            <article class="card request-item searchable" data-status="processing" data-day="today" data-search="sf-3182 gọi dọn phòng dọn phòng">
-              <div class="request-item__head">
-                <span class="request-item__icon"><img src="../assets/images/ccf51.svg" alt="" /></span>
-                <div class="request-item__main">
-                  <div class="request-item__title">
-                    <span class="request-item__code">#SF-3182</span>
-                    <h3>Gọi dọn phòng</h3>
-                  </div>
-                  <p class="request-item__meta">Gửi 09:05 hôm nay · Phòng 1208 · Ưu tiên bình thường</p>
-                </div>
-                <span class="status status--warning">
-                  <img src="../assets/images/979b6.svg" alt="" />Đang xử lý
-                </span>
-                <button class="secondary-button request-item__toggle" type="button" aria-expanded="false">
-                  Xem chi tiết
-                </button>
-              </div>
-
-              <div class="request-timeline">
-                <div class="timeline-step done">
-                  <div><span><img src="../assets/images/091ee.svg" alt="" /></span><i></i></div>
-                  <small>Đã gửi · 09:05</small>
-                </div>
-                <div class="timeline-step active">
-                  <div><span></span><i></i></div>
-                  <small>Đã tiếp nhận</small>
-                </div>
-                <div class="timeline-step">
-                  <div><span></span><i></i></div>
-                  <small>Đang thực hiện</small>
-                </div>
-                <div class="timeline-step">
-                  <div><span></span><i></i></div>
-                  <small>Hoàn thành</small>
-                </div>
-              </div>
-
-              <div class="request-item__detail">
-                <div><small>PHỤ TRÁCH</small><strong>Đội buồng phòng</strong></div>
-                <div><small>GHI CHÚ</small><strong>Dọn phòng trước 11:00 giúp mình.</strong></div>
-                <div><small>DỰ KIẾN</small><strong>Trong 20 phút</strong></div>
-              </div>
-
-              <div class="request-item__actions">
-                <button class="text-button text-button--danger" type="button" data-action="cancel">
-                  Huỷ yêu cầu
-                </button>
-                <span class="request-item__hint">Theo dõi tiến độ ngay trong danh sách này.</span>
-              </div>
-            </article>
-
-            <article class="card request-item searchable" data-status="done" data-day="yesterday" data-search="sf-3171 đặt bữa đặt bữa tối">
-              <div class="request-item__head">
-                <span class="request-item__icon"><img src="../assets/images/9e188.svg" alt="" /></span>
-                <div class="request-item__main">
-                  <div class="request-item__title">
-                    <span class="request-item__code">#SF-3171</span>
-                    <h3>Đặt bữa</h3>
-                  </div>
-                  <p class="request-item__meta">Gửi 19:40 hôm qua · Phòng 1208 · Ưu tiên bình thường</p>
-                </div>
-                <span class="status status--success">
-                  <img src="../assets/images/f1794.svg" alt="" />Hoàn thành
-                </span>
-                <button class="secondary-button request-item__toggle" type="button" aria-expanded="false">
-                  Xem chi tiết
-                </button>
-              </div>
-
-              <div class="request-timeline">
-                <div class="timeline-step done">
-                  <div><span><img src="../assets/images/091ee.svg" alt="" /></span><i></i></div>
-                  <small>Đã gửi · 19:40</small>
-                </div>
-                <div class="timeline-step done">
-                  <div><span><img src="../assets/images/091ee.svg" alt="" /></span><i></i></div>
-                  <small>Đã tiếp nhận</small>
-                </div>
-                <div class="timeline-step done">
-                  <div><span><img src="../assets/images/091ee.svg" alt="" /></span><i></i></div>
-                  <small>Đang thực hiện</small>
-                </div>
-                <div class="timeline-step done">
-                  <div><span><img src="../assets/images/091ee.svg" alt="" /></span><i></i></div>
-                  <small>Hoàn thành</small>
-                </div>
-              </div>
-
-              <div class="request-item__detail">
-                <div><small>PHỤ TRÁCH</small><strong>Bếp Aurora</strong></div>
-                <div><small>GHI CHÚ</small><strong>Bữa tối cho 2 người, ít cay.</strong></div>
-                <div><small>DỰ KIẾN</small><strong>Trong 40 phút</strong></div>
-              </div>
-
-              <div class="request-item__actions">
-                <button class="text-button" type="button" data-action="rate">Đánh giá dịch vụ</button>
-                <button class="text-button" type="button" data-action="repeat">Gửi lại yêu cầu</button>
-              </div>
-            </article>
           </section>
 
           <p class="empty-state" id="empty-state">
@@ -323,6 +222,7 @@
     </div>
 
     <!-- Hành vi khung dashboard dùng chung, phải nạp TRƯỚC script của trang -->
+    <script src="../js/data.js"></script>
     <script src="../shared/dashboard.js"></script>
     <script src="../js/guest-service-requests.js"></script>
   </body>

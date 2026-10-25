@@ -466,5 +466,17 @@ if (typeof document !== 'undefined') {
         render();
     }
 
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.StayFlowDataReady) {
+            window.StayFlowDataReady.then(init).catch(function (error) {
+                console.error('Không thể tải dữ liệu lịch ca:', error);
+                const grid = $('#schedGrid');
+                if (grid) {
+                    grid.textContent = 'Không thể tải dữ liệu lịch ca. Hãy kiểm tra assets/data/stayflow.mock.json và chạy trang qua Live Server.';
+                }
+            });
+        } else {
+            init();
+        }
+    });
 }
