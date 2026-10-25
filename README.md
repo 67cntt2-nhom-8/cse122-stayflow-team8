@@ -126,7 +126,7 @@ Khám phá / đăng nhập → Thực hiện nghiệp vụ chính theo vai trò 
 ## Phân công công việc
 - **Nguyễn Ninh Hải (SV1):** Phụ trách chính Quản lý khách sạn + Quản trị viên, chịu trách nhiệm tích hợp bố cục và điều hướng. Chịu trách nhiệm phát hành và đảm bảo chất lượng.
 - **Nguyễn Huy Thành (SV2):** Phụ trách chính Nhân viên vận hành, đồng phụ trách tương tác JavaScript / dữ liệu giả lập. Phụ trách tương tác AI.
-- **Phùng Xuân Thành (SV3):** Phụ trách chính Khách lưu trú, đồng phụ trách một phần giao diện dùng chung. Chịu trách nhiệm responsive, hệ thống thiết kế và điều hướng. Phụ trách chính Quản lý khách sạn + Quản trị viên, chịu trách nhiệm tích hợp bố cục và điều hướng. Chịu trách nhiệm phát hành và đảm bảo chất lượng.
+- **Phùng Xuân Thành (SV3):** Phụ trách chính Khách lưu trú, đồng phụ trách một phần giao diện dùng chung. Chịu trách nhiệm responsive, hệ thống thiết kế và điều hướng.
 
 ## Quy trình Git
 Quy trình làm việc nhóm tuân thủ nghiêm ngặt qua các bước:  
