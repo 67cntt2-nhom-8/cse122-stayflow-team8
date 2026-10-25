@@ -193,6 +193,55 @@ const SF = {
       showError(message);
       throw new Error(message);
     }
+    let addedMockRequests = false;
+    const requestStatuses = {
+      new: "Chờ xử lý",
+      assigned: "Đang thực hiện",
+      in_progress: "Đang thực hiện",
+      waiting_guest: "Đang chờ khách",
+      completed: "Hoàn thành",
+      cancelled: "Đã hủy",
+    };
+    const priorities = { high: "Cao", normal: "Trung bình", low: "Thấp" };
+    source.requests.forEach((request) => {
+      if (d.requests.some((item) => item.id === request.id)) return;
+      const stay = d.stays.find((item) => item.id === request.stayId);
+      const service = d.serviceTypes.find((item) => item.id === request.serviceTypeId);
+      if (!stay || !service || !requestStatuses[request.status] || !priorities[request.priority]) {
+        throw new Error(`Không thể đồng bộ yêu cầu mẫu ${request.id}: thiếu lưu trú, dịch vụ hoặc trạng thái hợp lệ.`);
+      }
+      d.requests.push({
+        id: request.id,
+        stayId: request.stayId,
+        serviceTypeId: request.serviceTypeId,
+        title: request.title,
+        content: request.description,
+        status: requestStatuses[request.status],
+        priority: priorities[request.priority],
+        createdAt: request.createdAt,
+        dueAt: request.dueAt,
+        ai_priority_reason: request.notes || "",
+      });
+      const task = source.tasks.find((item) => item.requestId === request.id);
+      if (task && !d.tasks.some((item) => item.requestId === request.id)) {
+        const taskStatuses = { assigned: "Chờ nhận", in_progress: "Đang làm", waiting_guest: "Chờ khách", completed: "Hoàn tất" };
+        if (!taskStatuses[task.status]) {
+          throw new Error(`Không thể đồng bộ nhiệm vụ mẫu ${task.id}: trạng thái không hợp lệ.`);
+        }
+        d.tasks.push({
+          id: task.id,
+          requestId: task.requestId,
+          staffId: task.assignedTo,
+          status: taskStatuses[task.status],
+          priority: priorities[request.priority],
+          ai_priority_reason: request.notes || "",
+          assignedAt: task.createdAt,
+          completedAt: task.completedAt,
+        });
+      }
+      addedMockRequests = true;
+    });
+    if (addedMockRequests) localStorage.setItem("sf_db", JSON.stringify(d));
     if (d.clock) SF.setClock(d.clock);
     return d;
   },

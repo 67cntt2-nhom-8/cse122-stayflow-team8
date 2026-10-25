@@ -151,6 +151,21 @@
       "dueAt": null,
       "assignedStaffId": "STF-003",
       "notes": "Khách đã trả phòng đúng giờ ban đầu."
+    },
+    {
+      "id": "REQ-2026-3007",
+      "stayId": "STY-2026-1042",
+      "serviceTypeId": "SVC-MAINTENANCE",
+      "title": "Demo tìm kiếm: điều hòa phòng 1208",
+      "description": "Yêu cầu mẫu để thử tìm kiếm theo mã, phòng, khách, dịch vụ, tiêu đề hoặc nội dung.",
+      "status": "new",
+      "priority": "normal",
+      "source": "guest_portal",
+      "createdAt": "2026-10-14T08:45:00+07:00",
+      "updatedAt": "2026-10-14T08:45:00+07:00",
+      "dueAt": "2026-10-14T09:45:00+07:00",
+      "assignedStaffId": null,
+      "notes": "Dữ liệu demo dành cho thao tác tìm kiếm trên trang điều phối."
     }
   ],
   "tasks": [

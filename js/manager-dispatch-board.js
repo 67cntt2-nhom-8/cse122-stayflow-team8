@@ -2,7 +2,7 @@
   const main = SF.shell("manager", "dispatch", "Vận hành / Điều phối trực tiếp", "Bảng điều phối");
   let db = await SF.load(), sel, pick, hide = !SF.cfg().ai;
   const PR = { Cao: ["bad", 0], "Trung bình": ["warn", 1], Thấp: ["info", 2] }, CAP = SF.cfg().cap;
-  const queue = () => SF.rows(db).filter((r) => r.status === "Chờ xử lý" && SF.match(r.id + r.room + r.guest + r.svc, SF.q)).sort((a, b) => PR[a.priority][1] - PR[b.priority][1] || a.due - b.due);
+  const queue = () => SF.rows(db).filter((r) => r.status === "Chờ xử lý" && SF.match(r.id + r.room + r.guest + r.svc + r.title + r.content, SF.q)).sort((a, b) => PR[a.priority][1] - PR[b.priority][1] || a.due - b.due);
   const load = (s) => db.tasks.filter((t) => t.staffId === s.id && ["Chờ nhận", "Đang làm"].includes(t.status)).length;
   const best = (r) => { const sc = (s) => (s.role === r.dept ? 0 : 9) + load(s); return db.staff.filter((s) => s.status === "Đang trực").sort((a, b) => sc(a) - sc(b))[0]; };
   const level = (n) => (n >= CAP ? ["Quá tải", "bad-f"] : n >= CAP * 0.5 ? ["Gần đầy", "warn-f"] : ["Khả dụng", ""]);
