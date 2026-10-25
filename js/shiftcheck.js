@@ -297,6 +297,9 @@ const shiftClasses = [
     'legend__item--morning', 'legend__item--afternoon', 'legend__item--night',
     // chế độ Tuần (dayCardHTML / slotHTML / memberHTML)
     'day-card', 'day-card__head', 'day-card__date', 'tag-today',
+    'day-card__button', 'day-card__weekday', 'day-card__number', 'day-card__month',
+    'day-card__coverage', 'day-card__shift', 'day-card__shift--morning',
+    'day-card__shift--afternoon', 'day-card__shift--night',
     'slot', 'slot--morning', 'slot--afternoon', 'slot--night',
     'slot__head', 'slot__name', 'slot__time', 'slot__empty',
     'members', 'member', 'member__text', 'avatar',
