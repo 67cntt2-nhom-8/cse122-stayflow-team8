@@ -1,22 +1,4 @@
-﻿/* ============================================================================
- * dashboard.js — Hành vi DÙNG CHUNG của khung dashboard StayFlow
- * ----------------------------------------------------------------------------
- * Nạp TRƯỚC script riêng của từng trang:
- *   guest-dashboard/guest-dashboard.html   -> ../shared/dashboard.js + guest-dashboard.js
- *   service-requests/service-requests.html       -> ../shared/dashboard.js + service-requests.js
- *   notifications/notifications.html   -> ../shared/dashboard.js + notifications.js
- *
- * Trước đây mỗi trang tự copy lại: mở/đóng sidebar, dropdown thông báo/hồ sơ,
- * đóng khi bấm ra ngoài, phím Escape, xoá tên khi đăng xuất, toast, bỏ dấu tiếng
- * Việt, hiệu ứng hiện dần, kho yêu cầu localStorage và cả modal gửi yêu cầu.
- * Nay tất cả nằm ở đây; trang chỉ còn xử lý phần đặc thù của mình.
- *
- * Giả định (2 trang đều có): #sidebar, #menu-button, #page-title,
- * #notification-button, #notification-dropdown, #profile-button,
- * #profile-dropdown, #toast.
- * ========================================================================= */
-
-/* --- 0. Giao diện sáng/tối: chạy trước mọi thứ để trang không nháy sai màu ---
+﻿/* --- 0. Giao diện sáng/tối: chạy trước mọi thứ để trang không nháy sai màu ---
  * Lựa chọn lưu ở localStorage nên giữ nguyên khi đổi trang hoặc tải lại. Nút bấm
  * được chèn vào .user-tools của topbar nên 5 trang khách không phải sửa HTML.
  * Bọc trong IIFE để không lộ biến ra phạm vi toàn cục dùng chung với script trang. */
@@ -32,7 +14,7 @@
     try { localStorage.setItem(THEME_KEY, value); } catch (error) { /* không lưu được thì thôi */ }
   };
 
-  // Gắn ngay khi script chạy: shared/dashboard.css đọc thuộc tính này (mục 2b + 14).
+  // Gắn ngay khi script chạy: shared/dashboard.css đọc thuộc tính này.
   root.setAttribute("data-theme", readTheme() === "dark" ? "dark" : "light");
 
   // Icon vẽ bằng SVG nội tuyến + currentColor nên tự đổi màu theo giao diện.
@@ -83,13 +65,6 @@ const toast = document.querySelector("#toast"); // thông báo nổi góc dướ
 const searchInput = document.querySelector("#dashboard-search"); // ô tìm trên topbar
 let toastTimer; // id setTimeout để tự ẩn toast
 
-/* --- 2. Kho yêu cầu dùng chung giữa 2 trang (sessionStorage) ---
- * Cố ý không dùng localStorage: yêu cầu là dữ liệu "thật" của khách, không nên tồn tại
- * vĩnh viễn trên máy. sessionStorage tự xoá khi đóng tab và vẫn chia sẻ giữa 2 trang
- * dashboard trong cùng một tab (cùng nguồn) -> mở sang trang Yêu cầu vẫn thấy yêu cầu. */
-const REQUEST_KEY = "stayflow_requests"; // 1 khoá duy nhất, cả 2 trang đọc/ghi cùng chỗ
-const REQUEST_SEQ_START = 0; // danh sách khởi đầu trống -> yêu cầu đầu tiên là #REQ-1208-01
-
 /* Thông tin phụ trách / thời gian dự kiến theo từng loại dịch vụ. Trang Yêu cầu dùng
    để dựng thẻ, trang Tạo yêu cầu dùng để dựng ô chọn + khối xem trước; để chung ở đây
    nên thêm dịch vụ mới chỉ phải sửa một nơi. Icon nằm trong assets/ của từng trang
@@ -100,25 +75,6 @@ const SERVICE_META = {
   "Đặt bữa": { icon: "../assets/images/9e188.svg", owner: "Bếp Aurora", eta: "Trong 40 phút" },
   "Báo sự cố": { icon: "../assets/images/3df7f.svg", owner: "Kỹ thuật toà nhà", eta: "Trong 15 phút" },
 };
-
-/* Đọc danh sách yêu cầu; JSON hỏng hoặc sessionStorage bị chặn thì trả mảng rỗng để
-   trang vẫn chạy bình thường. */
-function readRequests() {
-  try {
-    return JSON.parse(sessionStorage.getItem(REQUEST_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-/* Ghi thêm 1 yêu cầu vào kho. Cấu trúc bản ghi: { code, title, note, time }. */
-function saveRequest(record) {
-  try {
-    sessionStorage.setItem(REQUEST_KEY, JSON.stringify([...readRequests(), record]));
-  } catch {
-    /* sessionStorage bị chặn thì bỏ qua: phần còn lại của trang vẫn hoạt động. */
-  }
-}
 
 /* Mã kế tiếp: lấy số lớn nhất đang có trong kho rồi cộng 1 -> không trùng mã cũ. */
 function nextRequestCode() {
@@ -233,23 +189,7 @@ if (currentUserName) {
   if (profileName) profileName.textContent = currentUserName;
 }
 
-/* --- 6. Hiệu ứng "hiện dần khi cuộn tới" cho mọi phần tử .reveal --- */
-const revealObserver = new IntersectionObserver(
-  (entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      entry.target.classList.add("visible");
-      observer.unobserve(entry.target); // hiện rồi thì thôi theo dõi cho nhẹ
-    });
-  },
-  { threshold: 0.12 }, // kích hoạt khi ~12% phần tử đã hiện ra
-);
-
-document.querySelectorAll(".reveal").forEach((element, index) => {
-  element.style.animationDelay = `${Math.min(index * 55, 350)}ms`; // so le nhẹ theo thứ tự
-  revealObserver.observe(element);
-});
-/* --- 7. Modal "Gửi yêu cầu mới" (chỉ guest-dashboard còn dùng) ---
+/* --- 6. Modal "Gửi yêu cầu mới" (chỉ guest-dashboard còn dùng) ---
  * Trang gọi setupRequestModal(handler): guest-dashboard.js lưu vào kho + cập nhật thẻ
  * "Yêu cầu gần nhất". Trang "Yêu cầu" hiện dẫn hẳn sang trang tạo yêu cầu riêng.
  * handler nhận { title, note } và chạy sau khi đã giả lập gọi API ~850ms. */

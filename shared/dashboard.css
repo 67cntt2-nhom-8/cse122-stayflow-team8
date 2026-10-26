@@ -1,20 +1,3 @@
-/* ============================================================================
-   StayFlow — dashboard.css
-   ----------------------------------------------------------------------------
-   KHỐI DÙNG CHUNG cho mọi trang có khung dashboard:
-   guest-dashboard/guest-dashboard.html, service-requests/service-requests.html và profile/profile.html.
-
-   Thứ tự nạp trong HTML (quan trọng):
-     1. ../shared/dashboard.css   <- file này (khung + thành phần chung)
-     2. guest-dashboard.css / service-requests.css           <- chỉ phần riêng của từng trang
-
-   Nội dung: font, biến màu, reset, sidebar, topbar, dropdown, thẻ, nhãn trạng thái,
-   nút, modal gửi yêu cầu, toast, hiệu ứng và responsive của khung.
-
-   Sửa file này là cả 2 trang đổi theo -> không cần copy sang trang kia nữa.
-   ============================================================================ */
-
-
 /* --- 1. Font chữ (tải từ Figma, không cần asset cục bộ) --- */
 @font-face { font-family: "Instrument Sans:Regular"; src: url("https://static.figma.com/font/InstrumentSans_wdth_wght__1") format("woff2"); font-style: normal; font-weight: 400; }
 @font-face { font-family: "Instrument Serif:Regular"; src: url("https://static.figma.com/font/InstrumentSerif-Regular_1") format("woff2"); font-style: normal; font-weight: 400; }
@@ -293,11 +276,8 @@ img { display: block; }
 .secondary-button:hover { background: var(--navy); color: #fff; transform: translateY(-2px); }
 .secondary-button:disabled, .secondary-button:disabled:hover { background: var(--paper); color: var(--muted); cursor: not-allowed; opacity: .55; transform: none; }
 
-/* --- 9. Trạng thái lọc của ô tìm kiếm + hiệu ứng hiện dần khi cuộn --- */
+/* --- 9. Trạng thái lọc của ô tìm kiếm --- */
 .searchable.is-filtered { display: none; }
-
-.reveal { opacity: 0; transform: translateY(20px); }
-.reveal.visible { animation: reveal-card .65s cubic-bezier(.2,.75,.2,1) both; }
 
 /* --- 10. Modal gửi yêu cầu + toast thông báo --- */
 .modal-backdrop {
@@ -444,7 +424,6 @@ img { display: block; }
 /* --- 11. Keyframes dùng chung --- */
 @keyframes progress-fill { from { width: 0; } }
 @keyframes active-pulse { 50% { box-shadow: 0 0 0 7px rgba(36,122,84,.1); } }
-@keyframes reveal-card { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* --- 12. Responsive khung (màn <=860px và <=620px) --- */
@@ -485,27 +464,19 @@ img { display: block; }
   .toast { bottom: 16px; left: 16px; right: 16px; }
 }
 
-/* --- 13. Tôn trọng cài đặt "giảm hiệu ứng động" của hệ điều hành --- */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
-  .reveal { opacity: 1; transform: none; }
-}
+/* --- 13. Hiệu ứng: giảm tối đa, mọi thay đổi trạng thái diễn ra tức thì ---
+ * Luật cũ chỉ chạy khi hệ điều hành bật "giảm hiệu ứng động"; nay áp dụng luôn
+ * cho mọi người dùng theo yêu cầu.
+ * Dùng animation-duration .01ms chứ không phải `animation: none` để các phần tử
+ * khai báo `animation ... both` vẫn nhảy ngay tới khung hình cuối (nếu tắt hẳn
+ * bằng `none`, chúng sẽ kẹt ở opacity: 0 của khung `from` và biến mất).
+ * ponytail: đè toàn cục bằng !important; cần bật lại hiệu ứng cho một khối thì
+ * thêm luật riêng có độ ưu tiên cao hơn (xem ngoại lệ vòng xoay bên dưới). */
+*, *::before, *::after { animation-delay: 0s !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-delay: 0s !important; transition-duration: .01ms !important; }
 
-/* ============================================================================
-   14. Giao diện SÁNG / TỐI — nút đổi + những chỗ màu bị viết cứng
-   ----------------------------------------------------------------------------
-   Nút do shared/dashboard.js chèn vào .user-tools nên 5 trang khách không phải
-   sửa HTML. Lựa chọn lưu ở localStorage (khoá "stayflow_theme").
-
-   Mục 2b chỉ đổi biến màu. Dưới đây là: (a) nút đổi giao diện; (b) các luật viết
-   cứng màu nên không tự đổi theo biến; (c) các chỗ dùng --navy làm NỀN, phải giữ
-   nền tối cho khỏi chìm khi --navy đã thành màu sáng.
-
-   Cố ý KHÔNG đổi nền các chip icon (.service-icon, .metric-icon, .notice-item__icon,
-   .request-item__icon, .preview-card__icon, .service-option__icon, .timeline-step span):
-   icon trong assets/ có màu cố định (#B8914A, #247A54, #101D33...), đổi nền tối là
-   icon chìm mất. Chip kem trên nền tối vẫn đọc tốt nên giữ nguyên.
-   ========================================================================= */
+/* Ngoại lệ duy nhất: vòng xoay báo "đang xử lý" trong nút gửi form phải quay,
+ * nếu không người dùng không biết form đã được gửi. */
+.submit-button__loader, .modal__submit b, .primary-button b { animation-duration: .7s !important; animation-iteration-count: infinite !important; }
 
 /* --- 14a. Nút đổi giao diện: 38x38 cho cân với nút chuông bên cạnh --- */
 .theme-toggle { align-items: center; background: var(--cream); border: 1px solid var(--border); border-radius: 10px; color: var(--navy); display: flex; flex: 0 0 auto; height: 38px; justify-content: center; padding: 0; transition: background .2s ease, border-color .2s ease, transform .2s ease; width: 38px; }

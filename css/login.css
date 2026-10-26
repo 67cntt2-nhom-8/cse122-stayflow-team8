@@ -1,15 +1,3 @@
-/* =========================================================================
- * login.css — Giao diện trang Đăng nhập (StayFlow)
- * -------------------------------------------------------------------------
- * Bố cục 2 cột: trái là panel giới thiệu (ảnh nền + hiệu ứng), phải là form.
- * Các phần chính:
- *   1.  Font chữ (@font-face) tải từ Figma.
- *   2.  Biến màu & thiết lập chung (:root, reset).
- *   3.  Panel trái .brand-panel (ảnh nền, lớp phủ, ánh sáng theo chuột...).
- *   4.  Panel phải .form-panel + form đăng nhập và các trạng thái lỗi.
- *   5.  Keyframes (hiệu ứng động) và responsive (media queries).
- * ========================================================================= */
-
 /* --- 1. Font chữ dùng cho trang --- */
 @font-face {
   font-family: "Inria Sans:Regular";
@@ -199,7 +187,6 @@ img {
 }
 
 .eyebrow {
-  animation: reveal-up .75s .32s both;
   color: var(--gold);
   font: 700 11px "Inter:Bold", Arial, sans-serif;
   letter-spacing: .025em;
@@ -207,7 +194,6 @@ img {
 }
 
 .brand-message h1 {
-  animation: reveal-up .85s .42s both;
   font: 400 clamp(35px, 3.05vw, 45px)/1.12 "Inria Sans:Regular", Arial, sans-serif;
   font-variation-settings: "CTGR" 0, "wdth" 100;
   margin: 0;
@@ -215,7 +201,6 @@ img {
 }
 
 .brand-message__description {
-  animation: reveal-up .85s .55s both;
   color: #f2e7cf;
   font: 400 14px/1.55 "Inter:Regular", Arial, sans-serif;
   margin: 18px 0 0;
@@ -223,7 +208,6 @@ img {
 }
 
 .brand-footer {
-  animation: reveal-up .8s .68s both;
   color: #f2e7cf;
   font: 400 11px "Inter:Regular", Arial, sans-serif;
   margin: 0;
@@ -272,18 +256,6 @@ img {
   width: min(100%, 480px);
   z-index: 2;
 }
-
-.reveal-item {
-  animation: form-reveal .65s cubic-bezier(.2, .75, .2, 1) both;
-}
-
-.reveal-item:nth-child(2) { animation-delay: .1s; }
-.reveal-item:nth-child(3) { animation-delay: .18s; }
-.reveal-item:nth-child(4) { animation-delay: .26s; }
-.reveal-item:nth-child(5) { animation-delay: .34s; }
-.reveal-item:nth-child(6) { animation-delay: .42s; }
-.reveal-item:nth-child(7) { animation-delay: .5s; }
-.reveal-item:nth-child(8) { animation-delay: .58s; }
 
 /* --- 10. Tiêu đề form --- */
 .form-heading {
@@ -761,16 +733,6 @@ img {
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes reveal-up {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes form-reveal {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
@@ -887,14 +849,20 @@ img {
   }
 }
 
-/* Tắt/giảm chuyển động cho người dùng bật "giảm hiệu ứng động" trong hệ điều hành */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-  }
+*,
+*::before,
+*::after {
+  animation-delay: 0s !important;
+  animation-duration: .01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-delay: 0s !important;
+  transition-duration: .01ms !important;
+}
+
+/* Ngoại lệ duy nhất: vòng xoay báo "đang xử lý" trong nút đăng nhập phải quay,
+ * nếu không người dùng không biết form đã được gửi. */
+.submit-button__loader {
+  animation-duration: .7s !important;
+  animation-iteration-count: infinite !important;
 }

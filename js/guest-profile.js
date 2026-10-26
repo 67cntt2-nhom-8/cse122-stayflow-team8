@@ -1,16 +1,3 @@
-/* ============================================================================
- * profile.js — Riêng trang "Hồ sơ cá nhân"
- * ----------------------------------------------------------------------------
- * Phần khung dashboard (sidebar, dropdown, toast, Escape, hiệu ứng hiện dần,
- * tên người dùng trên topbar) nằm ở ../shared/dashboard.js.
- * File này chỉ xử lý hồ sơ:
- *   1. Đọc/ghi hồ sơ trong localStorage (khoá stayflow_profile).
- *   2. Điền sẵn biểu mẫu và danh thiếp khi mở trang.
- *   3. Lưu thay đổi -> cập nhật danh thiếp, topbar, dải xác nhận.
- *   4. Nút "Hủy" trả biểu mẫu về dữ liệu đã lưu.
- *   5. Nút "Đổi ảnh" chỉ xem trước ảnh trong phiên này.
- * ========================================================================= */
-
 /* --- 1. Tham chiếu phần tử riêng của trang --- */
 const profileForm = document.querySelector("#profile-form");
 const saveBanner = document.querySelector("#save-banner");

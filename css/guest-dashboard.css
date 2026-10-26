@@ -1,14 +1,3 @@
-/* ============================================================================
-   StayFlow — guest-dashboard.css (chỉ còn phần RIÊNG của trang Tổng quan)
-   ----------------------------------------------------------------------------
-   Khối dùng chung (font, biến màu, reset, sidebar, topbar, dropdown, thẻ, nhãn
-   trạng thái, nút, modal, toast, responsive khung...) đã chuyển sang
-   ../shared/dashboard.css và được nạp TRƯỚC file này.
-
-   File này chỉ giữ những thứ trang Yêu cầu không dùng: lời chào, thẻ phòng 1208,
-   tiến độ kỳ lưu trú, 2 thẻ số liệu, lưới dịch vụ, yêu cầu gần nhất, ưu đãi Spa.
-   ============================================================================ */
-
 /* --- 1. Hiệu ứng nhấn thẻ + khối kỳ lưu trú (thẻ phòng) --- */
 /* .welcome / .eyebrow đã chuyển sang dashboard.css vì cả 3 trang đều dùng. */
 .card.focus-card { border-color: var(--gold); box-shadow: 0 0 0 5px rgba(184,145,74,.12), var(--shadow); }

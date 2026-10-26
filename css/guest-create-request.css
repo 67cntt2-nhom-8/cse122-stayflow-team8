@@ -1,12 +1,3 @@
-/* ============================================================================
-   StayFlow — create-request.css (chỉ phần RIÊNG của trang "Tạo yêu cầu mới")
-   ----------------------------------------------------------------------------
-   Khung dùng chung (font, biến màu, reset, sidebar, topbar, dropdown, thẻ, nút,
-   toast, responsive khung...) nằm ở ../shared/dashboard.css, nạp TRƯỚC.
-   File này chỉ giữ: bố cục 2 cột, ô chọn dịch vụ, ghi chú + chip gợi ý, hàng nút
-   gửi và 2 thẻ ở cột phải (xem trước, nhắc nhở).
-   ============================================================================ */
-
 /* --- A. Bố cục: biểu mẫu bên trái, xem trước bên phải --- */
 .create-grid { align-items: start; display: grid; gap: 16px; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); }
 .create-form { display: flex; flex-direction: column; gap: 22px; padding: 24px; }

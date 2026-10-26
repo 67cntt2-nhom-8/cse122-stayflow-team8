@@ -1,15 +1,3 @@
-/* ============================================================================
-   StayFlow — profile.css (chỉ còn phần RIÊNG của trang "Hồ sơ cá nhân")
-   ----------------------------------------------------------------------------
-   Khối dùng chung (font, biến màu, reset, sidebar, topbar, dropdown, lời chào
-   .welcome, thẻ, nhãn trạng thái, nút, toast, responsive khung...) đã nằm ở
-   ../shared/dashboard.css và được nạp TRƯỚC file này.
-
-   File này chỉ giữ: lưới 2 cột của trang, danh thiếp khách (cột trái), biểu mẫu
-   thông tin liên hệ (cột phải) và dải xác nhận đã lưu.
-   ============================================================================ */
-
-
 /* --- 1. Lưới 2 cột: danh thiếp khách + biểu mẫu --- */
 .profile-grid { align-items: start; display: grid; gap: 18px; grid-template-columns: 300px 1fr; }
 
