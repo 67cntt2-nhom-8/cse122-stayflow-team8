@@ -36,7 +36,7 @@ const SUGGESTIONS = {
   "Báo sự cố": ["Điều hoà không mát", "Vòi nước nóng chảy yếu", "Đèn phòng tắm không sáng"],
 };
 
-let selectedService = Object.keys(SERVICE_META)[0]; // mặc định dịch vụ đầu bảng
+let selectedService = "";
 
 /* --- 2. Ô chọn dịch vụ: mỗi dịch vụ một nút, dữ liệu lấy từ SERVICE_META --- */
 function renderServicePicker() {
@@ -137,29 +137,37 @@ createForm.addEventListener("submit", (event) => {
   sendButton.disabled = true;
 
   window.setTimeout(() => {
-    const record = { code: nextRequestCode(), title: selectedService, serviceName: selectedService, note, time: nowClock(), status: "in_progress" };
-    saveRequest(record);
-    showToast(`Đã gửi yêu cầu ${record.code}. Đang quay về danh sách…`);
-    window.setTimeout(() => {
-      window.location.href = LIST_URL;
-    }, 900); // đủ lâu để khách kịp đọc toast
+    try {
+      const record = { code: nextRequestCode(), title: selectedService, serviceName: selectedService, note, time: nowClock(), status: "in_progress" };
+      saveRequest(record);
+      showToast(`Đã gửi yêu cầu ${record.code}. Đang quay về danh sách…`);
+      window.setTimeout(() => {
+        window.location.href = LIST_URL;
+      }, 900); // đủ lâu để khách kịp đọc toast
+    } catch (error) {
+      console.error("Không thể lưu yêu cầu:", error);
+      showToast(`Không thể lưu yêu cầu: ${error.message}`);
+      sendButton.disabled = false;
+    }
   }, 700);
 });
 
 /* --- 7. Khởi động trang ---
  * Thứ tự: dựng nút chọn trước (selectService cần các nút đã có), rồi mới tới mã dự kiến. */
-renderServicePicker();
-selectService(selectedService);
-previewCode.textContent = nextRequestCode(); // mã sẽ được cấp nếu bấm gửi ngay bây giờ
 noteInput.addEventListener("input", syncNote);
 syncNote();
 sendButton.disabled = true;
 STAYFLOW_REQUESTS_READY.then(() => {
-  if (!SERVICE_META[selectedService]) selectedService = Object.keys(SERVICE_META)[0];
+  selectedService = Object.keys(SERVICE_META)[0];
+  if (!selectedService) throw new Error("Chưa có loại dịch vụ đang hoạt động.");
   renderServicePicker();
   selectService(selectedService);
   previewCode.textContent = nextRequestCode();
   sendButton.disabled = false;
+}).catch((error) => {
+  console.error("Không thể khởi tạo biểu mẫu yêu cầu:", error);
+  noteError.textContent = `Không thể tải danh mục dịch vụ: ${error.message}`;
+  noteError.hidden = false;
 });
 
 /* --- 8. Trợ lý AI giả lập ---

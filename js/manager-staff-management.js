@@ -3,7 +3,7 @@
   let db = await SF.load(), role = "";
   const CAP = SF.cfg().cap, OPEN = ["Chờ nhận", "Đang làm"], on = (s) => s.status === "Đang trực";
   const load = (s) => db.tasks.filter((t) => t.staffId === s.id && OPEN.includes(t.status)).length;
-  const shifts = () => [...new Set([...db.staff.map((s) => s.shift), "Ca sáng", "Ca chiều", "Ca tối"])];
+  const shifts = () => [...new Set(db.shifts.map((shift) => shift.name).concat(db.staff.map((s) => s.shift)))];
   main.innerHTML = `<div id="h"></div><div class="tools"><label>Bộ phận <select id="fr"><option value="">Tất cả</option>${[...new Set(db.staff.map((s) => s.role))].map((r) => `<option>${r}</option>`).join("")}</select></label></div><div id="t" class="wrap"></div>`;
   const $ = (i) => document.getElementById(i), save = (snap, msg) => { SF.save(db); draw(); SF.toast(msg, () => { db = JSON.parse(snap); SF.save(db); draw(); }); };
   function draw() {

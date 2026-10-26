@@ -27,7 +27,9 @@ const SF = {
       : `<button type="button" data-soon="${n}"><span aria-hidden="true">${i}</span>${n}</button>`).join("");
     document.getElementById("app").innerHTML = `<a class="skip" href="#main">Bỏ qua điều hướng</a><div class="shell"><aside class="side"><div class="logo"><b>S</b>StayFlow</div><div class="hotel">AURORA GRAND · ĐÀ NẴNG<strong>${who}</strong></div><nav class="nav" aria-label="Điều hướng chính">${nav}</nav><div class="help"><strong>Cần trợ giúp?</strong><br>Trung tâm vận hành hỗ trợ 24/7<br>Máy lẻ 188<br><button type="button" id="reset">Đặt lại dữ liệu mẫu</button></div></aside><div><header class="top"><div class="grow"><small>${crumb}</small><h2>${title}</h2></div><input class="search" id="q" type="search" placeholder="Tìm mã, phòng, khách..." aria-label="Tìm kiếm"><div class="me"><i aria-hidden="true">M</i><span>Minh Anh<br><small>${who}</small></span></div></header><main id="main"></main></div></div><div id="toast" class="toast" role="status" aria-live="polite"></div>`;
     document.getElementById("q").oninput = (e) => { SF.q = e.target.value; SF.onq && SF.onq(); };
-    document.getElementById("reset").onclick = () => { if (confirm("Đặt lại toàn bộ dữ liệu mẫu?")) { localStorage.removeItem("sf_db"); location.reload(); } };
+    document.getElementById("reset").onclick = () => {
+      if (confirm("Đặt lại toàn bộ dữ liệu mẫu?")) window.StayFlowStore.reset();
+    };
     document.querySelector(".nav").onclick = (e) => { const b = e.target.closest("[data-soon]"); if (b) SF.toast(`${b.dataset.soon}: màn hình này sẽ được bổ sung.`); };
     return document.getElementById("main");
   },
@@ -35,15 +37,16 @@ const SF = {
     const showError = (message) => {
       document.getElementById("main").innerHTML = `<div class="card"><h3>Không tải được dữ liệu</h3><p class="muted">${SF.esc(message)}</p></div>`;
     };
-    let source;
     try {
       if (!window.StayFlowDataReady) throw new Error("Bộ tải dữ liệu dùng chung chưa được nạp.");
       await window.StayFlowDataReady;
-      source = window.StayFlowMockData;
+      if (!window.StayFlowStore || !window.StayFlowData) throw new Error("Kho dữ liệu dùng chung chưa sẵn sàng.");
+      SF.setClock(window.StayFlowData.clock);
+      return window.StayFlowData;
     } catch (error) {
-      const message = `Không thể đọc assets/data/stayflow.mock.json (${error.message}). Hãy chạy dự án bằng Live Server hoặc máy chủ HTTP.`;
+      const message = `Không thể tải dữ liệu StayFlow (${error.message}). Hãy chạy dự án bằng Live Server và kiểm tra dữ liệu đã lưu.`;
       showError(message);
-      throw new Error(message, { cause: error });
+      throw error;
     }
     let d;
     const saved = localStorage.getItem("sf_db");
@@ -193,55 +196,6 @@ const SF = {
       showError(message);
       throw new Error(message);
     }
-    let addedMockRequests = false;
-    const requestStatuses = {
-      new: "Chờ xử lý",
-      assigned: "Đang thực hiện",
-      in_progress: "Đang thực hiện",
-      waiting_guest: "Đang chờ khách",
-      completed: "Hoàn thành",
-      cancelled: "Đã hủy",
-    };
-    const priorities = { high: "Cao", normal: "Trung bình", low: "Thấp" };
-    source.requests.forEach((request) => {
-      if (d.requests.some((item) => item.id === request.id)) return;
-      const stay = d.stays.find((item) => item.id === request.stayId);
-      const service = d.serviceTypes.find((item) => item.id === request.serviceTypeId);
-      if (!stay || !service || !requestStatuses[request.status] || !priorities[request.priority]) {
-        throw new Error(`Không thể đồng bộ yêu cầu mẫu ${request.id}: thiếu lưu trú, dịch vụ hoặc trạng thái hợp lệ.`);
-      }
-      d.requests.push({
-        id: request.id,
-        stayId: request.stayId,
-        serviceTypeId: request.serviceTypeId,
-        title: request.title,
-        content: request.description,
-        status: requestStatuses[request.status],
-        priority: priorities[request.priority],
-        createdAt: request.createdAt,
-        dueAt: request.dueAt,
-        ai_priority_reason: request.notes || "",
-      });
-      const task = source.tasks.find((item) => item.requestId === request.id);
-      if (task && !d.tasks.some((item) => item.requestId === request.id)) {
-        const taskStatuses = { assigned: "Chờ nhận", in_progress: "Đang làm", waiting_guest: "Chờ khách", completed: "Hoàn tất" };
-        if (!taskStatuses[task.status]) {
-          throw new Error(`Không thể đồng bộ nhiệm vụ mẫu ${task.id}: trạng thái không hợp lệ.`);
-        }
-        d.tasks.push({
-          id: task.id,
-          requestId: task.requestId,
-          staffId: task.assignedTo,
-          status: taskStatuses[task.status],
-          priority: priorities[request.priority],
-          ai_priority_reason: request.notes || "",
-          assignedAt: task.createdAt,
-          completedAt: task.completedAt,
-        });
-      }
-      addedMockRequests = true;
-    });
-    if (addedMockRequests) localStorage.setItem("sf_db", JSON.stringify(d));
     if (d.clock) SF.setClock(d.clock);
     return d;
   },

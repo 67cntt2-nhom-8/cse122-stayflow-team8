@@ -21,7 +21,7 @@ const markAllButton = document.querySelector("#mark-all");
 const totalLabel = document.querySelector("#notice-total");
 const unreadLabel = document.querySelector("#notice-unread");
 const bellDot = document.querySelector("#bell-dot"); // chấm đỏ "còn thông báo chưa đọc"
-const NOTICE_KEY = "stayflow_notifications"; // cùng quy ước với stayflow_requests, stayflow_profile
+const NOTICE_KEY = "stayflow_notifications";
 
 /* Bốn thông báo của kỳ lưu trú hiện tại. "minutes" = số phút trước đây, dùng để
    tính mốc thời gian hiển thị và cho bộ lọc "7 ngày gần đây". */
@@ -294,17 +294,18 @@ renderNotices();
 STAYFLOW_REQUESTS_READY.then(() => {
   try {
     if (localStorage.getItem(NOTICE_KEY) !== null) return;
-    const stay = window.StayFlowMockData?.stays.find((item) => item.roomNumber === "1208");
+    const data = window.StayFlowData;
+    const stay = data.stays.find((item) => item.id === GUEST_STAY_ID);
     const imported = stay
-      ? window.StayFlowMockData.requests
+      ? data.requests
           .filter((request) => request.stayId === stay.id)
           .map((request, index) => {
             const createdAt = new Date(request.createdAt);
             return {
               id: `mock-${request.id}`,
               kind: "request",
-              title: `Yêu cầu #${request.id} ${request.status === "completed" ? "đã hoàn thành" : "đang được xử lý"}`,
-              body: request.description,
+              title: `Yêu cầu #${request.id} ${request.status === "Hoàn thành" ? "đã hoàn thành" : request.status === "Đã hủy" ? "đã huỷ" : "đang được xử lý"}`,
+              body: request.content,
               minutes: Math.max(0, Math.floor((Date.now() - createdAt.getTime()) / 60000)),
               read: index > 0,
             };

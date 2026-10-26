@@ -9,9 +9,32 @@
 
   function assign(r, s) {
     const t = r.task;
-    if (t) t.staffId = s.id;
-    else db.tasks.push({ id: "TSK" + String(db.tasks.length + 1).padStart(3, "0"), requestId: r.id, staffId: s.id, status: "Chờ nhận", priority: r.priority, ai_priority_reason: r.ai_priority_reason, assignedAt: new Date(SF.now()).toISOString().slice(0, 19), completedAt: null });
-    db.requests.find((x) => x.id === r.id).status = "Đang thực hiện";
+    if (t) {
+      t.staffId = s.id;
+      t.status = "Chờ nhận";
+    } else {
+      const next = db.tasks.reduce((max, task) => {
+        const match = /-(\d+)$/.exec(task.id);
+        return match ? Math.max(max, Number(match[1])) : max;
+      }, 5000) + 1;
+      db.tasks.push({
+        id: `TSK-${new Date(SF.now()).getFullYear()}-${next}`,
+        requestId: r.id,
+        staffId: s.id,
+        status: "Chờ nhận",
+        priority: r.priority,
+        ai_priority_reason: r.ai_priority_reason,
+        assignedAt: new Date(SF.now()).toISOString(),
+        startedAt: null,
+        completedAt: null,
+        checklist: [],
+        internalNote: "",
+      });
+    }
+    const request = db.requests.find((x) => x.id === r.id);
+    request.assignedStaffId = s.id;
+    request.status = "Đang thực hiện";
+    request.updatedAt = new Date(SF.now()).toISOString();
     SF.log(db, `Phân công ${r.id} cho ${s.name}`);
   }
   function run(list, msg) { // phân công + cho phép hoàn tác

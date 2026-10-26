@@ -34,7 +34,7 @@ function formatClock(value) {
 
 if (typeof document !== 'undefined' && typeof window !== 'undefined') {
 
-    const DEFAULT_CODE = '#SF-3192';
+    const DEFAULT_CODE = '#REQ-2026-3002';
     const STARTED_AT = Date.now();
 
     /* Nhật ký của phiên xem trang (mỗi lần đổi trạng thái / lưu ghi chú) */
@@ -211,7 +211,18 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
             toast('Nhiệm vụ đã ở trạng thái ' + API.STATUS_TEXT[status]);
             return;
         }
+        const snapshot = Object.assign({}, task);
         API.applyStatus(task, status);
+        try {
+            API.saveTask(task, note);
+        } catch (error) {
+            Object.assign(task, snapshot);
+            console.error('Không thể lưu thay đổi nhiệm vụ:', error);
+            toast('Không thể lưu thay đổi: ' + error.message);
+            paint(task);
+            paintActions(task);
+            return;
+        }
         paint(task);
         paintActions(task);
         addLog(status, API.STATUS_TEXT[before] + ' → ' + API.STATUS_TEXT[task.status], note);
@@ -283,6 +294,14 @@ if (typeof document !== 'undefined' && typeof window !== 'undefined') {
                     return;
                 }
                 showNoteError(false);
+                try {
+                    API.saveTask(task, note);
+                } catch (error) {
+                    console.error('Không thể lưu ghi chú nhiệm vụ:', error);
+                    toast('Không thể lưu ghi chú: ' + error.message);
+                    return;
+                }
+                task.note = note;
                 addLog(task.status, 'Ghi chú xử lý: đã lưu phản hồi của nhân viên', note);
                 flash('#noteField');
                 toast('Đã lưu ghi chú cho ' + task.code);

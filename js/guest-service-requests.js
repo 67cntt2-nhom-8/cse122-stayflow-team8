@@ -7,7 +7,7 @@
  *   1. Lọc theo tab trạng thái + dropdown + từ khoá, rồi chia trang.
  *   2. Đếm lại số lượng cho các tab và thẻ số liệu.
  *   3. Mở/đóng chi tiết, huỷ, đánh giá, gửi lại một yêu cầu.
- *   4. Dựng thẻ yêu cầu mới / đọc lại từ kho của phiên (sessionStorage).
+ *   4. Dựng thẻ yêu cầu mới / đọc lại từ kho dữ liệu StayFlow dùng chung.
  *   5. Danh sách thông báo lấy từ chính các yêu cầu đã tạo.
  * ========================================================================= */
 
@@ -179,8 +179,13 @@ requestList.addEventListener("click", (event) => {
   const item = action.closest(".request-item");
 
   if (action.dataset.action === "cancel") {
-    markCancelled(item);
-    showToast("Yêu cầu đã được huỷ.");
+    try {
+      markCancelled(item);
+      showToast("Yêu cầu đã được huỷ.");
+    } catch (error) {
+      console.error("Không thể huỷ yêu cầu:", error);
+      showToast(`Không thể huỷ yêu cầu: ${error.message}`);
+    }
     return;
   }
 
@@ -197,6 +202,9 @@ requestList.addEventListener("click", (event) => {
 
 /* Huỷ yêu cầu: đổi nhãn trạng thái, bỏ bước đang chạy, xoá nút huỷ rồi đếm lại. */
 function markCancelled(item) {
+  const record = readRequests().find((request) => request.code === cardCode(item));
+  if (!record) throw new Error("Không tìm thấy yêu cầu cần huỷ.");
+  saveRequest({ ...record, status: "cancelled" });
   item.dataset.status = "cancelled";
 
   const pill = item.querySelector(".status");
@@ -215,7 +223,7 @@ function markCancelled(item) {
   applyFilters();
 }
 /* --- 6. Dựng thẻ yêu cầu từ <template> ---
- * Dùng chung cho yêu cầu vừa tạo và yêu cầu đọc lại từ kho của phiên,
+ * Dùng chung cho yêu cầu vừa tạo và yêu cầu đọc lại từ kho dữ liệu chung,
  * nhờ vậy thẻ mới và thẻ sau khi tải lại trang trông giống hệt nhau. */
 function renderRequest({ code, title, serviceName, note, time, day = "today", dayLabel = "hôm nay" }) {
   const meta = SERVICE_META[serviceName] || SERVICE_META[title] || SERVICE_META["Gọi dọn phòng"];
@@ -278,7 +286,7 @@ function createRequest(title, note) {
 function restoreRequests() {
   const rendered = new Set(requestItems().map(cardCode));
 
-  readRequests().forEach((record) => {
+  [...readRequests()].reverse().forEach((record) => {
     if (record && record.code && !rendered.has(record.code)) renderRequest(record);
   });
 }
@@ -295,7 +303,7 @@ function renderNotifications() {
   badge.textContent = `${records.length} mới`;
   empty.hidden = records.length > 0;
 
-  [...records].reverse().forEach((record) => {
+  records.forEach((record) => {
     const item = document.createElement("button");
     item.className = "notification-item";
     item.type = "button";
