@@ -1,12 +1,20 @@
 (async () => {
   const main = SF.shell("admin", "hotel", "Quản trị / Khách sạn", "Quản lý khách sạn");
   const db = await SF.load();
-  const occupied = db.stays.filter((s) => s.status === "Đang lưu trú").length;
+  const occupied = db.stays.filter(
+    (stay) => stay.status === "Đang lưu trú",
+  ).length;
   const totalRooms = 120;
   const occupancy = Math.round((occupied / totalRooms) * 100);
-  const overdue = db.requests.filter((r) => SF.state(r)[0] === "Quá hạn").length;
-  const team = db.staff.filter((s) => s.status === "Đang trực").length;
-  const stayList = [...db.stays].sort((a, b) => a.roomNumber.localeCompare(b.roomNumber, undefined, { numeric: true }));
+  const overdue = db.requests.filter(
+    (request) => SF.state(request)[0] === "Quá hạn",
+  ).length;
+  const team = db.staff.filter(
+    (staff) => staff.status === "Đang trực",
+  ).length;
+  const stayList = [...db.stays].sort((a, b) =>
+    a.roomNumber.localeCompare(b.roomNumber, undefined, { numeric: true }),
+  );
 
   const chart = [
     { label: "1W", value: 62 },
@@ -31,9 +39,13 @@
     <div class="kpis">
       ${[
         ["Phòng đang có khách", `${occupied}/${totalRooms}`, `${occupancy}% lấp đầy`],
-        ["Yêu cầu đang mở", `${db.requests.filter((r) => !["Hoàn thành", "Đã hủy"].includes(r.status)).length}`, overdue ? `${overdue} quá hạn` : "Không có chậm trễ"],
-        ["Nhân viên đang trực", `${team}/${db.staff.length}`, "Phân bổ theo ca làm"] ,
-        ["Điểm hiệu suất", `4.8/5`, "Khách đánh giá dịch vụ"]
+        [
+          "Yêu cầu đang mở",
+          `${db.requests.filter((request) => !["Hoàn thành", "Đã hủy"].includes(request.status)).length}`,
+          overdue ? `${overdue} quá hạn` : "Không có chậm trễ",
+        ],
+        ["Nhân viên đang trực", `${team}/${db.staff.length}`, "Phân bổ theo ca làm"],
+        ["Điểm hiệu suất", `4.8/5`, "Khách đánh giá dịch vụ"],
       ].map(([label, value, note]) => `
         <div class="card kpi">
           <span>${label}</span>
@@ -87,13 +99,18 @@
           </thead>
           <tbody>
             ${stayList.slice(0, 8).map((stay) => {
-              const openReqs = db.requests.filter((r) => r.stayId === stay.id && !["Hoàn thành", "Đã hủy"].includes(r.status)).length;
+              const openRequests = db.requests.filter(
+                (request) =>
+                  request.stayId === stay.id &&
+                  !["Hoàn thành", "Đã hủy"].includes(request.status),
+              ).length;
+
               return `
                 <tr>
                   <td><strong>${SF.esc(stay.roomNumber)}</strong></td>
                   <td>${SF.esc(stay.guestName)}</td>
                   <td><span class="chip ${stay.status === "Đang lưu trú" ? "ok" : "info"}">${SF.esc(stay.status)}</span></td>
-                  <td>${openReqs}</td>
+                  <td>${openRequests}</td>
                 </tr>
               `;
             }).join("")}
