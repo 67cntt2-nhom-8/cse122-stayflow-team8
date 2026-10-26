@@ -100,7 +100,7 @@
 }
 
 /* --- H. Trợ lý AI giả lập: bong bóng góc dưới phải + hộp thoại ---
- * Dữ liệu trả lời do create-request.js đọc từ #assistant-data trong HTML. */
+ * Dữ liệu trả lời do create-request.js đọc từ aiMocks.guestAssistant (stayflow.mock.json). */
 .ai-bubble {
   align-items: center;
   background: var(--navy);
