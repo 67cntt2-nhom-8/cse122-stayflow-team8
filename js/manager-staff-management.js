@@ -1,30 +1,11 @@
 (async () => {
   const main = SF.shell("manager", "hr", "Quản lý / Nhân sự", "Nhân sự");
-  let db = await SF.load();
-  let role = "";
-
-  const CAP = SF.cfg().cap;
-  const OPEN = ["Chờ nhận", "Đang làm"];
-  const on = (staff) => staff.status === "Đang trực";
-  const load = (staff) =>
-    db.tasks.filter((task) => task.staffId === staff.id && OPEN.includes(task.status)).length;
-  const shifts = () => [
-    ...new Set([...db.staff.map((staff) => staff.shift), "Ca sáng", "Ca chiều", "Ca tối"]),
-  ];
-
-  main.innerHTML = `<div id="h"></div><div class="tools"><label>Bộ phận <select id="fr"><option value="">Tất cả</option>${[...new Set(db.staff.map((staff) => staff.role))].map((item) => `<option>${item}</option>`).join("")}</select></label></div><div id="t" class="wrap"></div>`;
-
-  const $ = (id) => document.getElementById(id);
-  const save = (snapshot, message) => {
-    SF.save(db);
-    draw();
-    SF.toast(message, () => {
-      db = JSON.parse(snapshot);
-      SF.save(db);
-      draw();
-    });
-  };
-
+  let db = await SF.load(), role = "";
+  const CAP = SF.cfg().cap, OPEN = ["Chờ nhận", "Đang làm"], on = (s) => s.status === "Đang trực";
+  const load = (s) => db.tasks.filter((t) => t.staffId === s.id && OPEN.includes(t.status)).length;
+  const shifts = () => [...new Set(db.shifts.map((shift) => shift.name).concat(db.staff.map((s) => s.shift)))];
+  main.innerHTML = `<div id="h"></div><div class="tools"><label>Bộ phận <select id="fr"><option value="">Tất cả</option>${[...new Set(db.staff.map((s) => s.role))].map((r) => `<option>${r}</option>`).join("")}</select></label></div><div id="t" class="wrap"></div>`;
+  const $ = (i) => document.getElementById(i), save = (snap, msg) => { SF.save(db); draw(); SF.toast(msg, () => { db = JSON.parse(snap); SF.save(db); draw(); }); };
   function draw() {
     const staffList = db.staff.filter((staff) =>
       (!role || staff.role === role) &&

@@ -1,62 +1,41 @@
 (async () => {
   const main = SF.shell("manager", "dispatch", "Vận hành / Điều phối trực tiếp", "Bảng điều phối");
-  let db = await SF.load();
-  let sel;
-  let pick;
-  let hide = !SF.cfg().ai;
+  let db = await SF.load(), sel, pick, hide = !SF.cfg().ai;
+  const PR = { Cao: ["bad", 0], "Trung bình": ["warn", 1], Thấp: ["info", 2] }, CAP = SF.cfg().cap;
+  const queue = () => SF.rows(db).filter((r) => r.status === "Chờ xử lý" && SF.match(r.id + r.room + r.guest + r.svc, SF.q)).sort((a, b) => PR[a.priority][1] - PR[b.priority][1] || a.due - b.due);
+  const load = (s) => db.tasks.filter((t) => t.staffId === s.id && ["Chờ nhận", "Đang làm"].includes(t.status)).length;
+  const best = (r) => { const sc = (s) => (s.role === r.dept ? 0 : 9) + load(s); return db.staff.filter((s) => s.status === "Đang trực").sort((a, b) => sc(a) - sc(b))[0]; };
+  const level = (n) => (n >= CAP ? ["Quá tải", "bad-f"] : n >= CAP * 0.5 ? ["Gần đầy", "warn-f"] : ["Khả dụng", ""]);
 
-  const PR = {
-    Cao: ["bad", 0],
-    "Trung bình": ["warn", 1],
-    Thấp: ["info", 2],
-  };
-  const CAP = SF.cfg().cap;
-  const queue = () => SF.rows(db)
-    .filter((request) =>
-      request.status === "Chờ xử lý" &&
-      SF.match(
-        request.id + request.room + request.guest + request.svc + request.title + request.content,
-        SF.q,
-      ),
-    )
-    .sort((a, b) => PR[a.priority][1] - PR[b.priority][1] || a.due - b.due);
-  const load = (staff) =>
-    db.tasks.filter(
-      (task) => task.staffId === staff.id && ["Chờ nhận", "Đang làm"].includes(task.status),
-    ).length;
-  const best = (request) => {
-    const score = (staff) => (staff.role === request.dept ? 0 : 9) + load(staff);
-    return db.staff
-      .filter((staff) => staff.status === "Đang trực")
-      .sort((a, b) => score(a) - score(b))[0];
-  };
-  const level = (count) =>
-    count >= CAP
-      ? ["Quá tải", "bad-f"]
-      : count >= CAP * 0.5
-        ? ["Gần đầy", "warn-f"]
-        : ["Khả dụng", ""];
-
-  function assign(request, staff) {
-    const task = request.task;
-
-    if (task) {
-      task.staffId = staff.id;
+  function assign(r, s) {
+    const t = r.task;
+    if (t) {
+      t.staffId = s.id;
+      t.status = "Chờ nhận";
     } else {
+      const next = db.tasks.reduce((max, task) => {
+        const match = /-(\d+)$/.exec(task.id);
+        return match ? Math.max(max, Number(match[1])) : max;
+      }, 5000) + 1;
       db.tasks.push({
-        id: "TSK" + String(db.tasks.length + 1).padStart(3, "0"),
-        requestId: request.id,
-        staffId: staff.id,
+        id: `TSK-${new Date(SF.now()).getFullYear()}-${next}`,
+        requestId: r.id,
+        staffId: s.id,
         status: "Chờ nhận",
-        priority: request.priority,
-        ai_priority_reason: request.ai_priority_reason,
-        assignedAt: new Date(SF.now()).toISOString().slice(0, 19),
+        priority: r.priority,
+        ai_priority_reason: r.ai_priority_reason,
+        assignedAt: new Date(SF.now()).toISOString(),
+        startedAt: null,
         completedAt: null,
+        checklist: [],
+        internalNote: "",
       });
     }
-
-    db.requests.find((item) => item.id === request.id).status = "Đang thực hiện";
-    SF.log(db, `Phân công ${request.id} cho ${staff.name}`);
+    const request = db.requests.find((x) => x.id === r.id);
+    request.assignedStaffId = s.id;
+    request.status = "Đang thực hiện";
+    request.updatedAt = new Date(SF.now()).toISOString();
+    SF.log(db, `Phân công ${r.id} cho ${s.name}`);
   }
 
   function run(list, message) {

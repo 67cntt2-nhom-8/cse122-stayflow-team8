@@ -1,285 +1,450 @@
-/* =========================================================================
-   StayFlow – Bộ chuyển đổi dữ liệu mock JSON dùng chung
-   -------------------------------------------------------------------------
-   Trình duyệt đọc assets/data/stayflow.mock.json qua HTTP và chuyển đổi sang
-   cấu trúc mà các trang Nhân viên đang dùng. Node đọc cùng JSON trực tiếp.
+/* Shared StayFlow data store. The mock JSON is the only source used to seed it. */
+(function (root) {
+  "use strict";
 
-   - Trình duyệt: <script src="../js/data.js"></script> -> window.StayFlowDataReady
-   - Node:        require('./js/data.js')              -> module.exports
-   ========================================================================= */
-(function (root, factory) {
-    'use strict';
-    const data = factory();
+  const STORAGE_KEY = "sf_db";
+  const SHIFT_NAMES = {
+    morning: "Ca sáng",
+    afternoon: "Ca chiều",
+    day: "Ca ngày",
+    evening: "Ca chiều",
+    night: "Ca đêm",
+  };
+  const DEPARTMENT_NAMES = {
+    Housekeeping: "Buồng phòng",
+    Engineering: "Kỹ thuật",
+    "Food & Beverage": "Ẩm thực",
+    "Room Service": "Ẩm thực",
+    "Front Desk": "Lễ tân",
+    Operations: "Vận hành",
+    Administration: "Quản trị",
+  };
+  const REQUEST_STATUS = {
+    new: "Chờ xử lý",
+    assigned: "Đang thực hiện",
+    in_progress: "Đang thực hiện",
+    waiting_guest: "Đang chờ khách",
+    completed: "Hoàn thành",
+    cancelled: "Đã hủy",
+  };
+  const TASK_STATUS = {
+    assigned: "Chờ nhận",
+    in_progress: "Đang làm",
+    waiting_guest: "Chờ khách",
+    completed: "Hoàn tất",
+  };
+  const PRIORITY = { high: "Cao", normal: "Trung bình", low: "Thấp" };
 
-    // Trình duyệt
-    if (typeof window !== 'undefined') {
-        window.StayFlowData = data;
-        if (typeof window.fetch === 'function') {
-            window.StayFlowDataReady = window.fetch('../assets/data/stayflow.mock.json')
-                .then(function (response) {
-                    if (!response.ok) {
-                        throw new Error('HTTP ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(function (source) {
-                    const converted = convertMockData(source);
-                    Object.keys(data).forEach(function (key) {
-                        delete data[key];
-                    });
-                    Object.assign(data, converted);
-                    window.StayFlowMockData = source;
-                    return data;
-                })
-                .catch(function (error) {
-                    console.error('Không thể tải assets/data/stayflow.mock.json:', error);
-                    throw error;
-                });
-        }
+  function requireLists(source) {
+    const names = ["staff", "serviceTypes", "stays", "requests", "tasks", "feedback", "users"];
+    if (!source || typeof source !== "object" || names.some((name) => !Array.isArray(source[name]))) {
+      throw new Error("stayflow.mock.json phải có các danh sách staff, stays, users, serviceTypes, requests, tasks và feedback.");
     }
-    // Node (selfcheck / domcheck)
-    if (typeof module !== 'undefined' && module.exports) {
-        module.exports = convertMockData(require('../assets/data/stayflow.mock.json'));
-    }
-})(typeof self !== 'undefined' ? self : this, function () {
-    'use strict';
+  }
 
-    /* ---------- Nhân viên ----------
-       `role`  = bộ phận (dùng để lọc lịch ca trực)
-       `shift` = ca đăng ký, khớp shifts[].name bên dưới
-       `status`= 'Đang trực' (có thể xếp ca) hoặc 'Nghỉ' (không xếp ca) */
-    const staff = [
-        { id: 'STF001', name: 'Nguyễn Thị Mai Anh', role: 'Lễ tân', status: 'Đang trực', shift: 'Ca sáng', phone: '0901234567', email: 'maianh.n@stayflow.vn' },
-        { id: 'STF002', name: 'Trần Văn Bình', role: 'Buồng phòng', status: 'Đang trực', shift: 'Ca sáng', phone: '0902345678', email: 'binh.tr@stayflow.vn' },
-        { id: 'STF003', name: 'Lê Hoàng Phúc', role: 'Kỹ thuật', status: 'Đang trực', shift: 'Ca chiều', phone: '0903456789', email: 'phuc.le@stayflow.vn' },
-        { id: 'STF004', name: 'Phạm Thị Hương', role: 'Lễ tân', status: 'Nghỉ', shift: 'Ca đêm', phone: '0904567890', email: 'huong.p@stayflow.vn' },
-        { id: 'STF005', name: 'Vũ Đức Thành', role: 'Buồng phòng', status: 'Đang trực', shift: 'Ca chiều', phone: '0905678901', email: 'thanh.vu@stayflow.vn' },
-        { id: 'STF006', name: 'Ngô Thị Lan', role: 'Lễ tân', status: 'Đang trực', shift: 'Ca sáng', phone: '0906789012', email: 'lan.ngo@stayflow.vn' },
-        { id: 'STF007', name: 'Đặng Minh Quân', role: 'Kỹ thuật', status: 'Đang trực', shift: 'Ca đêm', phone: '0907890123', email: 'quan.dang@stayflow.vn' },
-        { id: 'STF008', name: 'Bùi Thị Ngọc', role: 'Buồng phòng', status: 'Đang trực', shift: 'Ca đêm', phone: '0908901234', email: 'ngoc.bui@stayflow.vn' },
-        { id: 'STF009', name: 'Hoàng Văn Tú', role: 'Kỹ thuật', status: 'Đang trực', shift: 'Ca sáng', phone: '0909012345', email: 'tu.hoang@stayflow.vn' },
-        { id: 'STF010', name: 'Đỗ Thị Thu Hà', role: 'Lễ tân', status: 'Đang trực', shift: 'Ca chiều', phone: '0910123456', email: 'ha.do@stayflow.vn' }
-    ];
+  function indexById(items, name) {
+    const index = new Map();
+    items.forEach((item) => {
+      if (!item || typeof item.id !== "string" || !item.id.trim() || index.has(item.id)) {
+        throw new Error("ID bị thiếu hoặc trùng trong danh sách " + name + ": " + (item && item.id));
+      }
+      index.set(item.id, item);
+    });
+    return index;
+  }
 
-    /* ---------- Ca làm việc ---------- */
-    const shifts = [
-        { id: 'morning', name: 'Ca sáng', start: '06:00', end: '14:00' },
-        { id: 'afternoon', name: 'Ca chiều', start: '14:00', end: '22:00' },
-        { id: 'night', name: 'Ca đêm', start: '22:00', end: '06:00' }
-    ];
-
-    /* ---------- Loại dịch vụ ---------- */
-    const serviceTypes = [
-        { id: 'ST001', categoryName: 'Vệ sinh phòng', description: 'Dịch vụ dọn dẹp, thay đồ giường, cung cấp đồ dùng phòng tắm', expectedSLA: 30, department: 'Buồng phòng' },
-        { id: 'ST002', categoryName: 'Bảo trì kỹ thuật', description: 'Sửa chữa, bảo dưỡng hệ thống điện, nước, điều hòa, thiết bị phòng', expectedSLA: 60, department: 'Kỹ thuật' },
-        { id: 'ST003', categoryName: 'Ăn uống & Phòng ăn', description: 'Dịch vụ giao đồ ăn, nước uống tại phòng hoặc phục vụ tại nhà hàng khách sạn', expectedSLA: 45, department: 'F&B' },
-        { id: 'ST004', categoryName: 'Hỗ trợ lễ tân', description: 'Yêu cầu liên quan đến nhận phòng, trả phòng, lưu trữ hành lý, in ấn', expectedSLA: 15, department: 'Lễ tân' },
-        { id: 'ST005', categoryName: 'Spa & Thư giãn', description: 'Đặt lịch massage, phòng xông hơi, dịch vụ spa tại khách sạn', expectedSLA: 120, department: 'Spa' }
-    ];
-
-    /* ---------- Lưu trú ---------- */
-    const stays = [
-        { id: 'STR001', guestName: 'Ông Nguyễn Hoàng Long', roomNumber: '305', checkInDate: '2026-10-01', checkOutDate: '2026-10-07', status: 'Đang lưu trú', guestPhone: '0912345678', specialRequests: 'Tầng cao, không hút thuốc' },
-        { id: 'STR002', guestName: 'Cô Trần Thị Hạnh', roomNumber: '218', checkInDate: '2026-10-05', checkOutDate: '2026-10-08', status: 'Đang lưu trú', guestPhone: '0923456789', specialRequests: 'Muốn thêm gối mềm' },
-        { id: 'STR003', guestName: 'Gia đình anh Phạm Minh Tuấn', roomNumber: '412', checkInDate: '2026-10-03', checkOutDate: '2026-10-10', status: 'Đang lưu trú', guestPhone: '0934567890', specialRequests: 'Gia đình có trẻ em, cần cũi' },
-        { id: 'STR004', guestName: 'Anh Đỗ Quang Huy', roomNumber: '110', checkInDate: '2026-09-25', checkOutDate: '2026-09-30', status: 'Đã trả phòng', guestPhone: '0945678901', specialRequests: 'Không có' },
-        { id: 'STR005', guestName: 'Chị Lê Thủy Tiên', roomNumber: '501', checkInDate: '2026-10-06', checkOutDate: '2026-10-09', status: 'Đang lưu trú', guestPhone: '0956789012', specialRequests: 'Phòng view biển, tầng cao' }
-    ];
-
-    /* ---------- Yêu cầu của khách ---------- */
-    const requests = [
-        {
-            id: 'REQ001', stayId: 'STR001', serviceTypeId: 'ST002', title: 'Điều hòa không mát',
-            content: 'Điều hòa phòng 305 không lạnh, quạt chạy nhưng không làm mát. Khách cần sửa gấp vì thời tiết đang rất nóng.',
-            status: 'Chờ xử lý', createdAt: '2026-10-07T11:40:00', ai_classification: 'Kỹ thuật', priority: 'Cao',
-            ai_priority_reason: 'Điều hòa hỏng ảnh hưởng trực tiếp đến trải nghiệm nghỉ ngơi trong thời tiết nóng → Ưu tiên Cao. Nhân viên kỹ thuật đang trực ca chiều nên có thể tiếp cận nhanh.'
-        },
-        {
-            id: 'REQ002', stayId: 'STR002', serviceTypeId: 'ST001', title: 'Bổ sung nước suối',
-            content: 'Bổ sung thêm 4 chai nước suối và 2 ly thủy tinh cho khách tại phòng 218.',
-            status: 'Chờ xử lý', createdAt: '2026-10-07T11:44:00', ai_classification: 'Buồng phòng', priority: 'Trung bình',
-            ai_priority_reason: 'Yêu cầu bổ sung vật dụng cơ bản, không khẩn cấp nhưng cần chuẩn bị đúng giờ → Ưu tiên Trung bình.'
-        },
-        {
-            id: 'REQ003', stayId: 'STR003', serviceTypeId: 'ST001', title: 'Dọn phòng buổi tối',
-            content: 'Dọn phòng và thay khăn mới cho phòng 412 vào buổi tối sau 19h khi gia đình đi ăn.',
-            status: 'Chờ xử lý', createdAt: '2026-10-07T11:36:00', ai_classification: 'Buồng phòng', priority: 'Thấp',
-            ai_priority_reason: 'Vệ sinh phòng theo lịch, không gấp và có thể linh hoạt thời gian → Ưu tiên Thấp.'
-        },
-        {
-            id: 'REQ004', stayId: 'STR005', serviceTypeId: 'ST001', title: 'Bổ sung khăn tắm',
-            content: 'Bổ sung thêm 2 khăn tắm và 1 khăn chân cho khách phòng 501.',
-            status: 'Đang thực hiện', createdAt: '2026-10-07T11:50:00', ai_classification: 'Buồng phòng', priority: 'Trung bình',
-            ai_priority_reason: 'Bổ sung vật dụng cần xử lý trong ca nhưng không khẩn cấp → Ưu tiên Trung bình.'
-        },
-        {
-            id: 'REQ005', stayId: 'STR004', serviceTypeId: 'ST002', title: 'Xử lý khóa cửa',
-            content: 'Khóa cửa phòng 110 bị kẹt, khách không mở được từ bên trong. Cần kỹ thuật xử lý ngay.',
-            status: 'Đang thực hiện', createdAt: '2026-10-07T10:25:00', ai_classification: 'Kỹ thuật', priority: 'Cao',
-            ai_priority_reason: 'Sự cố khóa cửa ảnh hưởng đến an toàn của khách → Ưu tiên Cao, cần xử lý ngay.'
-        },
-        {
-            id: 'REQ006', stayId: 'STR001', serviceTypeId: 'ST004', title: 'Giao bàn ủi',
-            content: 'Giao bàn ủi và cầu là hơi nước đến phòng 305 cho khách sử dụng trong buổi sáng.',
-            status: 'Hoàn thành', createdAt: '2026-10-07T09:28:00', ai_classification: 'Lễ tân', priority: 'Thấp',
-            ai_priority_reason: 'Yêu cầu đơn giản, không ảnh hưởng an toàn hay trải nghiệm cơ bản → Ưu tiên Thấp.'
-        },
-        {
-            id: 'REQ007', stayId: 'STR002', serviceTypeId: 'ST003', title: 'Dọn khay thức ăn',
-            content: 'Dọn khay thức ăn và thu dọn bàn ăn tại phòng 218 sau khi khách dùng bữa sáng.',
-            status: 'Hoàn thành', createdAt: '2026-10-07T10:12:00', ai_classification: 'F&B', priority: 'Trung bình',
-            ai_priority_reason: 'Dọn dẹp sau bữa ăn cần thực hiện sớm để giữ vệ sinh phòng → Ưu tiên Trung bình.'
-        }
-    ];
-
-    /* ---------- Nhiệm vụ (task) ---------- */
-    const tasks = [
-        { id: 'TSK001', requestId: 'REQ001', staffId: null, status: 'Chờ nhận', priority: 'Cao', ai_priority_reason: 'Điều hòa hỏng ảnh hưởng trực tiếp đến trải nghiệm nghỉ ngơi trong thời tiết nóng → Ưu tiên Cao. Nhân viên kỹ thuật đang trực ca chiều nên có thể tiếp cận nhanh.', assignedAt: '2026-10-07T11:42:00', completedAt: null },
-        { id: 'TSK002', requestId: 'REQ002', staffId: null, status: 'Chờ nhận', priority: 'Trung bình', ai_priority_reason: 'Yêu cầu bổ sung vật dụng cơ bản, không khẩn cấp nhưng cần chuẩn bị đúng giờ → Ưu tiên Trung bình.', assignedAt: '2026-10-07T11:46:00', completedAt: null },
-        { id: 'TSK003', requestId: 'REQ003', staffId: null, status: 'Chờ nhận', priority: 'Thấp', ai_priority_reason: 'Vệ sinh phòng theo lịch, không gấp và có thể linh hoạt thời gian → Ưu tiên Thấp.', assignedAt: '2026-10-07T11:38:00', completedAt: null },
-        { id: 'TSK004', requestId: 'REQ004', staffId: 'STF002', status: 'Đang làm', priority: 'Trung bình', ai_priority_reason: 'Bổ sung vật dụng cần xử lý trong ca nhưng không khẩn cấp → Ưu tiên Trung bình.', assignedAt: '2026-10-07T11:52:00', completedAt: null },
-        { id: 'TSK005', requestId: 'REQ005', staffId: 'STF003', status: 'Đang làm', priority: 'Cao', ai_priority_reason: 'Sự cố khóa cửa ảnh hưởng đến an toàn của khách → Ưu tiên Cao, cần xử lý ngay.', assignedAt: '2026-10-07T10:30:00', completedAt: null },
-        { id: 'TSK006', requestId: 'REQ006', staffId: 'STF001', status: 'Hoàn tất', priority: 'Thấp', ai_priority_reason: 'Yêu cầu đơn giản, không ảnh hưởng an toàn hay trải nghiệm cơ bản → Ưu tiên Thấp.', assignedAt: '2026-10-07T09:30:00', completedAt: '2026-10-07T09:42:00' },
-        { id: 'TSK007', requestId: 'REQ007', staffId: 'STF005', status: 'Hoàn tất', priority: 'Trung bình', ai_priority_reason: 'Dọn dẹp sau bữa ăn cần thực hiện sớm để giữ vệ sinh phòng → Ưu tiên Trung bình.', assignedAt: '2026-10-07T10:15:00', completedAt: '2026-10-07T10:33:00' }
-    ];
-
-    /* ---------- Phản hồi của khách ---------- */
-    const feedback = [
-        { id: 'FB001', stayId: 'STR004', rating: 4, comment: 'Phòng sạch sẽ, nhân viên thân thiện. Nhưng điều hòa hơi ồn vào ban đêm, khiến mình khó ngủ. Nhìn chung vẫn hài lòng với kỳ nghỉ.', ai_summary: 'Chủ đề: Vệ sinh (+), Nhân viên (+), Điều hòa (-). Đánh giá tích cực về cơ sở vật chất và thái độ phục vụ, góp ý về độ ồn điều hòa.', createdAt: '2026-10-01T11:00:00' },
-        { id: 'FB002', stayId: 'STR001', rating: 5, comment: 'Dịch vụ tuyệt vời! Đội ngũ lễ tân rất nhiệt tình, phòng ăn ngon và đa dạng. Sẽ quay lại lần sau.', ai_summary: 'Chủ đề: Lễ tân (+), Ăn uống (+). Phản hồi rất tích cực, khách hài lòng về thái độ phục vụ và chất lượng ẩm thực.', createdAt: '2026-10-07T08:30:00' },
-        { id: 'FB003', stayId: 'STR005', rating: 3, comment: 'View phòng rất đẹp, nhưng dịch vụ spa đặt trước bị chậm giờ. Nhân viên spa cũng không đúng giờ hẹn.', ai_summary: 'Chủ đề: View phòng (+), Spa (-). Đánh giá trung bình, view phòng được khen nhưng chất lượng dịch vụ spa chưa đảm bảo đúng giờ.', createdAt: '2026-10-09T10:15:00' },
-        { id: 'FB004', stayId: 'STR003', rating: 5, comment: 'Gia đình mình rất vui khi ở khách sạn. Nhân viên quan tâm trẻ em rất chu đáo, có khu vui chơi cho con. Cảm ơn khách sạn nhiều!', ai_summary: 'Chủ đề: Dịch vụ gia đình (+), Trẻ em (+), Nhân viên (+). Phản hồi rất tích cực, đặc biệt khen ngợi sự quan tâm đến khách gia đình và trẻ em.', createdAt: '2026-10-10T09:00:00' },
-        { id: 'FB005', stayId: 'STR002', rating: 2, comment: 'Phòng có mùi ẩm, ga giường không sạch. Gọi điện yêu cầu thay nhưng mất quá lâu nhân viên mới đến. Rất thất vọng.', ai_summary: 'Chủ đề: Vệ sinh (-), Thời gian phục vụ (-). Đánh giá tiêu cực về chất lượng phòng và tốc độ phản hồi của nhân viên.', createdAt: '2026-10-08T14:30:00' }
-    ];
-
-    return {
-        staff: staff,
-        shifts: shifts,
-        serviceTypes: serviceTypes,
-        stays: stays,
-        requests: requests,
-        tasks: tasks,
-        feedback: feedback
-    };
-});
-
-function convertMockData(source) {
-    const requiredLists = ['staff', 'serviceTypes', 'stays', 'requests', 'tasks', 'feedback'];
-    if (!source || requiredLists.some(function (key) { return !Array.isArray(source[key]); })) {
-        throw new Error('stayflow.mock.json thiếu một hoặc nhiều danh sách dữ liệu bắt buộc.');
-    }
-
+  function validateSource(source) {
+    requireLists(source);
     const indexes = {};
-    ['staff', 'serviceTypes', 'stays', 'requests', 'tasks'].forEach(function (key) {
-        indexes[key] = new Map();
-        source[key].forEach(function (item) {
-            if (!item.id || indexes[key].has(item.id)) {
-                throw new Error('ID bị thiếu hoặc trùng trong danh sách ' + key + ': ' + item.id);
-            }
-            indexes[key].set(item.id, item);
-        });
+    ["staff", "serviceTypes", "stays", "requests", "tasks", "feedback", "users"].forEach((name) => {
+      indexes[name] = indexById(source[name], name);
     });
-    source.requests.forEach(function (request) {
-        if (!indexes.stays.has(request.stayId) || !indexes.serviceTypes.has(request.serviceTypeId)) {
-            throw new Error('Yêu cầu ' + request.id + ' đang tham chiếu đến lưu trú hoặc dịch vụ không tồn tại.');
-        }
+    source.requests.forEach((request) => {
+      if (!indexes.stays.has(request.stayId) || !indexes.serviceTypes.has(request.serviceTypeId)) {
+        throw new Error("Yêu cầu " + request.id + " tham chiếu đến lưu trú hoặc dịch vụ không tồn tại.");
+      }
+      if (request.assignedStaffId && !indexes.staff.has(request.assignedStaffId)) {
+        throw new Error("Yêu cầu " + request.id + " tham chiếu đến nhân viên không tồn tại: " + request.assignedStaffId);
+      }
+      if (!REQUEST_STATUS[request.status] || !PRIORITY[request.priority]) {
+        throw new Error("Yêu cầu " + request.id + " có trạng thái hoặc mức ưu tiên không được hỗ trợ.");
+      }
+      if (!Number.isFinite(Date.parse(request.createdAt)) ||
+          (request.dueAt !== null && request.dueAt !== undefined && !Number.isFinite(Date.parse(request.dueAt)))) {
+        throw new Error("Yêu cầu " + request.id + " có thời điểm tạo hoặc hạn xử lý không hợp lệ.");
+      }
     });
-    source.tasks.forEach(function (task) {
-        if (!indexes.requests.has(task.requestId) || (task.assignedTo && !indexes.staff.has(task.assignedTo))) {
-            throw new Error('Nhiệm vụ ' + task.id + ' đang tham chiếu đến yêu cầu hoặc nhân viên không tồn tại.');
-        }
+    source.tasks.forEach((task) => {
+      if (!indexes.requests.has(task.requestId) || (task.assignedTo && !indexes.staff.has(task.assignedTo))) {
+        throw new Error("Nhiệm vụ " + task.id + " tham chiếu đến yêu cầu hoặc nhân viên không tồn tại.");
+      }
+      if (!TASK_STATUS[task.status]) {
+        throw new Error("Nhiệm vụ " + task.id + " có trạng thái không được hỗ trợ: " + task.status);
+      }
     });
-    source.feedback.forEach(function (entry) {
-        if (!indexes.stays.has(entry.stayId) || (entry.requestId && !indexes.requests.has(entry.requestId))) {
-            throw new Error('Phản hồi ' + entry.id + ' đang tham chiếu đến lưu trú hoặc yêu cầu không tồn tại.');
-        }
+    source.feedback.forEach((entry) => {
+      if (!indexes.stays.has(entry.stayId) || (entry.requestId && !indexes.requests.has(entry.requestId))) {
+        throw new Error("Phản hồi " + entry.id + " tham chiếu đến lưu trú hoặc yêu cầu không tồn tại.");
+      }
     });
-    source.stays.forEach(function (stay) {
-        if (stay.status !== 'checked_in' && stay.status !== 'checked_out') {
-            throw new Error('Lưu trú ' + stay.id + ' có trạng thái không được hỗ trợ: ' + stay.status);
-        }
+    source.stays.forEach((stay) => {
+      if (!["checked_in", "checked_out"].includes(stay.status)) {
+        throw new Error("Lưu trú " + stay.id + " có trạng thái không được hỗ trợ: " + stay.status);
+      }
     });
+    const linkedPeople = new Set();
+    source.users.forEach((user) => {
+      if (!user || typeof user.personId !== "string" || typeof user.active !== "boolean") {
+        throw new Error("Tài khoản " + (user && user.id) + " thiếu personId hoặc trạng thái active hợp lệ.");
+      }
+      if (linkedPeople.has(user.personId)) {
+        throw new Error("Hồ sơ có nhiều tài khoản: " + user.personId);
+      }
+      if (!indexes.staff.has(user.personId) &&
+          !source.stays.some((stay) => stay.guestId === user.personId)) {
+        throw new Error("Tài khoản " + user.id + " tham chiếu đến hồ sơ không tồn tại: " + user.personId);
+      }
+      linkedPeople.add(user.personId);
+    });
+    return indexes;
+  }
 
-    const shifts = [
-        { id: 'morning', name: 'Ca sáng', start: '06:00', end: '14:00' },
-        { id: 'afternoon', name: 'Ca chiều', start: '14:00', end: '22:00' },
-        { id: 'night', name: 'Ca đêm', start: '22:00', end: '06:00' }
-    ];
-    const shiftNames = { morning: 'Ca sáng', afternoon: 'Ca chiều', day: 'Ca ngày', evening: 'Ca chiều', night: 'Ca đêm' };
-    const departments = {
-        Housekeeping: 'Buồng phòng',
-        Engineering: 'Kỹ thuật',
-        'Food & Beverage': 'F&B',
-        'Room Service': 'F&B',
-        'Front Desk': 'Lễ tân',
-        Operations: 'Vận hành',
-        Administration: 'Quản trị'
+  function validateDatabase(data) {
+    const names = ["staff", "shifts", "serviceTypes", "stays", "requests", "tasks", "feedback", "users", "audit"];
+    if (!data || typeof data !== "object" || names.some((name) => !Array.isArray(data[name]))) {
+      throw new Error("Dữ liệu StayFlow đã lưu thiếu một hoặc nhiều danh sách bắt buộc.");
+    }
+    const indexes = {};
+    ["staff", "serviceTypes", "stays", "requests", "tasks", "feedback"].forEach((name) => {
+      indexes[name] = indexById(data[name], name);
+    });
+    indexes.users = indexById(data.users, "users");
+    data.users.forEach((user) => {
+      if (!["Guest", "Staff", "Manager", "Admin"].includes(user.role) ||
+          typeof user.active !== "boolean" ||
+          !Array.isArray(user.perms) || user.perms.length !== 4 ||
+          user.perms.some((permission) => permission !== 0 && permission !== 1)) {
+        throw new Error("Tài khoản " + user.id + " có vai trò, trạng thái hoặc quyền không hợp lệ.");
+      }
+    });
+    data.requests.forEach((request) => {
+      if (!indexes.stays.has(request.stayId) || !indexes.serviceTypes.has(request.serviceTypeId)) {
+        throw new Error("Yêu cầu " + request.id + " tham chiếu đến lưu trú hoặc dịch vụ không tồn tại.");
+      }
+      if (request.assignedStaffId && !indexes.staff.has(request.assignedStaffId)) {
+        throw new Error("Yêu cầu " + request.id + " tham chiếu đến nhân viên không tồn tại.");
+      }
+      if (!["Chờ xử lý", "Đang thực hiện", "Đang chờ khách", "Hoàn thành", "Đã hủy"].includes(request.status) ||
+          !Object.values(PRIORITY).includes(request.priority)) {
+        throw new Error("Yêu cầu " + request.id + " có trạng thái hoặc mức ưu tiên không hợp lệ.");
+      }
+    });
+    data.tasks.forEach((task) => {
+      if (!indexes.requests.has(task.requestId) || (task.staffId && !indexes.staff.has(task.staffId))) {
+        throw new Error("Nhiệm vụ " + task.id + " tham chiếu đến yêu cầu hoặc nhân viên không tồn tại.");
+      }
+      if (!Object.values(TASK_STATUS).includes(task.status) && task.status !== "Chờ nhận") {
+        throw new Error("Nhiệm vụ " + task.id + " có trạng thái không hợp lệ: " + task.status);
+      }
+    });
+    data.feedback.forEach((entry) => {
+      if (!indexes.stays.has(entry.stayId) || (entry.requestId && !indexes.requests.has(entry.requestId))) {
+        throw new Error("Phản hồi " + entry.id + " tham chiếu đến lưu trú hoặc yêu cầu không tồn tại.");
+      }
+    });
+    return data;
+  }
+
+  function convertMockData(source) {
+    const indexes = validateSource(source);
+    const userPermissions = {
+      Guest: [0, 0, 0, 0],
+      Staff: [0, 0, 0, 0],
+      Manager: [1, 1, 0, 0],
+      Admin: [1, 1, 1, 1],
     };
-    const statusNames = { on_duty: 'Đang trực', off_duty: 'Nghỉ' };
+    const data = {
+      schemaVersion: 1,
+      clock: source.meta && source.meta.updatedAt,
+      staff: source.staff.filter((person) => person.role === "staff").map((person) => {
+        if (!SHIFT_NAMES[person.shift] || !["on_duty", "off_duty"].includes(person.status)) {
+          throw new Error("Nhân viên " + person.id + " có ca hoặc trạng thái không được hỗ trợ.");
+        }
+        return {
+          id: person.id,
+          name: person.name,
+          email: person.email,
+          phone: person.phone,
+          role: DEPARTMENT_NAMES[person.department] || person.department,
+          department: DEPARTMENT_NAMES[person.department] || person.department,
+          shift: SHIFT_NAMES[person.shift],
+          status: person.status === "on_duty" ? "Đang trực" : "Nghỉ",
+        };
+      }),
+      shifts: [
+        { id: "morning", name: "Ca sáng", start: "06:00", end: "14:00" },
+        { id: "afternoon", name: "Ca chiều", start: "14:00", end: "22:00" },
+        { id: "night", name: "Ca đêm", start: "22:00", end: "06:00" },
+      ],
+      serviceTypes: source.serviceTypes.map((service) => ({
+        id: service.id,
+        categoryName: service.name,
+        description: service.description,
+        department: DEPARTMENT_NAMES[service.department] || service.department,
+        expectedSLA: service.defaultSlaMinutes,
+        priority: "Trung bình",
+        active: service.isActive,
+        icon: service.icon,
+      })),
+      stays: source.stays.map((stay) => ({
+        id: stay.id,
+        guestId: stay.guestId,
+        guestName: stay.guestName,
+        guestEmail: stay.guestEmail,
+        guestPhone: stay.guestPhone,
+        roomNumber: stay.roomNumber,
+        roomType: stay.roomType,
+        checkInAt: stay.checkInAt,
+        checkOutAt: stay.checkOutAt,
+        status: stay.status === "checked_in" ? "Đang lưu trú" : "Đã trả phòng",
+        isVip: stay.isVip,
+      })),
+      requests: source.requests.map((request) => ({
+        id: request.id,
+        stayId: request.stayId,
+        serviceTypeId: request.serviceTypeId,
+        title: request.title,
+        content: request.description,
+        description: request.description,
+        status: REQUEST_STATUS[request.status],
+        priority: PRIORITY[request.priority],
+        source: request.source,
+        createdAt: request.createdAt,
+        updatedAt: request.updatedAt,
+        dueAt: request.dueAt,
+        assignedStaffId: request.assignedStaffId,
+        notes: request.notes || "",
+        ai_priority_reason: (source.aiMocks && source.aiMocks.priorityAssistant || [])
+          .find((item) => item.requestId === request.id)?.reason || request.notes || "",
+      })),
+      tasks: source.tasks.map((task) => {
+        const request = indexes.requests.get(task.requestId);
+        return {
+          id: task.id,
+          requestId: task.requestId,
+          staffId: task.assignedTo,
+          status: TASK_STATUS[task.status],
+          priority: PRIORITY[request.priority],
+          ai_priority_reason: (source.aiMocks && source.aiMocks.priorityAssistant || [])
+            .find((item) => item.requestId === task.requestId)?.reason || request.notes || "",
+          assignedAt: task.createdAt,
+          startedAt: task.startedAt,
+          completedAt: task.completedAt,
+          checklist: task.checklist || [],
+          internalNote: task.internalNote || "",
+        };
+      }),
+      feedback: source.feedback.map((entry) => ({ ...entry })),
+      users: source.users.map((user) => {
+        const staff = indexes.staff.get(user.personId);
+        const stay = staff ? null : source.stays.find((item) => item.guestId === user.personId);
+        const role = stay ? "Guest" : ({ staff: "Staff", manager: "Manager", admin: "Admin" })[staff.role];
+        if (!role) {
+          throw new Error("Tài khoản " + user.id + " liên kết đến vai trò nhân viên không được hỗ trợ.");
+        }
+        return {
+          id: user.id,
+          personId: user.personId,
+          name: staff ? staff.name : stay.guestName,
+          contact: staff ? staff.email : (stay.guestEmail || stay.guestPhone),
+          role,
+          scope: stay ? "Phòng " + stay.roomNumber : (staff.role === "admin"
+            ? "AURORA GRAND · ĐÀ NẴNG"
+            : staff.department),
+          active: user.active,
+          perms: userPermissions[role].slice(),
+        };
+      }),
+      audit: [],
+      feedbackSummary: source.aiMocks && source.aiMocks.feedbackSummarizer
+        ? source.aiMocks.feedbackSummarizer.summary || ""
+        : "",
+    };
+    return validateDatabase(data);
+  }
+
+  function migrateSaved(saved, initial, source) {
+    if (!saved || typeof saved !== "object") {
+      throw new Error("Dữ liệu StayFlow đã lưu không phải là đối tượng hợp lệ.");
+    }
+    const mergeRecords = (defaults, values) => (values || defaults).map((record) => ({
+      ...(defaults.find((item) => item.id === record.id) || {}),
+      ...record,
+    }));
+    const migrated = {
+      ...initial,
+      ...saved,
+      schemaVersion: 1,
+      staff: mergeRecords(initial.staff, saved.staff),
+      shifts: mergeRecords(initial.shifts, saved.shifts),
+      serviceTypes: mergeRecords(initial.serviceTypes, saved.serviceTypes),
+      stays: mergeRecords(initial.stays, saved.stays),
+      requests: mergeRecords(initial.requests, saved.requests),
+      tasks: mergeRecords(initial.tasks, saved.tasks),
+      feedback: mergeRecords(initial.feedback, saved.feedback),
+      users: initial.users.map((user) => ({
+        ...user,
+        ...(saved.users || []).find((savedUser) => savedUser.id === user.id),
+      })).concat((saved.users || []).filter((savedUser) =>
+        !initial.users.some((user) => user.id === savedUser.id))),
+      audit: saved.audit || [],
+    };
+    const mockIds = new Set(source.staff.map((person) => person.id)
+      .concat(initial.stays.map((stay) => stay.guestId)));
+    migrated.users = migrated.users.filter((user) => !mockIds.has(user.id));
+    return validateDatabase(migrated);
+  }
+
+  function createBrowserStore(initial) {
+    let data = initial;
+    const clockStartedAt = Date.now();
+    const clockOrigin = Date.parse(initial.clock) || clockStartedAt;
+    const currentClock = () => new Date(clockOrigin + Date.now() - clockStartedAt).toISOString();
+
+    function save(next) {
+      validateDatabase(next);
+      root.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+      data = next;
+      root.StayFlowData = data;
+      root.dispatchEvent(new Event("stayflow:data-changed"));
+      return data;
+    }
+
+    function nextRequestId() {
+      const max = data.requests.reduce((highest, request) => {
+        const match = /^REQ-\d{4}-(\d+)$/.exec(request.id);
+        return match ? Math.max(highest, Number(match[1])) : highest;
+      }, 0);
+      return "REQ-" + new Date().getFullYear() + "-" + String(max + 1).padStart(4, "0");
+    }
+
+    function createRequest(input) {
+      const service = data.serviceTypes.find((item) => item.id === input.serviceTypeId);
+      const stay = data.stays.find((item) => item.id === input.stayId);
+      if (!service || !stay) throw new Error("Không thể tạo yêu cầu: lưu trú hoặc loại dịch vụ không tồn tại.");
+      const latestRequestAt = data.requests.reduce((latest, request) => {
+        const createdAt = Date.parse(request.createdAt);
+        return Number.isFinite(createdAt) ? Math.max(latest, createdAt) : latest;
+      }, 0);
+      const now = new Date(Math.max(Date.parse(currentClock()), latestRequestAt + 1)).toISOString();
+      const id = input.id || nextRequestId();
+      if (data.requests.some((item) => item.id === id)) throw new Error("Mã yêu cầu đã tồn tại: " + id);
+      const request = {
+        id,
+        stayId: stay.id,
+        serviceTypeId: service.id,
+        title: String(input.title || service.categoryName).trim(),
+        content: String(input.description || "").trim(),
+        description: String(input.description || "").trim(),
+        status: "Chờ xử lý",
+        priority: input.priority || service.priority || "Trung bình",
+        source: "guest_portal",
+        createdAt: now,
+        updatedAt: now,
+        dueAt: new Date(Date.parse(now) + Number(service.expectedSLA) * 60000).toISOString(),
+        assignedStaffId: null,
+        notes: "",
+        ai_priority_reason: "",
+      };
+      data.requests.push(request);
+      save(data);
+      return request;
+    }
+
+    function updateGuestRequest(input) {
+      const id = String(input.id || input.code || "").replace(/^#/, "");
+      const request = data.requests.find((item) => item.id === id);
+      if (!request) throw new Error("Không tìm thấy yêu cầu cần cập nhật: " + id);
+      const statuses = { in_progress: "Đang thực hiện", completed: "Hoàn thành", cancelled: "Đã hủy" };
+      if (input.status && !statuses[input.status]) throw new Error("Trạng thái yêu cầu không được hỗ trợ: " + input.status);
+      if (input.status) request.status = statuses[input.status];
+      if (input.note !== undefined) request.content = request.description = String(input.note);
+      request.updatedAt = currentClock();
+      save(data);
+      return request;
+    }
+
+    function updateStaffTask(taskId, status, staffId, note) {
+      const task = data.tasks.find((item) => item.id === taskId);
+      if (!task) throw new Error("Không tìm thấy nhiệm vụ cần cập nhật: " + taskId);
+      const statuses = { new: "assigned", processing: "in_progress", completed: "completed" };
+      const labels = { assigned: "Chờ nhận", in_progress: "Đang làm", completed: "Hoàn tất" };
+      if (!statuses[status]) throw new Error("Trạng thái nhiệm vụ không được hỗ trợ: " + status);
+      if (staffId && !data.staff.some((person) => person.id === staffId)) {
+        throw new Error("Không tìm thấy nhân viên được phân công: " + staffId);
+      }
+      task.status = labels[statuses[status]];
+      if (staffId) task.staffId = staffId;
+      if (note !== undefined) task.internalNote = String(note);
+      if (status === "completed") task.completedAt = currentClock();
+      const request = data.requests.find((item) => item.id === task.requestId);
+      request.status = status === "completed" ? "Hoàn thành" : "Đang thực hiện";
+      request.assignedStaffId = task.staffId || null;
+      request.updatedAt = currentClock();
+      save(data);
+      return task;
+    }
 
     return {
-        staff: source.staff.filter(function (person) { return person.role === 'staff'; }).map(function (person) {
-            if (!shiftNames[person.shift] || !statusNames[person.status]) {
-                throw new Error('Nhân viên ' + person.id + ' có ca hoặc trạng thái không được hỗ trợ.');
-            }
-            return {
-                id: person.id,
-                name: person.name,
-                role: departments[person.department] || person.department,
-                status: statusNames[person.status],
-                shift: shiftNames[person.shift],
-                phone: person.phone,
-                email: person.email
-            };
-        }),
-        shifts: shifts,
-        serviceTypes: source.serviceTypes.map(function (service) {
-            return {
-                id: service.id,
-                categoryName: service.name,
-                description: service.description,
-                expectedSLA: service.defaultSlaMinutes,
-                department: departments[service.department] || service.department
-            };
-        }),
-        stays: source.stays.map(function (stay) {
-            return {
-                id: stay.id,
-                guestName: stay.guestName,
-                roomNumber: stay.roomNumber,
-                checkInDate: stay.checkInAt,
-                checkOutDate: stay.checkOutAt,
-                status: stay.status === 'checked_in' ? 'Đang lưu trú' : 'Đã trả phòng',
-                guestPhone: stay.guestPhone,
-                specialRequests: ''
-            };
-        }),
-        requests: source.requests.map(function (request) {
-            return {
-                id: request.id,
-                stayId: request.stayId,
-                serviceTypeId: request.serviceTypeId,
-                title: request.title,
-                content: request.description,
-                status: request.status,
-                createdAt: request.createdAt,
-                ai_classification: request.serviceTypeId,
-                priority: request.priority,
-                ai_priority_reason: request.notes || ''
-            };
-        }),
-        tasks: source.tasks.map(function (task) {
-            return {
-                id: task.id,
-                requestId: task.requestId,
-                staffId: task.assignedTo,
-                status: task.status,
-                priority: task.priority,
-                ai_priority_reason: task.internalNote || '',
-                assignedAt: task.createdAt,
-                completedAt: task.completedAt
-            };
-        }),
-        feedback: source.feedback
+      getData: () => data,
+      save,
+      createRequest,
+      updateGuestRequest,
+      updateStaffTask,
+      nextRequestId,
+      reset() {
+        root.localStorage.removeItem(STORAGE_KEY);
+        root.location.reload();
+      },
     };
-}
+  }
+
+  if (typeof module !== "undefined" && module.exports) {
+    module.exports = convertMockData(require("../assets/data/stayflow.mock.json"));
+  }
+
+  if (typeof window !== "undefined" && typeof document !== "undefined" &&
+      document.currentScript && document.currentScript.src && typeof window.fetch === "function") {
+    const script = document.currentScript;
+    const jsonUrl = new URL("../assets/data/stayflow.mock.json", script.src);
+    window.StayFlowData = null;
+    window.StayFlowMockData = null;
+    window.StayFlowStore = null;
+    window.StayFlowDataReady = window.fetch(jsonUrl)
+      .then((response) => {
+        if (!response.ok) throw new Error("HTTP " + response.status);
+        return response.json();
+      })
+      .then((source) => {
+        const initial = convertMockData(source);
+        let data = initial;
+        const saved = window.localStorage.getItem(STORAGE_KEY);
+        if (saved !== null) {
+          try {
+            data = migrateSaved(JSON.parse(saved), initial, source);
+          } catch (error) {
+            console.error("Dữ liệu StayFlow trong trình duyệt không hợp lệ:", error);
+            throw new Error("Dữ liệu đã lưu không hợp lệ. Hãy đặt lại dữ liệu mẫu rồi tải lại trang.", { cause: error });
+          }
+        }
+        window.StayFlowMockData = source;
+        window.StayFlowData = data;
+        window.StayFlowStore = createBrowserStore(data);
+        return data;
+      })
+      .catch((error) => {
+        console.error("Không thể khởi tạo dữ liệu StayFlow:", error);
+        throw error;
+      });
+  }
+})(typeof self !== "undefined" ? self : this);

@@ -1,16 +1,4 @@
-﻿/* ============================================================================
- * guest-dashboard.js — Riêng trang "Tổng quan kỳ lưu trú"
- * ----------------------------------------------------------------------------
- * Phần khung dashboard (sidebar, dropdown, toast, Escape, kho yêu cầu, modal gửi
- * yêu cầu, hiệu ứng hiện dần) nằm ở ../shared/dashboard.js.
- * File này chỉ xử lý những gì thuộc trang Tổng quan:
- *   1. Thẻ dịch vụ -> mở modal gửi yêu cầu với đúng loại dịch vụ.
- *   2. Lời chào + tên người dùng đã đăng nhập.
- *   3. Tìm kiếm trong các thẻ (.searchable) của trang.
- *   4. Thẻ "Yêu cầu gần nhất" + hiệu ứng đếm số trên 2 thẻ số liệu.
- * ========================================================================= */
-
-/* --- 1. Tham chiếu phần tử riêng của trang --- */
+﻿/* --- 1. Tham chiếu phần tử riêng của trang --- */
 const searchables = document.querySelectorAll(".searchable"); // các thẻ lọc được
 const noResults = document.querySelector("#no-results"); // dòng "không tìm thấy"
 const latestRequestTitle = document.querySelector("#latest-request-title");
@@ -71,21 +59,21 @@ setupRequestModal(({ title, note }) => {
 });
 
 STAYFLOW_REQUESTS_READY.then(() => {
-  const source = window.StayFlowMockData;
-  const stay = source?.stays.find((item) => item.roomNumber === "1208");
+  const source = window.StayFlowData;
+  const stay = source.stays.find((item) => item.id === GUEST_STAY_ID);
   if (source) {
     source.serviceTypes.forEach((service) => {
       const card = Array.from(document.querySelectorAll(".service-card"))
-        .find((item) => item.dataset.service === service.name);
+        .find((item) => item.dataset.service === service.categoryName);
       if (!card) return;
-      card.querySelector("p").textContent = `Dự kiến ${service.defaultSlaMinutes} phút`;
-      card.dataset.search = `${service.name} ${service.description} ${service.defaultSlaMinutes} phút`;
+      card.querySelector("p").textContent = `Dự kiến ${service.expectedSLA} phút`;
+      card.dataset.search = `${service.categoryName} ${service.description} ${service.expectedSLA} phút`;
     });
   }
   if (stay) {
     const checkIn = new Date(stay.checkInAt);
     const checkOut = new Date(stay.checkOutAt);
-    const now = new Date(source.meta.updatedAt);
+    const now = new Date(source.clock);
     const parts = (date) => Object.fromEntries(
       new Intl.DateTimeFormat("en-GB", {
         timeZone: "Asia/Ho_Chi_Minh",
@@ -108,10 +96,9 @@ STAYFLOW_REQUESTS_READY.then(() => {
     document.querySelector("#stay-progress").style.width = `${totalNights ? (elapsedNights / totalNights) * 100 : 0}%`;
 
     const stayRequests = source.requests.filter((request) => request.stayId === stay.id);
-    const processing = stayRequests.filter((request) => !["completed", "cancelled"].includes(request.status)).length;
-    const completed = stayRequests.filter((request) => request.status === "completed").length;
+    const processing = stayRequests.filter((request) => !["Hoàn thành", "Đã hủy"].includes(request.status)).length;
+    const completed = stayRequests.filter((request) => request.status === "Hoàn thành").length;
     guestDashboardDataReady = true;
-    counterObserver.disconnect();
     processingCounter.dataset.target = String(processing);
     processingCounter.textContent = String(processing).padStart(2, "0");
     completedCounter.dataset.target = String(completed);
@@ -122,7 +109,7 @@ STAYFLOW_REQUESTS_READY.then(() => {
   }
 
   const records = readRequests();
-  const latest = records[records.length - 1];
+  const latest = records[0];
   if (!latest) return;
 
   latestRequestCode = latest.code;
@@ -151,35 +138,9 @@ document.querySelector("#explore-offer").addEventListener("click", () => {
   showToast("Ưu đãi Spa đã được lưu cho phòng 1208.");
 });
 
-/* --- 7. Hiệu ứng đếm số cho 2 thẻ số liệu (chỉ chạy khi thẻ lọt vào màn hình) --- */
-const counterObserver = new IntersectionObserver(
-  (entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      if (!guestDashboardDataReady) return;
-      animateCounter(entry.target);
-      observer.unobserve(entry.target);
-    });
-  },
-  { threshold: 0.6 },
-);
-
+/* --- 7. Hai thẻ số liệu: ghi thẳng giá trị đích, không đếm dần ---
+ * ponytail: bỏ hiệu ứng đếm số theo yêu cầu giảm hiệu ứng; cần dựng lại thì
+ * xem lại bản IntersectionObserver + requestAnimationFrame trong git. */
 document.querySelectorAll(".counter").forEach((counter) => {
-  counterObserver.observe(counter);
+  counter.textContent = String(Number(counter.dataset.target)).padStart(2, "0");
 });
-
-/* Đếm từ 0 lên dataset.target trong 900ms, dùng easing bậc 3 cho mượt. */
-function animateCounter(counter) {
-  const target = Number(counter.dataset.target);
-  const start = performance.now();
-  const duration = 900;
-
-  function frame(time) {
-    const progress = Math.min((time - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    counter.textContent = String(Math.round(target * eased)).padStart(2, "0");
-    if (progress < 1) requestAnimationFrame(frame);
-  }
-
-  requestAnimationFrame(frame);
-}

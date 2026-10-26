@@ -1,17 +1,3 @@
-/* =========================================================================
- * sign-up.css — Giao diện trang Đăng ký (StayFlow)
- * -------------------------------------------------------------------------
- * Cùng ngôn ngữ thiết kế với login.css (panel trái ảnh nền + panel phải form)
- * nhưng dùng bộ biến màu riêng (--gold #c9a84c) nên KHÔNG gộp file với trang
- * đăng nhập; phần logic dùng chung nằm ở shared/auth-ui.js.
- *
- * Thứ tự trong file:
- *   1. Font chữ              6. Form đăng ký
- *   2. Biến màu & reset      7. Ô nhập + trạng thái lỗi/đúng
- *   3. Bố cục 2 cột          8. Rung form + thẻ thành công
- *   4. Panel trái            9. Keyframes
- *   5. Panel phải           10. Responsive + giảm hiệu ứng động
- * ========================================================================= */
 @font-face {
   font-family: "Instrument Sans:Bold";
   src: url("https://static.figma.com/font/InstrumentSans_wdth_wght__1") format("woff2");
@@ -241,16 +227,6 @@ img { display: block; }
   width: min(100%, 480px);
   z-index: 2;
 }
-
-.reveal-item { animation: form-in .62s cubic-bezier(.2, .75, .2, 1) both; }
-.reveal-item:nth-child(2) { animation-delay: .07s; }
-.reveal-item:nth-child(3) { animation-delay: .13s; }
-.reveal-item:nth-child(4) { animation-delay: .19s; }
-.reveal-item:nth-child(5) { animation-delay: .25s; }
-.reveal-item:nth-child(6) { animation-delay: .31s; }
-.reveal-item:nth-child(7) { animation-delay: .37s; }
-.reveal-item:nth-child(8) { animation-delay: .43s; }
-.reveal-item:nth-child(9) { animation-delay: .49s; }
 
 .form-heading { display: flex; flex-direction: column; gap: 8px; }
 .form-heading > span {
@@ -545,10 +521,6 @@ img { display: block; }
   from { opacity: 0; transform: translateY(24px); }
   to { opacity: 1; transform: translateY(0); }
 }
-@keyframes form-in {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
-}
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
@@ -590,13 +562,20 @@ img { display: block; }
   .field-row { grid-template-columns: 1fr; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: .01ms !important;
-    animation-iteration-count: 1 !important;
-    scroll-behavior: auto !important;
-    transition-duration: .01ms !important;
-  }
+*,
+*::before,
+*::after {
+  animation-delay: 0s !important;
+  animation-duration: .01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-delay: 0s !important;
+  transition-duration: .01ms !important;
+}
+
+/* Ngoại lệ duy nhất: vòng xoay báo "đang xử lý" trong nút đăng ký phải quay,
+ * nếu không người dùng không biết form đã được gửi. */
+.submit-button__loader {
+  animation-duration: .7s !important;
+  animation-iteration-count: infinite !important;
 }

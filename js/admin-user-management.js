@@ -41,16 +41,14 @@
   const admins = () => db.users.filter((user) => user.role === "Admin" && user.active);
 
   function draw() {
-    const users = list();
-    page = Math.min(page, Math.max(0, Math.ceil(users.length / PER) - 1));
-    const pageUsers = users.slice(page * PER, page * PER + PER);
-
-    $("h").innerHTML = `<div class="head"><div><span class="gold">Phân quyền theo vai trò và phạm vi</span><h1>Tài khoản & phân quyền</h1><p class="muted">${db.users.length} tài khoản · ${db.users.filter((user) => user.active).length} đang hoạt động</p></div></div>`;
+    const l = list(); page = Math.min(page, Math.max(0, Math.ceil(l.length / PER) - 1)); const pg = l.slice(page * PER, page * PER + PER);
+    $("h").innerHTML = `<div class="head"><div><span class="gold">Phân quyền theo vai trò và phạm vi</span><h1>Tài khoản & phân quyền</h1><p class="muted">${db.users.length} tài khoản · ${db.users.filter((u) => u.active).length} đang hoạt động</p></div></div>`;
     $("b").innerHTML = sel.size
       ? `<div class="bulk"><strong>${sel.size} tài khoản được chọn</strong><button class="btn sm danger" data-bulk>Khóa đã chọn</button><button class="btn sm" data-clr>Bỏ chọn</button></div>`
-      : "";
-
-    $("t").innerHTML = `<table><thead><tr><th><input type="checkbox" data-all aria-label="Chọn tất cả trên trang"${pageUsers.length && pageUsers.every((user) => sel.has(user.id)) ? " checked" : ""}></th><th>Tài khoản</th><th>Vai trò</th><th>Phạm vi</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>${pageUsers.map((user) => `<tr><td><input type="checkbox" data-c="${user.id}" aria-label="Chọn ${SF.esc(user.name)}"${sel.has(user.id) ? " checked" : ""}></td><td><button class="btn sm" data-v="${user.id}" style="border:0;padding:0;background:none;text-align:left"><strong>${SF.esc(user.name)}</strong></button><br><small class="muted">${SF.esc(user.contact)}</small></td><td><span class="chip ${RC[user.role]}">${user.role}</span></td><td>${SF.esc(user.scope)}</td><td><span class="chip ${user.active ? "ok" : "bad"}">${user.active ? "Hoạt động" : "Đã khóa"}</span></td><td><button class="btn sm" data-pm="${user.id}">Phân quyền</button> <button class="btn sm" data-rp="${user.id}">Cấp lại mật khẩu</button> <button class="btn sm" data-lk="${user.id}">${user.active ? "Khóa" : "Kích hoạt"}</button></td></tr>`).join("")}</tbody></table>${users.length ? "" : SF.empty()}${SF.pager(page, users.length, PER)}`;
+      : db.users.length
+        ? ""
+        : '<div class="note">JSON hiện không có danh sách tài khoản đăng nhập. Nhân viên và khách lưu trú không được tự động coi là tài khoản; chức năng quản lý tài khoản cần nguồn dữ liệu tài khoản riêng.</div>';
+    $("t").innerHTML = `<table><thead><tr><th><input type="checkbox" data-all aria-label="Chọn tất cả trên trang"${pg.length && pg.every((u) => sel.has(u.id)) ? " checked" : ""}></th><th>Tài khoản</th><th>Vai trò</th><th>Phạm vi</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>${pg.map((u) => `<tr><td><input type="checkbox" data-c="${u.id}" aria-label="Chọn ${SF.esc(u.name)}"${sel.has(u.id) ? " checked" : ""}></td><td><button class="btn sm" data-v="${u.id}" style="border:0;padding:0;background:none;text-align:left"><strong>${SF.esc(u.name)}</strong></button><br><small class="muted">${SF.esc(u.contact)}</small></td><td><span class="chip ${RC[u.role]}">${u.role}</span></td><td>${SF.esc(u.scope)}</td><td><span class="chip ${u.active ? "ok" : "bad"}">${u.active ? "Hoạt động" : "Đã khóa"}</span></td><td><button class="btn sm" data-pm="${u.id}">Phân quyền</button> <button class="btn sm" data-rp="${u.id}">Cấp lại mật khẩu</button> <button class="btn sm" data-lk="${u.id}">${u.active ? "Khóa" : "Kích hoạt"}</button></td></tr>`).join("")}</tbody></table>${l.length ? "" : SF.empty()}${SF.pager(page, l.length, PER)}`;
   }
 
   function view(user) {

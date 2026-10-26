@@ -1,17 +1,3 @@
-/* ============================================================================
- * auth-ui.js — Tiện ích DÙNG CHUNG cho 3 trang xác thực StayFlow
- *   pages/login.html, pages/sign-up.html, pages/forgot-password.html
- *
- * Nạp TRƯỚC script của trang (login.js / sign-up.js / forgot-password.js).
- * Trước đây 3 file tự copy lại 4 đoạn y hệt nhau; nay chỉ còn 1 bản ở đây:
- *   1. setupPasswordToggle() — nút con mắt ẩn/hiện mật khẩu.
- *   2. shakeForm()           — rung form khi dữ liệu sai.
- *   3. showToast()           — thông báo nổi ở góc dưới.
- *
- * Không gộp login.css và sign-up.css: hai trang dùng bộ biến màu khác nhau
- * (--gold #b8914a và #c9a84c) nên gộp sẽ làm đổi giao diện trang Đăng ký.
- * ========================================================================= */
-
 /* --- 1. Ẩn / hiện mật khẩu ---
  * Đổi type của ô nhập và cập nhật aria cho trình đọc màn hình. */
 function setupPasswordToggle(toggle, input) {
