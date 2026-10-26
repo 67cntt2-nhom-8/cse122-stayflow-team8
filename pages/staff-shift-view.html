@@ -7,7 +7,7 @@
     <title>StayFlow - Lịch ca trực</title>
     <link rel="stylesheet" href="../css/staff.css">
 </head>
-<body>
+<body class="shift-view-page">
 <div class="app">
 
     <!-- ============ SIDEBAR ============ -->
@@ -79,76 +79,162 @@
         </header>
 
         <main class="page" id="main">
-
-            <section class="page-head">
-                <div class="page-head__text">
+            <section class="shift-page-heading">
+                <div>
                     <p class="eyebrow" id="shiftLabel">LỊCH &amp; CA · NHÓM VẬN HÀNH</p>
-                    <h2 class="page-head__title">Lịch ca trực</h2>
-                    <p class="page-head__desc">Xem ai trực ca nào theo tuần hoặc theo tháng, kèm định mức nhân sự mỗi ca.</p>
+                    <h2 class="shift-page-heading__title">Lịch ca trực</h2>
+                    <p class="shift-page-heading__desc">Theo dõi lịch làm việc và chuẩn bị bàn giao trong tuần.</p>
                 </div>
-
-                <!-- Chế độ xem: Tuần (7 ngày) / Tháng (trọn lưới tháng) -->
-                <div class="seg" role="group" aria-label="Chế độ xem lịch">
-                    <button class="seg__btn" type="button" data-mode="week" aria-pressed="true">Tuần</button>
-                    <button class="seg__btn" type="button" data-mode="month" aria-pressed="false">Tháng</button>
+                <div class="shift-toolbar">
+                    <div class="seg" role="group" aria-label="Chế độ xem lịch">
+                        <button class="seg__btn" type="button" data-mode="week" aria-pressed="true">Tuần</button>
+                        <button class="seg__btn" type="button" data-mode="month" aria-pressed="false">Tháng</button>
+                    </div>
+                    <div class="sched-nav" role="group" aria-label="Chuyển kỳ xem lịch">
+                        <button class="btn btn--ghost shift-icon-button" id="prevBtn" type="button" aria-label="Kỳ trước">‹</button>
+                        <button class="btn btn--ghost" id="todayBtn" type="button">Hôm nay</button>
+                        <button class="btn btn--ghost shift-icon-button" id="nextBtn" type="button" aria-label="Kỳ sau">›</button>
+                    </div>
                 </div>
             </section>
 
-            <!-- ============ THANH CHUYỂN KỲ ============ -->
-            <div class="sched-bar">
-                <div class="sched-nav" role="group" aria-label="Chuyển kỳ xem lịch">
-                    <button class="btn btn--ghost" id="prevBtn" type="button">‹ Trước</button>
-                    <button class="btn btn--ghost" id="todayBtn" type="button">Hôm nay</button>
-                    <button class="btn btn--ghost" id="nextBtn" type="button">Sau ›</button>
-                </div>
-                <p class="sched-range" id="shiftRange" aria-live="polite"></p>
-            </div>
-
-            <!-- ============ BỘ LỌC ============ -->
-            <form class="filters" id="shiftFilterForm" role="search" aria-label="Tìm và lọc lịch ca trực">
-                <div class="filters__search">
-                    <svg class="filters__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5 20 20"/></svg>
-                    <label class="sr-only" for="shiftSearch">Tìm nhân viên theo tên</label>
-                    <input type="search" id="shiftSearch" name="q" placeholder="Tìm nhân viên theo tên" autocomplete="off">
+            <section class="shift-week-section" aria-labelledby="weekHeading">
+                <div class="shift-section-heading">
+                    <div>
+                        <h3 id="weekHeading">Lịch trong tuần</h3>
+                        <p id="shiftRange" class="sched-range" aria-live="polite"></p>
+                    </div>
+                    <p class="shift-rota-summary" id="shiftSummary" aria-live="polite"></p>
                 </div>
 
-                <div class="filters__selects">
-                    <p class="select">
-                        <label class="sr-only" for="filterDepartment">Bộ phận</label>
-                        <select id="filterDepartment" name="department">
-                            <option value="all">Bộ phận: Tất cả</option>
-                            <option value="Lễ tân">Lễ tân</option>
-                            <option value="Buồng phòng">Buồng phòng</option>
-                            <option value="Kỹ thuật">Kỹ thuật</option>
-                        </select>
-                    </p>
-                    <p class="select">
-                        <label class="sr-only" for="filterShiftType">Ca làm việc</label>
-                        <select id="filterShiftType" name="shift">
-                            <option value="all">Ca: Tất cả</option>
-                            <option value="morning">Ca sáng 06:00-14:00</option>
-                            <option value="afternoon">Ca chiều 14:00-22:00</option>
-                            <option value="night">Ca đêm 22:00-06:00</option>
-                        </select>
-                    </p>
+                <div class="sched" id="schedGrid"></div>
+
+                <details class="shift-filters">
+                    <summary>Tìm kiếm và lọc lịch</summary>
+                    <form class="filters" id="shiftFilterForm" role="search" aria-label="Tìm và lọc lịch ca trực">
+                        <div class="filters__search">
+                            <svg class="filters__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M15.5 15.5 20 20"/></svg>
+                            <label class="sr-only" for="shiftSearch">Tìm nhân viên theo tên</label>
+                            <input type="search" id="shiftSearch" name="q" placeholder="Tìm nhân viên theo tên" autocomplete="off">
+                        </div>
+                        <div class="filters__selects">
+                            <p class="select">
+                                <label class="sr-only" for="filterDepartment">Bộ phận</label>
+                                <select id="filterDepartment" name="department">
+                                    <option value="all">Bộ phận: Tất cả</option>
+                                    <option value="Lễ tân">Lễ tân</option>
+                                    <option value="Buồng phòng">Buồng phòng</option>
+                                    <option value="Kỹ thuật">Kỹ thuật</option>
+                                    <option value="Ẩm thực">Ẩm thực</option>
+                                </select>
+                            </p>
+                            <p class="select">
+                                <label class="sr-only" for="filterShiftType">Ca làm việc</label>
+                                <select id="filterShiftType" name="shift">
+                                    <option value="all">Ca: Tất cả</option>
+                                    <option value="morning">Ca sáng 06:00-14:00</option>
+                                    <option value="afternoon">Ca chiều 14:00-22:00</option>
+                                    <option value="night">Ca đêm 22:00-06:00</option>
+                                </select>
+                            </p>
+                        </div>
+                    </form>
+                </details>
+                <ul class="legend shift-legend" aria-label="Chú thích ca làm việc">
+                    <li class="legend__item legend__item--morning"><i class="dot" aria-hidden="true"></i>Sáng</li>
+                    <li class="legend__item legend__item--afternoon"><i class="dot" aria-hidden="true"></i>Chiều</li>
+                    <li class="legend__item legend__item--night"><i class="dot" aria-hidden="true"></i>Đêm</li>
+                </ul>
+            </section>
+
+            <section class="shift-roster-panel shift-panel" aria-labelledby="rosterHeading">
+                <div class="shift-panel__heading">
+                    <div>
+                        <p class="shift-card-kicker">PHÂN CÔNG TRONG NGÀY</p>
+                        <h3 id="rosterHeading">Nhân sự theo ca</h3>
+                    </div>
+                    <span class="shift-date-pill" id="rosterDate"></span>
                 </div>
-            </form>
+                <div class="shift-roster-grid" id="shiftRosterGrid"></div>
+            </section>
 
-            <!-- ============ CHÚ THÍCH CA ============ -->
-            <ul class="legend" aria-label="Chú thích ca làm việc">
-                <li class="legend__item legend__item--morning"><i class="dot" aria-hidden="true"></i>Ca sáng · 06:00-14:00</li>
-                <li class="legend__item legend__item--afternoon"><i class="dot" aria-hidden="true"></i>Ca chiều · 14:00-22:00</li>
-                <li class="legend__item legend__item--night"><i class="dot" aria-hidden="true"></i>Ca đêm · 22:00-06:00</li>
-            </ul>
+            <section class="shift-dashboard" aria-label="Thông tin ca làm việc">
+                <div class="shift-dashboard__main">
+                    <article class="shift-current-card">
+                        <div class="shift-current-card__top">
+                            <div>
+                                <p class="shift-card-kicker">CA LÀM VIỆC CỦA BẠN</p>
+                                <h3 id="currentShiftTitle">Đang tải ca trực...</h3>
+                                <p class="shift-current-card__date" id="selectedShiftDate"></p>
+                            </div>
+                            <span class="shift-status" id="shiftStatus">Đang tải</span>
+                        </div>
+                        <div id="currentShiftContent" class="shift-current-card__details"></div>
+                    </article>
 
-            <div class="board-bar">
-                <p id="shiftSummary" aria-live="polite"></p>
-                <p class="hint">Định mức mỗi ca: sáng 2 · chiều 2 · đêm 1 người. Ở chế độ Tháng, bấm một ngày để mở tuần chứa ngày đó.</p>
-            </div>
+                    <article class="shift-panel handover-panel">
+                        <div class="shift-panel__heading">
+                            <div>
+                                <p class="shift-card-kicker">ĐẦU CA</p>
+                                <h3>Checklist bàn giao</h3>
+                            </div>
+                            <span class="handover-count" id="handoverProgress">0/4</span>
+                        </div>
+                        <div class="handover-progress" aria-hidden="true"><span id="handoverProgressBar"></span></div>
+                        <ul class="handover-list">
+                            <li><label><input type="checkbox" class="handover-check"><span>Nhận bàn giao sổ trực và các ghi chú còn mở</span></label></li>
+                            <li><label><input type="checkbox" class="handover-check"><span>Kiểm tra danh sách khách đến và yêu cầu đặc biệt</span></label></li>
+                            <li><label><input type="checkbox" class="handover-check"><span>Xác nhận chìa khóa và thiết bị tại quầy</span></label></li>
+                            <li><label><input type="checkbox" class="handover-check"><span>Kiểm tra khu vực sảnh trước khi nhận ca</span></label></li>
+                        </ul>
+                    </article>
+                </div>
 
-            <!-- ============ LỊCH CA TRỰC (do js/staff-shift-view.js render) ============ -->
-            <div class="sched" id="schedGrid"></div>
+                <aside class="shift-dashboard__side">
+                    <article class="shift-panel shift-timeline">
+                        <div class="shift-panel__heading">
+                            <div>
+                                <p class="shift-card-kicker">KẾ HOẠCH</p>
+                                <h3>Công việc trong ca</h3>
+                            </div>
+                            <span class="shift-date-pill" id="timelineDate"></span>
+                        </div>
+                        <ol class="timeline-list">
+                            <li class="timeline-item is-complete">
+                                <span class="timeline-item__time">14:00</span>
+                                <span class="timeline-item__marker" aria-hidden="true"></span>
+                                <div><b>Nhận bàn giao</b><small>Kiểm tra sổ trực và cập nhật từ ca trước</small></div>
+                            </li>
+                            <li class="timeline-item is-current">
+                                <span class="timeline-item__time">15:30</span>
+                                <span class="timeline-item__marker" aria-hidden="true"></span>
+                                <div><b>Rà soát yêu cầu khách</b><small>Ưu tiên các yêu cầu đang chờ xử lý</small></div>
+                            </li>
+                            <li class="timeline-item">
+                                <span class="timeline-item__time">18:00</span>
+                                <span class="timeline-item__marker" aria-hidden="true"></span>
+                                <div><b>Cập nhật tình trạng phòng</b><small>Phối hợp cùng bộ phận buồng phòng</small></div>
+                            </li>
+                            <li class="timeline-item">
+                                <span class="timeline-item__time">21:30</span>
+                                <span class="timeline-item__marker" aria-hidden="true"></span>
+                                <div><b>Chuẩn bị bàn giao cuối ca</b><small>Ghi lại các công việc chưa hoàn tất</small></div>
+                            </li>
+                        </ol>
+                    </article>
 
+                    <article class="shift-panel shift-team">
+                        <div class="shift-panel__heading">
+                            <div>
+                                <p class="shift-card-kicker">CÙNG CA</p>
+                                <h3>Đồng nghiệp</h3>
+                            </div>
+                            <span class="team-count" id="teamCount">0 người</span>
+                        </div>
+                        <ul class="team-list" id="shiftTeamList"></ul>
+                    </article>
+                </aside>
+            </section>
         </main>
 
         <footer class="foot">

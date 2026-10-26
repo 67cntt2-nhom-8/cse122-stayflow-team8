@@ -4,7 +4,7 @@ const saveBanner = document.querySelector("#save-banner");
 const cardName = document.querySelector("#profile-card-name"); // tên in trên danh thiếp
 const avatarImage = document.querySelector("#profile-avatar");
 const avatarInput = document.querySelector("#avatar-input");
-const PROFILE_KEY = "stayflow_profile"; // cùng quy ước với stayflow_requests, stayflow_user_name
+const PROFILE_KEY = "stayflow_profile";
 
 /* Thứ tự khoá = thứ tự lấy giá trị từ form; dùng chung cho đọc và ghi. */
 const PROFILE_FIELDS = ["fullName", "phone", "email", "language", "timezone", "emergency"];
@@ -84,3 +84,22 @@ avatarInput.addEventListener("change", () => {
 
 /* --- 6. Khởi động: điền sẵn hồ sơ đã lưu --- */
 fillProfile(readProfile());
+
+STAYFLOW_REQUESTS_READY.then(() => {
+  const stay = window.StayFlowData?.stays.find((item) => item.id === GUEST_STAY_ID);
+  if (!stay) return;
+
+  try {
+    if (localStorage.getItem(PROFILE_KEY) !== null) return;
+    PROFILE_DEFAULTS.fullName = stay.guestName;
+    PROFILE_DEFAULTS.phone = stay.guestPhone;
+    PROFILE_DEFAULTS.email = stay.guestEmail || PROFILE_DEFAULTS.email;
+    const profile = readProfile();
+    fillProfile(profile);
+    localStorage.setItem("stayflow_user_name", profile.fullName);
+    const profileName = document.querySelector("#profile-button b");
+    if (profileName) profileName.textContent = profile.fullName;
+  } catch (error) {
+    console.error("Không thể nạp hồ sơ khách từ dữ liệu mock:", error);
+  }
+});

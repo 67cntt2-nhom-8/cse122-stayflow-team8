@@ -21,7 +21,7 @@ const markAllButton = document.querySelector("#mark-all");
 const totalLabel = document.querySelector("#notice-total");
 const unreadLabel = document.querySelector("#notice-unread");
 const bellDot = document.querySelector("#bell-dot"); // chấm đỏ "còn thông báo chưa đọc"
-const NOTICE_KEY = "stayflow_notifications"; // cùng quy ước với stayflow_requests, stayflow_profile
+const NOTICE_KEY = "stayflow_notifications";
 
 /* Bốn thông báo của kỳ lưu trú hiện tại. "minutes" = số phút trước đây, dùng để
    tính mốc thời gian hiển thị và cho bộ lọc "7 ngày gần đây". */
@@ -290,3 +290,32 @@ markAllButton.addEventListener("click", () => {
 
 /* --- 7. Khởi động: dựng danh sách, rồi applyFilters() lo phần lọc + số đếm --- */
 renderNotices();
+
+STAYFLOW_REQUESTS_READY.then(() => {
+  try {
+    if (localStorage.getItem(NOTICE_KEY) !== null) return;
+    const data = window.StayFlowData;
+    const stay = data.stays.find((item) => item.id === GUEST_STAY_ID);
+    const imported = stay
+      ? data.requests
+          .filter((request) => request.stayId === stay.id)
+          .map((request, index) => {
+            const createdAt = new Date(request.createdAt);
+            return {
+              id: `mock-${request.id}`,
+              kind: "request",
+              title: `Yêu cầu #${request.id} ${request.status === "Hoàn thành" ? "đã hoàn thành" : request.status === "Đã hủy" ? "đã huỷ" : "đang được xử lý"}`,
+              body: request.content,
+              minutes: Math.max(0, Math.floor((Date.now() - createdAt.getTime()) / 60000)),
+              read: index > 0,
+            };
+          })
+      : [];
+    notices = [...imported, ...NOTICE_SEED.filter((notice) => notice.kind !== "request" && notice.kind !== "service")];
+    saveNotices(notices);
+    renderNotices();
+  } catch (error) {
+    console.error("Không thể nạp thông báo từ dữ liệu mock:", error);
+    showToast("Không thể tải thông báo mẫu.");
+  }
+});

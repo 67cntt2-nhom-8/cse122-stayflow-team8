@@ -84,7 +84,7 @@ const window = {
 };
 
 /* ---------- Chạy main.js rồi gọi init() ---------- */
-new Function('document', 'window', 'setInterval', source)(document, window, () => 0);
+new Function('document', 'window', 'setInterval', 'require', source)(document, window, () => 0, require);
 document.ready();  // mô phỏng DOMContentLoaded
 
 /* ---------- Kiểm tra kết quả render ---------- */
@@ -97,16 +97,16 @@ const rendered = columns.map((column) => ({
     empty: column.querySelector('[data-dropzone]').classList.contains('is-empty'),
 }));
 
-assert.deepStrictEqual(rendered.map((c) => c.cards.length), [3, 2, 2], 'Mỗi cột phải render 3/2/2 thẻ');
-assert.deepStrictEqual(rendered.map((c) => c.count), [3, 2, 2], 'Số trên tiêu đề cột phải khớp');
+assert.deepStrictEqual(rendered.map((c) => c.cards.length), [1, 2, 1], 'Mỗi cột phải phản ánh trạng thái tác vụ đã liên kết');
+assert.deepStrictEqual(rendered.map((c) => c.count), [1, 2, 1], 'Số trên tiêu đề cột phải khớp');
 assert.strictEqual(rendered[0].empty, false, 'Cột có thẻ thì không hiện gợi ý kéo thả');
 
 // Lọc theo từ khóa phải làm cột "Mới" còn 1 thẻ
 const search = byId.taskSearch;
-search.value = '3192';
+search.value = '3002';
 search.handlers.input({ target: search });
 assert.strictEqual(columns[0].querySelector('[data-list]').innerHTML.match(/<li class="card/g).length, 1,
-    'Tìm "3192" chỉ còn 1 thẻ ở cột Mới');
-assert.match(byId.resultCount.textContent, /1\/7 nhiệm vụ/, 'Ô kết quả phải hiện 1/7');
+    'Tìm mã yêu cầu hiện trong dữ liệu liên kết');
+assert.match(byId.resultCount.textContent, /1\/4 nhiệm vụ/, 'Ô kết quả phải hiện 1/4');
 
-console.log('✓ domcheck: render 3/2/2 thẻ, số cột và tìm kiếm đều đạt');
+console.log('✓ domcheck: render danh sách chung, đếm trạng thái và tìm kiếm đều đạt');

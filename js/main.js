@@ -58,11 +58,11 @@ const PRIORITY = {
 
 /* Nhân viên đang đăng nhập (mô phỏng phiên làm việc) */
 const profile = {
-    id: 'STF001',
-    name: 'Minh Anh',
+    id: 'STF-001',
+    name: 'Nguyễn Thị Mai Anh',
     fullName: 'Nguyễn Thị Mai Anh',
     role: 'Nhân viên',
-    shift: 'afternoon'
+    shift: 'Ca sáng'
 };
 
 /* Trạng thái lọc hiện tại (dùng chung cho mọi lần render) */
@@ -70,29 +70,70 @@ const filters = {
     query: '',
     priority: 'all',
     zone: 'all',
-    shift: 'afternoon'
+    shift: 'all'
 };
 
-/* --- Mỗi nhiệm vụ gắn với 1 yêu cầu; gộp phẳng để tiện render --- */
-const taskRecords = [
-    { id: 'TSK001', code: '#SF-3192', title: 'Điều hòa không mát', room: '305', floor: 3, guest: 'Ông Nguyễn Hoàng Long', service: 'Bảo trì kỹ thuật', department: 'Kỹ thuật', sla: 60, status: 'new', priority: 'high', assignee: null, minutes: 24, note: 'Điều hòa phòng 305 không lạnh, quạt chạy nhưng không làm mát. Khách cần sửa gấp vì thời tiết đang rất nóng.', reason: 'Điều hòa hỏng ảnh hưởng trực tiếp đến trải nghiệm nghỉ ngơi → Ưu tiên Cao.' },
-    { id: 'TSK002', code: '#SF-3188', title: 'Bổ sung nước suối', room: '218', floor: 2, guest: 'Cô Trần Thị Hạnh', service: 'Vệ sinh phòng', department: 'Buồng phòng', sla: 30, status: 'new', priority: 'medium', assignee: null, minutes: 41, note: 'Bổ sung thêm 4 chai nước suối và 2 ly thủy tinh cho khách tại phòng 218.', reason: 'Yêu cầu bổ sung vật dụng cơ bản, không khẩn cấp nhưng cần đúng giờ → Trung bình.' },
-    { id: 'TSK003', code: '#SF-3165', title: 'Dọn phòng buổi tối', room: '412', floor: 4, guest: 'Gia đình anh Phạm Minh Tuấn', service: 'Vệ sinh phòng', department: 'Buồng phòng', sla: 30, status: 'new', priority: 'low', assignee: null, minutes: 72, note: 'Dọn phòng và thay khăn mới cho phòng 412 vào buổi tối sau 19h khi gia đình đi ăn.', reason: 'Vệ sinh phòng theo lịch, không gấp → Ưu tiên Thấp.' },
-    { id: 'TSK004', code: '#SF-3198', title: 'Bổ sung khăn tắm', room: '501', floor: 5, guest: 'Chị Lê Thủy Tiên', service: 'Vệ sinh phòng', department: 'Buồng phòng', sla: 30, status: 'processing', priority: 'medium', assignee: 'Trần Văn Bình', minutes: 12, note: 'Bổ sung thêm 2 khăn tắm và 1 khăn chân cho khách phòng 501.', reason: 'Bổ sung vật dụng cần xử lý trong ca nhưng không khẩn cấp → Trung bình.' },
-    { id: 'TSK005', code: '#SF-3177', title: 'Xử lý khóa cửa', room: '110', floor: 1, guest: 'Anh Đỗ Quang Huy', service: 'Bảo trì kỹ thuật', department: 'Kỹ thuật', sla: 60, status: 'processing', priority: 'high', assignee: 'Lê Hoàng Phúc', minutes: -12, note: 'Khóa cửa phòng 110 bị kẹt, khách không mở được từ bên trong. Cần kỹ thuật xử lý ngay.', reason: 'Sự cố khóa cửa ảnh hưởng đến an toàn của khách → Ưu tiên Cao.' },
-    { id: 'TSK006', code: '#SF-3154', title: 'Giao bàn ủi', room: '305', floor: 3, guest: 'Ông Nguyễn Hoàng Long', service: 'Hỗ trợ lễ tân', department: 'Lễ tân', sla: 15, status: 'completed', priority: 'low', assignee: 'Minh Anh', minutes: 14, note: 'Giao bàn ủi và cầu là hơi nước đến phòng 305 cho khách sử dụng trong buổi sáng.', reason: 'Yêu cầu đơn giản, không ảnh hưởng an toàn → Ưu tiên Thấp.' },
-    { id: 'TSK007', code: '#SF-3171', title: 'Dọn khay thức ăn', room: '218', floor: 2, guest: 'Cô Trần Thị Hạnh', service: 'Ăn uống & Phòng ăn', department: 'F&B', sla: 45, status: 'completed', priority: 'medium', assignee: 'Vũ Đức Thành', minutes: 18, note: 'Dọn khay thức ăn và thu dọn bàn ăn tại phòng 218 sau khi khách dùng bữa sáng.', reason: 'Dọn dẹp sau bữa ăn cần thực hiện sớm để giữ vệ sinh phòng → Trung bình.' }
-];
+const tasks = [];
 
-/* Bản sao làm việc (giữ nguyên taskRecords làm "nguồn gốc" khi cần reset) */
-const tasks = taskRecords.map(function (task) {
-    return Object.assign({}, task);
-});
+/* Chuyển nhiệm vụ đã liên kết sang bản ghi mà bảng Kanban cần. */
+function tasksFromMockData(source) {
+    const stays = new Map(source.stays.map(function (stay) { return [stay.id, stay]; }));
+    const services = new Map(source.serviceTypes.map(function (service) { return [service.id, service]; }));
+    const staff = new Map(source.staff.map(function (person) { return [person.id, person]; }));
+    const requests = new Map(source.requests.map(function (request) { return [request.id, request]; }));
+    const statusMap = { 'Chờ nhận': 'new', 'Đang làm': 'processing', 'Chờ khách': 'processing', 'Hoàn tất': 'completed' };
+    const priorityMap = { 'Cao': 'high', 'Trung bình': 'medium', 'Thấp': 'low' };
+    const shiftMap = { 'Ca sáng': 'morning', 'Ca chiều': 'afternoon', 'Ca đêm': 'night' };
+    const now = Date.parse(source.clock) || Date.now();
+
+    return source.tasks.filter(function (task) {
+        const request = requests.get(task.requestId);
+        return request && request.status !== 'Đã hủy';
+    }).map(function (task) {
+        const request = requests.get(task.requestId);
+        const stay = stays.get(request.stayId);
+        const service = services.get(request.serviceTypeId);
+        const assignee = staff.get(task.staffId);
+        if (!stay || !service || !statusMap[task.status] || !priorityMap[request.priority]) {
+            throw new Error('Nhiệm vụ ' + task.id + ' thiếu liên kết hợp lệ hoặc trạng thái không được hỗ trợ.');
+        }
+        const dueAt = Date.parse(request.dueAt);
+        const sla = Number(service.expectedSLA) || 30;
+        const minutes = Number.isFinite(dueAt) ? Math.floor((dueAt - now) / 60000) : sla;
+        const floor = Math.floor(Number(stay.roomNumber) / 100) || 1;
+
+        return {
+            id: task.id,
+            requestId: request.id,
+            code: '#' + request.id,
+            title: request.title,
+            room: stay.roomNumber,
+            floor: floor,
+            guest: stay.guestName,
+            service: service.categoryName,
+            department: service.department,
+            sla: sla,
+            status: statusMap[task.status],
+            priority: priorityMap[request.priority],
+            assignee: assignee ? assignee.name : null,
+            minutes: minutes,
+            receivedAt: request.createdAt,
+            dueAt: request.dueAt,
+            note: request.content,
+            reason: task.ai_priority_reason || request.ai_priority_reason || '',
+            staffId: task.staffId || null,
+            assigneeShift: assignee ? shiftMap[assignee.shift] : null
+        };
+    });
+}
 
 /* Dữ liệu tra cứu: nhân viên, loại dịch vụ, lưu trú, yêu cầu, phản hồi */
 const mockData = (typeof window !== 'undefined' && window.StayFlowData) ||
     (typeof require === 'function' ? require('./data.js') : null) ||
     { staff: [], serviceTypes: [], stays: [], requests: [], tasks: [], feedback: [] };
+if ((typeof window === 'undefined' || !window.StayFlowDataReady) && mockData) {
+    tasks.push.apply(tasks, tasksFromMockData(mockData));
+}
 
 /* ========================================================================
    2) HÀM NGHIỆP VỤ THUẦN (không đụng DOM)
@@ -135,6 +176,9 @@ function filterTasks(list, now, startedAt) {
     return (list || []).filter(function (task) {
         // Ưu tiên
         if (filters.priority !== 'all' && task.priority !== filters.priority) {
+            return false;
+        }
+        if (filters.shift !== 'all' && task.assigneeShift !== filters.shift) {
             return false;
         }
         // Khu vực theo tầng
@@ -199,6 +243,19 @@ function applyStatus(task, status) {
 
     task.status = status;
     return task;
+}
+
+function saveTask(task, note) {
+    if (typeof window === 'undefined' || !window.StayFlowStore) {
+        return;
+    }
+    const staffId = task.staffId || profile.id;
+    window.StayFlowStore.updateStaffTask(task.id, task.status, staffId, note);
+    task.staffId = staffId;
+    if (!task.assignee) {
+        const person = window.StayFlowData.staff.find(function (item) { return item.id === staffId; });
+        task.assignee = person ? person.name : profile.name;
+    }
 }
 
 /* Đổi trạng thái theo vòng NEXT_STATUS (dùng cho nút trên thẻ/modal) */
@@ -435,8 +492,17 @@ if (typeof document !== 'undefined') {
         if (!task || !status) {
             return;
         }
+        const beforeTask = Object.assign({}, task);
         const before = task.status;
         applyStatus(task, status);
+        try {
+            saveTask(task);
+        } catch (error) {
+            Object.assign(task, beforeTask);
+            console.error('Không thể lưu trạng thái nhiệm vụ:', error);
+            toast('Không thể lưu thay đổi: ' + error.message);
+            return;
+        }
         closeModal();
         render();
         if (before !== task.status) {
@@ -585,6 +651,7 @@ if (typeof document !== 'undefined') {
         }
         const shiftSel = $('#filterShift');
         if (shiftSel) {
+            shiftSel.value = filters.shift;
             shiftSel.addEventListener('change', function (e) {
                 filters.shift = e.target.value;
                 render();
@@ -597,6 +664,7 @@ if (typeof document !== 'undefined') {
                 filters.query = '';
                 filters.priority = 'all';
                 filters.zone = 'all';
+                filters.shift = 'all';
                 if (search) {
                     search.value = '';
                 }
@@ -605,6 +673,9 @@ if (typeof document !== 'undefined') {
                 }
                 if (zoneSel) {
                     zoneSel.value = 'all';
+                }
+                if (shiftSel) {
+                    shiftSel.value = 'all';
                 }
                 render();
                 toast('Đã làm mới bảng nhiệm vụ', 'success');
@@ -624,27 +695,57 @@ if (typeof document !== 'undefined') {
         }
     }
 
-    /* ---- API dùng chung cho các trang nhân viên khác ----
-       Trang chi tiết nhiệm vụ (staff-task-detail.html) tái dùng đúng
-       nguồn dữ liệu và quy tắc nghiệp vụ ở đây thay vì chép lại. */
-    window.StaffFlow = {
-        tasks: tasks,
-        profile: profile,
-        PRIORITY: PRIORITY,
-        STATUS_TEXT: STATUS_TEXT,
-        STATUS_LABELS: STATUS_LABELS,
-        NEXT_STATUS: NEXT_STATUS,
-        ACTION_TEXT: ACTION_TEXT,
-        findTask: findTask,
-        applyStatus: applyStatus,
-        isOverdue: isOverdue,
-        liveMinutes: liveMinutes,
-        timeLabel: timeLabel,
-        initials: initials,
-        toast: toast
-    };
+    /* API dùng chung cho trang chi tiết; chỉ sẵn sàng sau khi dữ liệu JSON tải xong. */
+    function publishApi() {
+        return window.StaffFlow = {
+            tasks: tasks,
+            profile: profile,
+            PRIORITY: PRIORITY,
+            STATUS_TEXT: STATUS_TEXT,
+            STATUS_LABELS: STATUS_LABELS,
+            NEXT_STATUS: NEXT_STATUS,
+            ACTION_TEXT: ACTION_TEXT,
+            findTask: findTask,
+            applyStatus: applyStatus,
+            isOverdue: isOverdue,
+            liveMinutes: liveMinutes,
+            timeLabel: timeLabel,
+            initials: initials,
+            toast: toast,
+            saveTask: saveTask
+        };
+    }
 
-    /* Đăng ký chạy khi DOM sẵn sàng */
-    document.addEventListener('DOMContentLoaded', init);
+    const mockReady = window.StayFlowDataReady
+        ? window.StayFlowDataReady.then(function () {
+            const records = tasksFromMockData(window.StayFlowData);
+            tasks.splice.apply(tasks, [0, tasks.length].concat(records));
+            const currentStaff = window.StayFlowData.staff[0];
+            if (currentStaff) {
+                profile.id = currentStaff.id;
+                profile.name = currentStaff.name;
+                profile.fullName = currentStaff.name;
+            }
+            return publishApi();
+        })
+        : Promise.resolve(publishApi());
+    window.StaffFlowReady = mockReady;
+
+    function showLoadError(error) {
+        console.error('Không thể khởi tạo bảng nhiệm vụ từ dữ liệu mock:', error);
+        const message = document.createElement('p');
+        message.setAttribute('role', 'alert');
+        message.textContent = 'Không thể tải dữ liệu nhiệm vụ. Hãy kiểm tra assets/data/stayflow.mock.json và chạy trang qua Live Server.';
+        document.body.prepend(message);
+    }
+
+    /* Đăng ký chạy khi DOM và dữ liệu sẵn sàng. */
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.StayFlowDataReady) {
+            mockReady.then(init).catch(showLoadError);
+        } else {
+            init();
+        }
+    });
 
 }

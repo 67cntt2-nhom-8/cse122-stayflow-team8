@@ -7,7 +7,7 @@
     <title>StayFlow - Chi tiết nhiệm vụ</title>
     <link rel="stylesheet" href="../css/staff.css">
 </head>
-<body>
+<body class="task-detail-page">
 <div class="app">
 
     <!-- ============ SIDEBAR ============ -->
@@ -59,14 +59,21 @@
         <header class="topbar">
             <div class="topbar__left">
                 <p class="crumbs">
-                    <a href="staff-task-board.html">Vận hành</a><span aria-hidden="true">/</span>
                     <a href="staff-task-board.html">Bảng nhiệm vụ</a><span aria-hidden="true">/</span>
-                    <span data-code>#SF-3192</span>
+                    <span>Chi tiết nhiệm vụ</span>
                 </p>
                 <h1 class="topbar__title">Chi tiết nhiệm vụ</h1>
             </div>
 
             <div class="topbar__right">
+                <label class="global-search">
+                    <svg class="global-search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg>
+                    <input type="search" placeholder="Tìm mã, phòng, khách..." aria-label="Tìm mã, phòng, khách">
+                </label>
+                <button class="bell" type="button" aria-label="Thông báo">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>
+                    <span class="bell__dot" aria-hidden="true"></span>
+                </button>
                 <div class="user">
                     <span class="avatar avatar--lg" aria-hidden="true">MA</span>
                     <span class="user__text">
@@ -79,108 +86,157 @@
 
         <main class="page" id="main">
 
-            <!-- ============ TIÊU ĐỀ TRANG ============ -->
-            <section class="page-head">
-                <div class="page-head__text">
-                    <p class="eyebrow">NHIỆM VỤ · CHI TIẾT</p>
-                    <h2 class="page-head__title">Chi tiết nhiệm vụ <span data-code>#SF-3192</span></h2>
-                    <p class="page-head__desc" data-title>Đang tải nội dung yêu cầu…</p>
+            <section class="task-hero" aria-labelledby="taskTitle">
+                <div class="task-hero__copy">
+                    <p class="task-hero__eyebrow"><span data-code>#REQ-2026-3002</span><span aria-hidden="true">·</span><span data-service>Gọi dọn phòng</span></p>
+                    <h2 class="task-hero__title" id="taskTitle" data-title>Đang tải nội dung yêu cầu…</h2>
+                    <p class="task-hero__meta">Được tiếp nhận lúc <time data-received-clock>—</time><span class="sr-only" data-received>—</span><span aria-hidden="true">·</span>cập nhật gần đây</p>
                 </div>
-                <a class="btn btn--ghost" href="staff-task-board.html">
-                    <svg class="btn__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-                    Quay lại danh sách
-                </a>
+                <div class="task-hero__badges" aria-label="Thông tin trạng thái">
+                    <span class="task-chip task-chip--status" id="statusPill" data-status="new"><i class="dot" aria-hidden="true"></i><span data-status-text>Mới</span></span>
+                    <span class="task-chip task-chip--priority"><i class="dot" aria-hidden="true"></i>Ưu tiên <span data-priority>—</span></span>
+                    <span class="task-chip task-chip--sla"><i class="dot" aria-hidden="true"></i>SLA còn <span data-remaining>—</span></span>
+                </div>
             </section>
 
             <!-- Thông báo đổi trạng thái, đọc bởi trình đọc màn hình -->
             <p class="sr-only" id="liveMsg" aria-live="polite"></p>
 
-            <!-- ============ HAI CỘT ============ -->
-            <div class="detail" id="detail">
-
-                <!-- ---- CỘT TRÁI: THÔNG TIN CHÍNH ---- -->
-                <div class="detail__main">
-
-                    <section class="panel" aria-labelledby="reqTitle">
-                        <div class="panel__head">
-                            <h3 class="panel__title" id="reqTitle">Nội dung yêu cầu</h3>
-                            <span class="status-pill" id="statusPill" data-status="new">
-                                <i class="dot" aria-hidden="true"></i><span data-status-text>Mới</span>
-                            </span>
+            <div class="task-layout" id="detail">
+                <div class="task-layout__main">
+                    <section class="task-panel request-panel" aria-labelledby="reqTitle">
+                        <h3 class="task-panel__title" id="reqTitle">Yêu cầu của khách</h3>
+                        <p class="request-panel__quote" data-note>—</p>
+                        <div class="request-panel__context">
+                            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/></svg>
+                            <span data-reason>—</span>
                         </div>
-                        <p class="panel__note" data-note>—</p>
-                        <p class="panel__label">Vì sao AI xếp mức ưu tiên này?</p>
-                        <p class="panel__note" data-reason>—</p>
                     </section>
 
-                    <section class="panel" aria-labelledby="infoTitle">
-                        <h3 class="panel__title" id="infoTitle">Thông tin phòng &amp; thời gian</h3>
-                        <dl class="info">
-                            <div class="info__row"><dt>Phòng / Tầng</dt><dd data-room>—</dd></div>
-                            <div class="info__row"><dt>Khách lưu trú</dt><dd data-guest>—</dd></div>
-                            <div class="info__row"><dt>Loại dịch vụ</dt><dd data-service>—</dd></div>
-                            <div class="info__row"><dt>Bộ phận</dt><dd data-department>—</dd></div>
-                            <div class="info__row"><dt>Mức độ ưu tiên</dt><dd data-priority>—</dd></div>
-                            <div class="info__row"><dt>Thời gian tiếp nhận</dt><dd data-received>—</dd></div>
-                            <div class="info__row"><dt>SLA dự kiến</dt><dd data-sla>—</dd></div>
-                            <div class="info__row"><dt>Thời gian còn lại</dt><dd data-remaining>—</dd></div>
-                            <div class="info__row"><dt>Người phụ trách</dt><dd data-assignee>—</dd></div>
-                            <div class="info__row"><dt>Trạng thái hiện tại</dt><dd data-status-row>—</dd></div>
+                    <section class="task-panel attachment-panel" aria-labelledby="attachmentTitle">
+                        <div class="task-panel__heading">
+                            <h3 class="task-panel__title" id="attachmentTitle">Ảnh đính kèm</h3>
+                            <span>1 ảnh từ khách</span>
+                        </div>
+                        <a class="attachment-preview" href="../assets/images/b006a.png" target="_blank" rel="noreferrer" aria-label="Mở ảnh phòng khách trong thẻ mới">
+                            <img src="../assets/images/b006a.png" alt="Ảnh phòng nghỉ khách sạn đính kèm yêu cầu">
+                            <span aria-hidden="true">Phòng khách · 1 ảnh</span>
+                        </a>
+                    </section>
+
+                    <section class="task-panel activity-panel" aria-labelledby="logTitle">
+                        <div class="task-panel__heading activity-panel__heading">
+                            <h3 class="task-panel__title" id="logTitle">Hoạt động</h3>
+                            <button class="task-note-toggle" id="btnShowNote" type="button" aria-controls="notePanel">Thêm ghi chú</button>
+                        </div>
+                        <ol class="task-timeline" data-timeline></ol>
+                    </section>
+
+                    <section class="task-note-panel" id="notePanel" aria-labelledby="noteTitle" hidden>
+                        <div>
+                            <h3 class="task-panel__title" id="noteTitle">Ghi chú hoàn tất</h3>
+                            <p>Ghi lại kết quả xử lý trước khi hoàn thành nhiệm vụ.</p>
+                        </div>
+                        <div class="field" id="noteField">
+                            <label class="sr-only" for="staffNote">Nội dung đã xử lý</label>
+                            <textarea id="staffNote" name="note" rows="2" placeholder="Ví dụ: Đã bổ sung vật dụng, khách đã xác nhận..."></textarea>
+                            <p class="field__error" id="noteError" hidden>Vui lòng nhập ghi chú trước khi hoàn tất nhiệm vụ.</p>
+                            <button class="task-note-panel__save" type="button" id="btnSaveNote">Lưu ghi chú</button>
+                        </div>
+                    </section>
+                </div>
+
+                <aside class="task-layout__aside" aria-label="Thông tin yêu cầu">
+                    <section class="task-panel location-panel" aria-labelledby="locationTitle">
+                        <h3 class="task-panel__title" id="locationTitle">Vị trí</h3>
+                        <div class="room-map" aria-label="Sơ đồ vị trí phòng">
+                            <span class="room-map__room" data-location-room>—</span>
+                        </div>
+                        <strong class="location-panel__floor" data-location-floor>—</strong>
+                        <p class="location-panel__detail">Kho đồ vải · cách 38m</p>
+                    </section>
+
+                    <section class="task-panel guest-panel" aria-labelledby="guestTitle">
+                        <h3 class="task-panel__title" id="guestTitle">Thông tin khách</h3>
+                        <div class="guest-panel__identity">
+                            <span class="avatar avatar--gold" aria-hidden="true">KH</span>
+                            <span><strong data-guest>—</strong><small>Khách đang lưu trú</small></span>
+                        </div>
+                        <dl class="guest-details">
+                            <div><dt>Mã yêu cầu</dt><dd data-code>#REQ-2026-3002</dd></div>
+                            <div><dt>Bộ phận</dt><dd data-department>—</dd></div>
+                            <div><dt>SLA dự kiến</dt><dd><span data-sla>—</span> phút</dd></div>
+                            <div><dt>Người phụ trách</dt><dd data-assignee>—</dd></div>
                         </dl>
                     </section>
-
-                </div>
-
-                <!-- ---- CỘT PHẢI: THAO TÁC & NHẬT KÝ ---- -->
-                <div class="detail__side">
-
-                    <section class="panel" aria-labelledby="actionTitle">
-                        <h3 class="panel__title" id="actionTitle">Cập nhật trạng thái</h3>
-                        <div class="action">
-                            <p class="action__hint">Nhiệm vụ quá hạn được đánh dấu đỏ trên bảng. Ghi chú xử lý là bắt buộc khi hoàn tất.</p>
-                            <div class="action__buttons">
-                                <button class="btn btn--dark" type="button" id="btnProcessing" data-action="processing">
-                                    Bắt đầu — Đang xử lý
-                                </button>
-                                <button class="btn btn--ghost" type="button" id="btnCompleted" data-action="completed">
-                                    Đánh dấu Hoàn tất
-                                </button>
-                                <button class="btn btn--ghost" type="button" id="btnReopen" data-action="new" hidden>
-                                    Mở lại nhiệm vụ
-                                </button>
-                            </div>
-                        </div>
-                    </section>
-
-                    <section class="panel" aria-labelledby="noteTitle">
-                        <h3 class="panel__title" id="noteTitle">Ghi chú / phản hồi của nhân viên</h3>
-                        <div class="field" id="noteField">
-                            <label for="staffNote">Nội dung đã xử lý</label>
-                            <textarea id="staffNote" name="note" rows="4" placeholder="Ví dụ: Đã vệ sinh phòng, thay ga giường và bổ sung khăn tắm. Khách đã kiểm tra và hài lòng."></textarea>
-                            <p class="field__error" id="noteError" hidden>Vui lòng nhập ghi chú trước khi hoàn tất nhiệm vụ.</p>
-                        </div>
-                        <button class="btn btn--dark btn--block" type="button" id="btnSaveNote">Lưu ghi chú</button>
-                    </section>
-
-                    <section class="panel" aria-labelledby="logTitle">
-                        <h3 class="panel__title" id="logTitle">Lịch sử thay đổi</h3>
-                        <ol class="timeline" data-timeline></ol>
-                    </section>
-
-                </div>
+                </aside>
             </div>
+
+            <section class="task-actions" aria-label="Thao tác nhiệm vụ">
+                <button class="btn btn--ghost" type="button" id="btnProcessing" data-action="processing">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5 12 7-12 7z"/></svg>
+                    Bắt đầu
+                </button>
+                <button class="btn btn--dark" type="button" id="btnCompleted" data-action="completed">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/></svg>
+                    Hoàn tất
+                </button>
+                <button class="btn btn--report" type="button" id="btnReportIssue" aria-haspopup="dialog" aria-controls="reportModal" aria-expanded="true">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v4m0 3h.01"/></svg>
+                    Báo sự cố
+                </button>
+                <button class="btn btn--ghost" type="button" id="btnReopen" data-action="new" hidden>Mở lại</button>
+            </section>
 
         </main>
 
         <footer class="foot">
-            <p>Responsive: hai cột chuyển một cột dưới 1024px.</p>
-            <p>WCAG AA · Focus ring 2px · trạng thái không chỉ phụ thuộc màu sắc.</p>
+            <p>StayFlow · Điều phối dịch vụ lưu trú</p>
         </footer>
     </div>
 </div>
 
 <!-- Toast thông báo -->
 <div class="toasts" id="toasts" role="status" aria-live="polite"></div>
+
+<div class="report-modal" id="reportModal" role="dialog" aria-labelledby="reportTitle">
+    <div class="report-modal__head">
+        <h2 id="reportTitle">Báo sự cố nhiệm vụ</h2>
+        <button class="report-modal__close" id="reportClose" type="button" aria-label="Đóng biểu mẫu">×</button>
+    </div>
+    <form id="reportForm">
+        <label class="report-field">
+            <span>Loại sự cố</span>
+            <select id="reportType" name="type" required>
+                <option value="Không đủ vật tư">Không đủ vật tư</option>
+                <option value="Không thể tiếp cận phòng">Không thể tiếp cận phòng</option>
+                <option value="Cần hỗ trợ thêm">Cần hỗ trợ thêm</option>
+                <option value="Khác">Khác</option>
+            </select>
+        </label>
+        <label class="report-field">
+            <span>Mức ảnh hưởng</span>
+            <select id="reportImpact" name="impact" required>
+                <option value="Trung bình">Trung bình - có thể trễ SLA</option>
+                <option value="Thấp">Thấp - chưa ảnh hưởng SLA</option>
+                <option value="Cao">Cao - cần hỗ trợ ngay</option>
+            </select>
+        </label>
+        <label class="report-field">
+            <span>Mô tả</span>
+            <textarea id="reportDescription" name="description" rows="2" placeholder="Mô tả ngắn tình huống để quản lý hỗ trợ..." required></textarea>
+        </label>
+        <label class="report-upload" for="reportAttachment">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4"/><path d="M5 13v6h14v-6"/></svg>
+            <span id="reportAttachmentName">Đính kèm ảnh hiện trường</span>
+            <input id="reportAttachment" type="file" accept="image/*">
+        </label>
+        <div class="report-modal__actions">
+            <button class="btn btn--ghost" id="reportCancel" type="button">Hủy</button>
+            <button class="btn btn--report" type="submit">Gửi báo cáo</button>
+        </div>
+    </form>
+</div>
 
 <script src="../js/data.js"></script>
 <script src="../js/main.js"></script>

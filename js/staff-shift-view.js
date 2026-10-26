@@ -25,13 +25,13 @@ const WEEKDAYS = ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'];
 const WEEKDAYS_FULL = ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy', 'Chủ nhật'];
 
 /* Bộ phận có thể lọc (khớp staff[].role trong js/data.js) */
-const DEPARTMENTS = ['Lễ tân', 'Buồng phòng', 'Kỹ thuật'];
+const DEPARTMENTS = ['Lễ tân', 'Buồng phòng', 'Kỹ thuật', 'Ẩm thực'];
 
 /* Bộ lọc hiện tại: tên nhân viên · bộ phận · ca */
 const shiftFilters = { query: '', department: 'all', shift: 'all' };
 
 /* Dữ liệu tra cứu: js/data.js -> window.StayFlowData (trình duyệt) / require (Node) */
-const shiftData = (typeof window !== 'undefined' && window.StayFlowData) ||
+let shiftData = (typeof window !== 'undefined' && window.StayFlowData) ||
     (typeof require === 'function' ? require('./data.js') : null) ||
     { staff: [], shifts: [] };
 
@@ -185,6 +185,7 @@ if (typeof document !== 'undefined') {
 
     /* Kỳ đang xem: 'week' | 'month' + mốc neo ngày */
     const view = { mode: 'week', anchor: weekStart(TODAY) };
+    let selectedShiftDate = startOfDay(TODAY);
 
     function $(selector) {
         return document.querySelector(selector);
@@ -213,6 +214,10 @@ if (typeof document !== 'undefined') {
 
     function sameDay(a, b) {
         return startOfDay(a).getTime() === startOfDay(b).getTime();
+    }
+
+    function longDate(date) {
+        return dowFull(date) + ', ' + date.getDate() + ' tháng ' + (date.getMonth() + 1);
     }
 
     /* Lấy chữ viết tắt của tên nhân viên */
@@ -267,20 +272,38 @@ if (typeof document !== 'undefined') {
         '</section>';
     }
 
-    /* Thẻ một ngày ở chế độ Tuần */
+    /* Thẻ ngày gọn cho dải tuần; nội dung ca chi tiết vẫn giữ trong DOM. */
     function dayCardHTML(date, full, filtered, tally) {
         tally.total += countSlots(full);
         const today = sameDay(date, TODAY);
+        const selected = sameDay(date, selectedShiftDate);
+        const counts = SHIFT_ORDER.map(function (id) {
+            const members = filtered.slots[id];
+            return {
+                id: id,
+                count: members ? members.length : 0,
+                label: shiftType(id).name.replace('Ca ', '')
+            };
+        });
 
-        return '<article class="day-card' + (today ? ' is-today' : '') + '">' +
-            '<header class="day-card__head">' +
-                '<h3 class="day-card__date">' + esc(dowText(date)) + ' · ' + esc(shortDate(date)) + '</h3>' +
+        return '<article class="day-card' + (today ? ' is-today' : '') +
+            (selected ? ' is-selected' : '') + '" data-date="' + esc(isoDate(date)) + '">' +
+            '<button class="day-card__button" type="button" data-date="' + esc(isoDate(date)) +
+                '" aria-pressed="' + (selected ? 'true' : 'false') + '" aria-label="' +
+                esc('Chọn ' + longDate(date)) + '">' +
+                '<span class="day-card__weekday">' + esc(dowText(date)) + '</span>' +
+                '<span class="day-card__number">' + date.getDate() + '</span>' +
+                '<span class="day-card__month">' + esc(date.toLocaleDateString('vi-VN', { month: 'short' })) + '</span>' +
                 (today ? '<span class="tag-today">Hôm nay</span>' : '') +
-            '</header>' +
+                '<span class="day-card__coverage">' + counts.map(function (item) {
+                    return '<span class="day-card__shift day-card__shift--' + item.id + '">' +
+                        '<i aria-hidden="true"></i>' + esc(item.label) + '<b>' + item.count + '</b></span>';
+                }).join('') + '</span>' +
+            '</button>' +
             SHIFT_ORDER.map(function (id) {
                 return slotHTML(id, filtered, tally);
             }).join('') +
-        '</article>';
+            '</article>';
     }
 
     /* Ô một ngày ở chế độ Tháng */
@@ -324,6 +347,118 @@ if (typeof document !== 'undefined') {
             btn.setAttribute('aria-pressed', active ? 'true' : 'false');
         });
     }
+
+    function renderShiftDetails(staff) {
+        const currentStaff = staff.find(function (member) {
+            return normalize(member.name).indexOf('mai anh') !== -1;
+        }) || staff.find(function (member) {
+            return member.status === 'Đang trực';
+        });
+        const currentShift = currentStaff && SHIFT_ORDER.find(function (id) {
+            return shiftType(id).name === currentStaff.shift;
+        });
+        const schedule = daySchedule(staff, selectedShiftDate);
+        const assigned = currentShift && schedule.slots[currentShift].some(function (member) {
+            return currentStaff && member.id === currentStaff.id;
+        });
+        const shift = currentShift ? shiftType(currentShift) : null;
+        const title = $('#currentShiftTitle');
+        const dateLabel = $('#selectedShiftDate');
+        const status = $('#shiftStatus');
+        const details = $('#currentShiftContent');
+        const timelineDate = $('#timelineDate');
+        const teamList = $('#shiftTeamList');
+        const teamCount = $('#teamCount');
+
+        if (title) {
+            title.textContent = shift ? shift.name : 'Chưa có ca được phân';
+        }
+        if (dateLabel) {
+            dateLabel.textContent = longDate(selectedShiftDate);
+        }
+        if (timelineDate) {
+            timelineDate.textContent = shortDate(selectedShiftDate);
+        }
+        if (status) {
+            status.textContent = assigned ? 'Có trong lịch' : 'Chưa phân ca';
+            status.classList.toggle('is-assigned', Boolean(assigned));
+        }
+        if (details) {
+            details.innerHTML = shift && currentStaff
+                ? '<div class="shift-detail-item"><span>Giờ làm việc</span><b>' +
+                    esc(shift.start + ' – ' + shift.end) + '</b></div>' +
+                  '<div class="shift-detail-item"><span>Bộ phận</span><b>' +
+                    esc(currentStaff.role) + '</b></div>' +
+                  '<div class="shift-detail-item"><span>Nhân sự theo ca</span><b>' +
+                    schedule.slots[currentShift].length + ' người</b></div>'
+                : '<p class="shift-empty">Chưa có dữ liệu ca làm việc.</p>';
+        }
+
+        const teammates = currentShift ? schedule.slots[currentShift] : [];
+        if (teamList) {
+            teamList.innerHTML = teammates.map(function (member) {
+                return '<li class="team-member">' +
+                    '<span class="team-member__avatar" aria-hidden="true">' +
+                        esc(initials(member.name)) + '</span>' +
+                    '<span class="team-member__text"><b>' + esc(member.name) +
+                        (currentStaff && member.id === currentStaff.id ? ' <small>(Bạn)</small>' : '') +
+                        '</b><small>' + esc(member.role) + '</small></span>' +
+                    '<span class="team-member__status" aria-label="Đang trực"></span>' +
+                '</li>';
+            }).join('') || '<li class="shift-empty">Chưa có đồng nghiệp được xếp ca.</li>';
+        }
+        if (teamCount) {
+            teamCount.textContent = teammates.length + ' người';
+        }
+    }
+
+    function renderDayRoster(staff) {
+        const dateLabel = $('#rosterDate');
+        const rosterGrid = $('#shiftRosterGrid');
+        if (dateLabel) {
+            dateLabel.textContent = longDate(selectedShiftDate);
+        }
+        if (!rosterGrid) {
+            return;
+        }
+
+        const filtered = filterDay(daySchedule(staff, selectedShiftDate), shiftFilters);
+        rosterGrid.innerHTML = SHIFT_ORDER.filter(function (id) {
+            return filtered.slots[id] !== null;
+        }).map(function (id) {
+            const type = shiftType(id);
+            const members = filtered.slots[id];
+            return '<article class="shift-roster-card shift-roster-card--' + id + '">' +
+                '<div class="shift-roster-card__heading">' +
+                    '<div><h4>' + esc(type.name) + '</h4><span>' +
+                        esc(type.start + '–' + type.end) + '</span></div>' +
+                    '<b>' + members.length + '</b>' +
+                '</div>' +
+                (members.length
+                    ? '<ul class="shift-roster-list">' + members.map(function (member) {
+                        return '<li class="shift-roster-member"><span class="team-member__avatar" aria-hidden="true">' +
+                            esc(initials(member.name)) + '</span><span class="team-member__text"><b>' +
+                            esc(member.name) + '</b><small>' + esc(member.role) +
+                            '</small></span></li>';
+                    }).join('') + '</ul>'
+                    : '<p class="shift-empty">Chưa có nhân sự khớp bộ lọc.</p>') +
+                '</article>';
+        }).join('') || '<p class="shift-empty">Không có ca trực khớp bộ lọc hiện tại.</p>';
+    }
+
+    function updateHandoverProgress() {
+        const checks = Array.prototype.slice.call(document.querySelectorAll('.handover-check'));
+        const completed = checks.filter(function (check) { return check.checked; }).length;
+        const label = $('#handoverProgress');
+        const bar = $('#handoverProgressBar');
+        if (label) {
+            label.textContent = completed + '/' + checks.length;
+        }
+        if (bar && bar.style) {
+            bar.style.width = checks.length ? (completed / checks.length * 100) + '%' : '0%';
+        }
+    }
+
     /* ---- Render lịch theo kỳ đang xem ---- */
     function render() {
         const grid = $('#schedGrid');
@@ -357,6 +492,12 @@ if (typeof document !== 'undefined') {
                 : 'Không có ca trực khớp bộ lọc hiện tại';
         }
 
+        const weekHeading = $('#weekHeading');
+        if (weekHeading) {
+            weekHeading.textContent = month ? 'Lịch theo tháng' : 'Lịch trong tuần';
+        }
+        renderShiftDetails(staff);
+        renderDayRoster(staff);
         syncModeButtons();
     }
 
@@ -366,6 +507,9 @@ if (typeof document !== 'undefined') {
             view.anchor = view.mode === 'month'
                 ? addMonths(view.anchor, direction)
                 : addDays(view.anchor, direction * 7);
+            if (view.mode === 'week') {
+                selectedShiftDate = view.anchor;
+            }
             render();
         }
 
@@ -387,6 +531,7 @@ if (typeof document !== 'undefined') {
         if (todayBtn) {
             todayBtn.addEventListener('click', function () {
                 view.anchor = TODAY;
+                selectedShiftDate = TODAY;
                 render();
             });
         }
@@ -440,15 +585,26 @@ if (typeof document !== 'undefined') {
                     return;
                 }
                 const parts = cell.dataset.date.split('-');
-                view.mode = 'week';
-                view.anchor = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                selectedShiftDate = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+                if (view.mode === 'month') {
+                    view.mode = 'week';
+                    view.anchor = selectedShiftDate;
+                }
                 render();
             });
         }
+
+        Array.prototype.forEach.call(document.querySelectorAll('.handover-check'), function (check) {
+            check.addEventListener('change', updateHandoverProgress);
+        });
+        updateHandoverProgress();
     }
 
     /* ---- Khởi động ---- */
     function init() {
+        if (typeof window !== 'undefined' && window.StayFlowData) {
+            shiftData = window.StayFlowData;
+        }
         const search = $('#shiftSearch');
         if (search) {
             shiftFilters.query = search.value;
@@ -466,5 +622,17 @@ if (typeof document !== 'undefined') {
         render();
     }
 
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', function () {
+        if (window.StayFlowDataReady) {
+            window.StayFlowDataReady.then(init).catch(function (error) {
+                console.error('Không thể tải dữ liệu lịch ca:', error);
+                const grid = $('#schedGrid');
+                if (grid) {
+                    grid.textContent = 'Không thể tải dữ liệu lịch ca. Hãy kiểm tra assets/data/stayflow.mock.json và chạy trang qua Live Server.';
+                }
+            });
+        } else {
+            init();
+        }
+    });
 }
