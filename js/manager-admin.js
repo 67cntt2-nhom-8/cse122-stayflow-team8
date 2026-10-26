@@ -1,7 +1,15 @@
 // StayFlow – phần dùng chung cho Quản lý + Quản trị (SV1): dữ liệu, khung trang, toast, hộp thoại.
 const SF = {
-  NOW0: new Date("2026-10-06T20:30:00").getTime(), T0: Date.now(), q: "",
-  cfg: () => ({ warn: 20, cap: 4, target: 92, ai: true, ...JSON.parse(localStorage.getItem("sf_cfg") || "{}") }),
+  NOW0: new Date("2026-10-06T20:30:00").getTime(),
+  T0: Date.now(),
+  q: "",
+  cfg: () => ({
+    warn: 20,
+    cap: 4,
+    target: 92,
+    ai: true,
+    ...JSON.parse(localStorage.getItem("sf_cfg") || "{}"),
+  }),
   now: () => SF.NOW0 + Date.now() - SF.T0, // đồng hồ giả lập khớp dữ liệu mẫu
   setClock(value) {
     const timestamp = Date.parse(value);
@@ -9,22 +17,53 @@ const SF = {
     SF.NOW0 = timestamp;
     SF.T0 = Date.now();
   },
-  esc: (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]),
-  norm: (s) => String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d"),
-  match: (text, q) => SF.norm(text).includes(SF.norm(q.trim())), // tìm kiếm không phân biệt dấu
+  esc: (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[c]),
+  norm: (s) => String(s)
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d"),
+  match: (text, q) =>
+    SF.norm(text).includes(SF.norm(q.trim())), // tìm kiếm không phân biệt dấu
   fmt(s) {
-    const a = Math.abs(s), p = (n) => String(n).padStart(2, "0"), g = s < 0 ? "-" : "";
-    return a >= 86400 ? `${g}${Math.floor(a / 86400)}n ${Math.floor((a % 86400) / 3600)}g` : `${g}${p(Math.floor(a / 3600))}:${p(Math.floor((a % 3600) / 60))}:${p(a % 60)}`;
+    const a = Math.abs(s);
+    const p = (n) => String(n).padStart(2, "0");
+    const g = s < 0 ? "-" : "";
+
+    return a >= 86400
+      ? `${g}${Math.floor(a / 86400)}n ${Math.floor((a % 86400) / 3600)}g`
+      : `${g}${p(Math.floor(a / 3600))}:${p(Math.floor((a % 3600) / 60))}:${p(a % 60)}`;
   },
   NAV: {
-    manager: [["Điều phối", "manager-dispatch-board.html", "dispatch", "▦"], ["Theo dõi SLA", "manager-sla-monitor.html", "sla", "◷"], ["Báo cáo", "manager-service-report.html", "report", "▮"], ["Nhân sự", "manager-staff-management.html", "hr", "☺"], ["Cấu hình", "manager-settings.html", "cfg", "⚙"]],
-    admin: [["Tổng quan", "admin-dashboard.html", "home", "▦"], ["Người dùng", "admin-user-management.html", "user", "☺"], ["Loại dịch vụ", "admin-service-type-management.html", "svc", "☰"], ["Khách sạn", "admin-hotel.html", "hotel", "⌂"], ["Nhật ký hệ thống", "admin-system-log.html", "log", "≡"]],
+    manager: [
+      ["Điều phối", "manager-dispatch-board.html", "dispatch", "▦"],
+      ["Theo dõi SLA", "manager-sla-monitor.html", "sla", "◷"],
+      ["Báo cáo", "manager-service-report.html", "report", "▮"],
+      ["Nhân sự", "manager-staff-management.html", "hr", "☺"],
+      ["Cấu hình", "manager-settings.html", "cfg", "⚙"],
+    ],
+    admin: [
+      ["Tổng quan", "admin-dashboard.html", "home", "▦"],
+      ["Người dùng", "admin-user-management.html", "user", "☺"],
+      ["Loại dịch vụ", "admin-service-type-management.html", "svc", "☰"],
+      ["Khách sạn", "admin-hotel.html", "hotel", "⌂"],
+      ["Nhật ký hệ thống", "admin-system-log.html", "log", "≡"],
+    ],
   },
   shell(role, page, crumb, title) {
-    const admin = role === "admin", who = admin ? "Quản trị viên" : "Quản lý";
-    const nav = SF.NAV[role].map(([n, h, k, i]) => h
-      ? `<a href="${h}"${k === page ? ' class="on" aria-current="page"' : ""}><span aria-hidden="true">${i}</span>${n}</a>`
-      : `<button type="button" data-soon="${n}"><span aria-hidden="true">${i}</span>${n}</button>`).join("");
+    const admin = role === "admin";
+    const who = admin ? "Quản trị viên" : "Quản lý";
+    const nav = SF.NAV[role]
+      .map(([name, href, key, icon]) => href
+        ? `<a href="${href}"${key === page ? ' class="on" aria-current="page"' : ""}><span aria-hidden="true">${icon}</span>${name}</a>`
+        : `<button type="button" data-soon="${name}"><span aria-hidden="true">${icon}</span>${name}</button>`)
+      .join("");
     document.getElementById("app").innerHTML = `<a class="skip" href="#main">Bỏ qua điều hướng</a><div class="shell"><aside class="side"><div class="logo"><b>S</b>StayFlow</div><div class="hotel">AURORA GRAND · ĐÀ NẴNG<strong>${who}</strong></div><nav class="nav" aria-label="Điều hướng chính">${nav}</nav><div class="help"><strong>Cần trợ giúp?</strong><br>Trung tâm vận hành hỗ trợ 24/7<br>Máy lẻ 188<br><button type="button" id="reset">Đặt lại dữ liệu mẫu</button></div></aside><div><header class="top"><div class="grow"><small>${crumb}</small><h2>${title}</h2></div><input class="search" id="q" type="search" placeholder="Tìm mã, phòng, khách..." aria-label="Tìm kiếm"><div class="me"><i aria-hidden="true">M</i><span>Minh Anh<br><small>${who}</small></span></div></header><main id="main"></main></div></div><div id="toast" class="toast" role="status" aria-live="polite"></div>`;
     document.getElementById("q").oninput = (e) => { SF.q = e.target.value; SF.onq && SF.onq(); };
     document.getElementById("reset").onclick = () => {
@@ -58,25 +97,50 @@ const SF = {
   left: (r) => Math.round((r.due - SF.now()) / 1000),
   state(r) {
     if (["Hoàn thành", "Đã hủy"].includes(r.status)) return ["Đã đóng", "info"];
-    const l = SF.left(r); return l < 0 ? ["Quá hạn", "bad"] : l < SF.cfg().warn * 60 ? ["Sắp hạn", "warn"] : ["Trong hạn", "ok"];
+    const remaining = SF.left(r);
+    return remaining < 0
+      ? ["Quá hạn", "bad"]
+      : remaining < SF.cfg().warn * 60
+        ? ["Sắp hạn", "warn"]
+        : ["Trong hạn", "ok"];
   },
   toast(msg, undo) {
-    const t = document.getElementById("toast"); clearTimeout(SF.tt);
-    t.innerHTML = `<span>${SF.esc(msg)}</span>${undo ? '<button type="button">Hoàn tác</button>' : ""}`; t.classList.add("show");
-    if (undo) t.querySelector("button").onclick = () => { undo(); t.classList.remove("show"); };
-    SF.tt = setTimeout(() => t.classList.remove("show"), 6000);
+    const toast = document.getElementById("toast");
+    clearTimeout(SF.tt);
+    toast.innerHTML = `<span>${SF.esc(msg)}</span>${undo ? '<button type="button">Hoàn tác</button>' : ""}`;
+    toast.classList.add("show");
+    if (undo) {
+      toast.querySelector("button").onclick = () => {
+        undo();
+        toast.classList.remove("show");
+      };
+    }
+    SF.tt = setTimeout(() => toast.classList.remove("show"), 6000);
   },
   modal(html, drawer) { // chỉ một lớp phủ tại một thời điểm, Esc / bấm nền để đóng
-    SF.close(); SF.prev = document.activeElement;
-    const o = document.createElement("div"); o.className = "overlay" + (drawer ? " drawer" : "");
-    o.innerHTML = `<div class="panel" role="dialog" aria-modal="true" tabindex="-1">${html}</div>`;
-    document.getElementById("app").append(o);
-    o.onclick = (e) => { if (e.target === o) SF.close(); };
-    o.onkeydown = (e) => { if (e.key === "Escape") SF.close(); };
-    const p = o.firstChild; p.querySelectorAll("[data-x]").forEach((b) => (b.onclick = SF.close));
-    (p.querySelector("input,select,textarea") || p).focus(); return p;
+    SF.close();
+    SF.prev = document.activeElement;
+    const overlay = document.createElement("div");
+    overlay.className = "overlay" + (drawer ? " drawer" : "");
+    overlay.innerHTML = `<div class="panel" role="dialog" aria-modal="true" tabindex="-1">${html}</div>`;
+    document.getElementById("app").append(overlay);
+    overlay.onclick = (e) => {
+      if (e.target === overlay) SF.close();
+    };
+    overlay.onkeydown = (e) => {
+      if (e.key === "Escape") SF.close();
+    };
+    const panel = overlay.firstChild;
+    panel.querySelectorAll("[data-x]").forEach((button) => (button.onclick = SF.close));
+    (panel.querySelector("input,select,textarea") || panel).focus();
+    return panel;
   },
-  close() { document.querySelector(".overlay")?.remove(); SF.prev?.focus?.(); },
-  pager: (p, n, per) => `<div class="pager"><span class="muted">${n ? p * per + 1 : 0}–${Math.min(n, (p + 1) * per)} trong ${n}</span><span><button class="btn sm" data-p="${p - 1}"${p < 1 ? " disabled" : ""}>‹ Trước</button> <button class="btn sm" data-p="${p + 1}"${(p + 1) * per >= n ? " disabled" : ""}>Sau ›</button></span></div>`,
-  empty: () => '<div class="empty"><strong>Không có kết quả phù hợp</strong><p class="muted">Thử từ khóa khác hoặc xóa bộ lọc.</p></div>',
+  close() {
+    document.querySelector(".overlay")?.remove();
+    SF.prev?.focus?.();
+  },
+  pager: (page, count, perPage) =>
+    `<div class="pager"><span class="muted">${count ? page * perPage + 1 : 0}–${Math.min(count, (page + 1) * perPage)} trong ${count}</span><span><button class="btn sm" data-p="${page - 1}"${page < 1 ? " disabled" : ""}>‹ Trước</button> <button class="btn sm" data-p="${page + 1}"${(page + 1) * perPage >= count ? " disabled" : ""}>Sau ›</button></span></div>`,
+  empty: () =>
+    '<div class="empty"><strong>Không có kết quả phù hợp</strong><p class="muted">Thử từ khóa khác hoặc xóa bộ lọc.</p></div>',
 };

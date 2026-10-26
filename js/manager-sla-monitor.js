@@ -4,9 +4,22 @@
   const TARGET = SF.cfg().target, S = (r) => SF.state(r)[0];
   main.innerHTML = `<div class="head"><div><span class="gold">Cập nhật trực tiếp</span><h1>Sức khỏe SLA hôm nay</h1><p class="muted">Mục tiêu toàn khách sạn: ≥ ${TARGET}% yêu cầu trong SLA.</p></div><div class="tools"><button class="btn" id="csv">Xuất báo cáo (CSV)</button><a class="btn pri" href="manager-dispatch-board.html">Điều phối lại</a></div></div>
   <div id="k" class="kpis"></div><section class="card" id="c" aria-label="Xu hướng SLA theo giờ"></section>
-  <div class="tools"><label>Dịch vụ <select id="fs"><option value="">Tất cả</option>${db.serviceTypes.map((s) => `<option value="${s.id}">${SF.esc(s.categoryName)}</option>`).join("")}</select></label><label>Trạng thái <select id="ft"><option value="">Tất cả</option><option>Quá hạn</option><option>Sắp hạn</option><option>Trong hạn</option><option>Đã đóng</option></select></label></div><div id="t" class="wrap"></div>`;
-  const list = () => SF.rows(db).filter((r) => (!sv || r.serviceTypeId === sv) && (!st || S(r) === st) && SF.match(r.id + r.room + r.svc + (r.staff?.name || ""), SF.q))
-    .sort((a, b) => (S(a) === "Đã đóng") - (S(b) === "Đã đóng") || a.due - b.due);
+  <div class="tools"><label>Dịch vụ <select id="fs"><option value="">Tất cả</option>${db.serviceTypes.map((service) => `<option value="${service.id}">${SF.esc(service.categoryName)}</option>`).join("")}</select></label><label>Trạng thái <select id="ft"><option value="">Tất cả</option><option>Quá hạn</option><option>Sắp hạn</option><option>Trong hạn</option><option>Đã đóng</option></select></label></div><div id="t" class="wrap"></div>`;
+
+  const list = () => SF.rows(db)
+    .filter((request) =>
+      (!sv || request.serviceTypeId === sv) &&
+      (!st || S(request) === st) &&
+      SF.match(
+        request.id + request.room + request.svc + (request.staff?.name || ""),
+        SF.q,
+      ),
+    )
+    .sort(
+      (a, b) =>
+        (S(a) === "Đã đóng") - (S(b) === "Đã đóng") ||
+        a.due - b.due,
+    );
 
   function draw() {
     const all = SF.rows(db).filter((r) => r.status !== "Đã hủy"), over = all.filter((r) => S(r) === "Quá hạn").length, soon = all.filter((r) => S(r) === "Sắp hạn").length;
@@ -71,16 +84,66 @@
       SF.toast(`Đã giao ${r.id} cho ${s.name}`, () => { db = JSON.parse(snap); SF.save(db); draw(); });
     };
   }
+
   main.onclick = (e) => {
-    const b = e.target.closest("[data-n],[data-r],#csv"); if (!b) return;
-    if (b.id === "csv") {
-      const q = (v) => `"${String(v).replace(/"/g, '""')}"`, rows = list().map((r) => [r.id, r.svc, r.room, r.staff?.name || "Chưa phân công", S(r) === "Đã đóng" ? "" : SF.fmt(SF.left(r)), S(r)].map(q).join(","));
-      const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["\ufeff" + ["Mã,Dịch vụ,Phòng,Nhân viên,Còn lại,Trạng thái", ...rows].join("\n")], { type: "text/csv" })); a.download = "sla-hom-nay.csv"; a.click(); SF.toast(`Đã xuất ${rows.length} dòng`);
-    } else if (b.dataset.n) { const r = list().find((x) => x.id === b.dataset.n); cool[r.id] = 1; setTimeout(() => { delete cool[r.id]; draw(); }, 30000); SF.log(db, `Nhắc ${r.staff.name} xử lý ${r.id}`); SF.save(db); draw(); SF.toast(`Đã nhắc ${r.staff.name} xử lý ${r.id}`); }
-    else pickStaff(list().find((x) => x.id === b.dataset.r));
+    const button = e.target.closest("[data-n],[data-r],#csv");
+    if (!button) return;
+
+    if (button.id === "csv") {
+      const quote = (value) => `"${String(value).replace(/"/g, '""')}"`;
+      const rows = list().map((request) =>
+        [
+          request.id,
+          request.svc,
+          request.room,
+          request.staff?.name || "Chưa phân công",
+          S(request) === "Đã đóng" ? "" : SF.fmt(SF.left(request)),
+          S(request),
+        ].map(quote).join(","),
+      );
+      const link = document.createElement("a");
+
+      link.href = URL.createObjectURL(
+        new Blob(
+          [
+            "\ufeff" + ["Id,Dịch vụ,Phòng,Nhân viên,Còn lại,Trạng thái", ...rows].join("\n"),
+          ],
+          { type: "text/csv" },
+        ),
+      );
+      link.download = "sla-hom-nay.csv";
+      link.click();
+      SF.toast(`Đã xuất ${rows.length} dòng`);
+    } else if (button.dataset.n) {
+      const request = list().find((item) => item.id === button.dataset.n);
+      cool[request.id] = 1;
+      setTimeout(() => {
+        delete cool[request.id];
+        draw();
+      }, 30000);
+      SF.log(db, `Nhắc ${request.staff.name} xử lý ${request.id}`);
+      SF.save(db);
+      draw();
+      SF.toast(`Đã nhắc ${request.staff.name} xử lý ${request.id}`);
+    } else {
+      pickStaff(list().find((request) => request.id === button.dataset.r));
+    }
   };
-  document.getElementById("fs").onchange = (e) => { sv = e.target.value; draw(); };
-  document.getElementById("ft").onchange = (e) => { st = e.target.value; draw(); };
-  setInterval(() => document.querySelectorAll("[data-due]").forEach((c) => (c.textContent = SF.fmt(Math.round((+c.dataset.due - SF.now()) / 1000)))), 1000);
-  SF.onq = draw; draw();
+
+  document.getElementById("fs").onchange = (e) => {
+    sv = e.target.value;
+    draw();
+  };
+  document.getElementById("ft").onchange = (e) => {
+    st = e.target.value;
+    draw();
+  };
+  setInterval(() => {
+    document.querySelectorAll("[data-due]").forEach((cell) => {
+      cell.textContent = SF.fmt(Math.round((+cell.dataset.due - SF.now()) / 1000));
+    });
+  }, 1000);
+
+  SF.onq = draw;
+  draw();
 })();
