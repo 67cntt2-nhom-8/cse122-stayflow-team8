@@ -1,15 +1,3 @@
-/* ============================================================================
- * notifications.js — Riêng trang "Trung tâm thông báo"
- * ----------------------------------------------------------------------------
- * Khung dashboard (sidebar, dropdown trên topbar, toast, phím Escape, tên người
- * dùng) nằm ở ../shared/dashboard.js. File này chỉ lo thông báo:
- *   1. Đọc/ghi danh sách trong localStorage (khoá stayflow_notifications).
- *   2. Dựng một dòng cho mỗi thông báo, kèm nhãn "Chưa đọc".
- *   3. Lọc theo chip (Tất cả / Chưa đọc / Hệ thống), theo loại, khoảng thời gian, từ khoá.
- *   4. Đánh dấu đã đọc (từng dòng hoặc tất cả), bỏ đánh dấu, xoá thông báo.
- *   5. Đồng bộ số đếm: chip, dòng phụ đề, chấm đỏ trên chuông, dropdown topbar.
- * ========================================================================= */
-
 /* --- 1. Tham chiếu phần tử riêng của trang --- */
 const noticeList = document.querySelector("#notice-list");
 const noticeEmpty = document.querySelector("#notice-empty");

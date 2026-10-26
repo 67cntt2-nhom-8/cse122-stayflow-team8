@@ -257,7 +257,7 @@
       "description": "Đưa đón sân bay, taxi và phương tiện đi lại.",
       "icon": "car",
       "defaultSlaMinutes": 60,
-      "isActive": true
+      "isActive": false
     },
     {
       "id": "SVC-FRONT-DESK",
@@ -266,7 +266,7 @@
       "description": "Giải đáp thắc mắc và hỗ trợ trong thời gian lưu trú.",
       "icon": "concierge-bell",
       "defaultSlaMinutes": 20,
-      "isActive": true
+      "isActive": false
     }
   ],
   "feedback": [
@@ -517,6 +517,54 @@
       "confidence": 0.78,
       "state": "suggested",
       "fallbackMessage": "Chưa đủ dữ liệu phản hồi để tóm tắt. Hãy thử lại sau khi thu thập thêm đánh giá."
+    },
+    "guestAssistant": {
+      "assistant": {
+        "name": "Trợ lý StayFlow",
+        "greeting": "Chào Thu Hà 👋 Kể tôi nghe bạn cần gì — tôi sẽ chọn giúp dịch vụ, soạn ghi chú và gợi ý mức ưu tiên.",
+        "typing": "Đang soạn trả lời…",
+        "fallback": "Tôi chưa chắc dịch vụ nào phù hợp. Bạn thử nói rõ hơn (ví dụ: điều hoà, khăn, ăn uống, dọn phòng) hoặc tự chọn ở bước 1 nhé."
+      },
+      "quickPrompts": [
+        "Điều hoà phòng không mát",
+        "Thêm 2 khăn tắm",
+        "Đặt bữa sáng 7:00",
+        "Dọn phòng giúp tôi"
+      ],
+      "replies": [
+        {
+          "keywords": ["điều hoà", "điều hòa", "máy lạnh", "không mát", "nóng", "lạnh", "quạt", "đèn", "bóng đèn", "vòi", "nước nóng", "chảy", "rò rỉ", "hỏng", "không sáng", "không chạy", "cửa khoá", "thang máy", "ổ cắm", "điện"],
+          "service": "Báo sự cố",
+          "priority": "Cao",
+          "reason": "Thiết bị hỏng ảnh hưởng trực tiếp đến chỗ nghỉ nên cần kỹ thuật vào sớm.",
+          "answer": "Đây là sự cố thiết bị — tôi đã chọn “Báo sự cố”, Kỹ thuật toà nhà sẽ vào trong 15 phút.",
+          "note": "Phòng 1208 gặp sự cố thiết bị (điều hoà/đèn/vòi nước), nhờ kỹ thuật kiểm tra sớm."
+        },
+        {
+          "keywords": ["khăn", "gối", "ga giường", "chăn", "khăn tắm", "khăn mặt"],
+          "service": "Yêu cầu khăn",
+          "priority": "Bình thường",
+          "reason": "Vật phẩm tiêu hao, đội buồng phòng xử lý rất nhanh (dưới 10 phút).",
+          "answer": "Đã chọn “Yêu cầu khăn” — Đội buồng phòng mang lên trong 10 phút.",
+          "note": "Xin thêm 2 khăn tắm và 2 khăn mặt, để ở bàn cạnh cửa."
+        },
+        {
+          "keywords": ["ăn", "uống", "bữa", "sáng", "trưa", "tối", "cơm", "trà", "cà phê", "nước cam", "đồ ăn", "gọi món", "phở", "mì"],
+          "service": "Đặt bữa",
+          "priority": "Theo giờ hẹn",
+          "reason": "Có giờ hẹn cụ thể nên bếp chuẩn bị theo khung giờ bạn nêu.",
+          "answer": "Đã chọn “Đặt bữa” — Bếp Aurora xác nhận trong 40 phút.",
+          "note": "Đặt bữa sáng cho 2 người lúc 7:00."
+        },
+        {
+          "keywords": ["dọn phòng", "dọn", "rác", "thu gom", "vệ sinh", "lau"],
+          "service": "Gọi dọn phòng",
+          "priority": "Bình thường",
+          "reason": "Dọn phòng theo lượt thường lệ của đội buồng phòng.",
+          "answer": "Đã chọn “Gọi dọn phòng” — đội buồng phòng lên trong 20 phút.",
+          "note": "Nhờ dọn phòng và thay ga giường."
+        }
+      ]
     }
   }
 }

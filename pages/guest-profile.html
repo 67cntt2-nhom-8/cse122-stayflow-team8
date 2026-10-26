@@ -10,6 +10,8 @@
     <title>Hồ sơ cá nhân · StayFlow</title>
     <!-- Khung dashboard dùng chung (sidebar, topbar, thẻ, nút, toast...) -->
     <link rel="stylesheet" href="../shared/dashboard.css" />
+    <!-- Áp giao diện đã lưu TRƯỚC khi vẽ trang, nếu không mỗi lần chuyển trang sẽ nháy nền sáng. -->
+    <script>try { document.documentElement.dataset.theme = localStorage.getItem("stayflow_theme") === "dark" ? "dark" : "light"; } catch (error) { /* trình duyệt chặn localStorage -> giữ giao diện sáng */ }</script>
     <!-- Chỉ phần riêng của trang Hồ sơ; nạp SAU để có thể ghi đè khối chung -->
     <link rel="stylesheet" href="../css/guest-profile.css" />
   </head>
@@ -103,7 +105,7 @@
         </header>
 
         <main class="content">
-          <section class="welcome reveal">
+          <section class="welcome">
             <div>
               <h1>Thông tin của bạn</h1>
               <p>Quản lý thông tin liên hệ và tùy chọn dịch vụ phòng hoá.</p>
@@ -126,7 +128,7 @@
 
           <section class="profile-grid">
             <!-- Cột trái: danh thiếp của khách -->
-            <article class="card profile-card reveal">
+            <article class="card profile-card">
               <div class="profile-avatar">
                 <img id="profile-avatar" src="../assets/images/images.jpg" alt="Ảnh đại diện của Nguyễn Thu Hà" />
               </div>
@@ -157,7 +159,7 @@
             </article>
 
             <!-- Cột phải: biểu mẫu thông tin liên hệ -->
-            <form class="card profile-form reveal" id="profile-form">
+            <form class="card profile-form" id="profile-form">
               <div class="field">
                 <label for="full-name">Họ và tên</label>
                 <input id="full-name" name="fullName" type="text" autocomplete="name" required />

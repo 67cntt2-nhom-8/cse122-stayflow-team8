@@ -1,16 +1,3 @@
-/* ============================================================================
- * service-requests.js — Riêng trang "Yêu cầu của tôi"
- * ----------------------------------------------------------------------------
- * Phần khung dashboard (sidebar, dropdown, toast, Escape, kho yêu cầu, hiệu ứng hiện
- * dần) nằm ở ../shared/dashboard.js.
- * File này chỉ xử lý danh sách yêu cầu:
- *   1. Lọc theo tab trạng thái + dropdown + từ khoá, rồi chia trang.
- *   2. Đếm lại số lượng cho các tab và thẻ số liệu.
- *   3. Mở/đóng chi tiết, huỷ, đánh giá, gửi lại một yêu cầu.
- *   4. Dựng thẻ yêu cầu mới / đọc lại từ kho dữ liệu StayFlow dùng chung.
- *   5. Danh sách thông báo lấy từ chính các yêu cầu đã tạo.
- * ========================================================================= */
-
 /* --- 1. Tham chiếu phần tử riêng của trang --- */
 const listSearchInput = document.querySelector("#request-search"); // ô tìm trong danh sách
 const statusSelect = document.querySelector("#status-select");

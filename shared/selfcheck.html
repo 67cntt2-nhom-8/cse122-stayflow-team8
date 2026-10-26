@@ -61,8 +61,8 @@
           "yeucau: liên kết tới trang tạo yêu cầu",
         );
       }
-      /* Trang Tạo yêu cầu: trợ lý AI giả lập đọc JSON nhúng trong HTML, trả lời và
-          tự điền dịch vụ + ghi chú vào biểu mẫu. */
+      /* Trang Tạo yêu cầu: trợ lý AI giả lập đọc dữ liệu từ stayflow.mock.json
+          (aiMocks.guestAssistant), trả lời và tự điền dịch vụ + ghi chú vào biểu mẫu. */
       async function taoyeucauAssistant() {
         await load("../pages/guest-create-request.html");
         await sleep(300);

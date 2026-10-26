@@ -175,9 +175,24 @@ STAYFLOW_REQUESTS_READY.then(() => {
  * trong thẻ <script type="application/json" id="assistant-data"> của create-request.html.
  * Luồng: khách nhắn -> khớp từ khoá (bỏ dấu tiếng Việt bằng normalize() của
  * dashboard.js) -> trả lời + TỰ chọn dịch vụ ở bước 1 và soạn ghi chú ở bước 2.
+ * Dữ liệu nằm trong aiMocks.guestAssistant của stayflow.mock.json (data.js đã fetch
+ * sẵn, giữ chung cơ chế StayFlowDataReady — không fetch riêng để không trùng lặp).
  * ponytail: khớp từ khoá đơn giản (chuỗi con) — đủ cho bản demo JSON giả lập; khi có
  * API thật chỉ cần thay aiReply() bằng lời gọi API, phần giao diện giữ nguyên. */
-const aiData = JSON.parse(document.querySelector("#assistant-data").textContent);
+let aiData = { assistant: { greeting: "", typing: "…", fallback: "" }, quickPrompts: [], replies: [] };
+const aiDataReady = (window.StayFlowDataReady || Promise.reject(new Error("StayFlowDataReady chưa sẵn sàng.")))
+  .then(() => {
+    /* StayFlowMockData là JSON gốc vừa fetch (data.js gán trước khi promise kết thúc). */
+    const mocks = window.StayFlowMockData && window.StayFlowMockData.aiMocks;
+    if (!mocks || !mocks.guestAssistant) throw new Error("Thiếu aiMocks.guestAssistant trong stayflow.mock.json.");
+    aiData = mocks.guestAssistant;
+    renderAiChips();
+    /* Khách mở hộp trước khi dữ liệu về: giờ mới có lời chào để hiện. */
+    if (!aiPanel.hidden && !aiLog.childElementCount) aiAddMessage(aiData.assistant.greeting, "bot");
+  })
+  .catch((error) => {
+    console.error("Không thể nạp dữ liệu trợ lý AI:", error.message);
+  });
 const aiBubble = document.querySelector("#ai-bubble");
 const aiPanel = document.querySelector("#ai-panel");
 const aiClose = document.querySelector("#ai-close");
@@ -220,7 +235,8 @@ function aiSend(text) {
   const typing = aiAddMessage(aiData.assistant.typing, "bot"); // giả lập đang gõ
   typing.classList.add("is-typing");
 
-  window.setTimeout(() => {
+  window.setTimeout(async () => {
+    await aiDataReady; // dữ liệu mẫu có thể về muộn: đợi rồi mới trả lời, tránh trả lời bằng dữ liệu rỗng
     typing.remove();
 
     const reply = aiReply(text);
@@ -239,7 +255,10 @@ function aiSend(text) {
 
 aiBubble.addEventListener("click", () => {
   aiToggle(aiPanel.hidden);
-  if (aiPanel.hidden === false && !aiLog.childElementCount) aiAddMessage(aiData.assistant.greeting, "bot");
+  /* Chưa có lời chào (dữ liệu mẫu chưa về) thì để aiDataReady hiện sau, tránh bong bóng rỗng. */
+  if (aiPanel.hidden === false && !aiLog.childElementCount && aiData.assistant.greeting) {
+    aiAddMessage(aiData.assistant.greeting, "bot");
+  }
 });
 
 aiClose.addEventListener("click", () => aiToggle(false));
@@ -257,12 +276,14 @@ aiForm.addEventListener("submit", (event) => {
   aiSend(text);
 });
 
-/* Câu hỏi nhanh từ JSON: bấm là gửi luôn, khỏi gõ. */
-aiData.quickPrompts.forEach((text) => {
-  const chip = document.createElement("button");
-  chip.className = "ai-chip";
-  chip.type = "button";
-  chip.textContent = text;
-  chip.addEventListener("click", () => aiSend(text));
-  aiChips.appendChild(chip);
-});
+/* Câu hỏi nhanh từ JSON: bấm là gửi luôn, khỏi gõ. Gọi một lần trong aiDataReady. */
+function renderAiChips() {
+  aiData.quickPrompts.forEach((text) => {
+    const chip = document.createElement("button");
+    chip.className = "ai-chip";
+    chip.type = "button";
+    chip.textContent = text;
+    chip.addEventListener("click", () => aiSend(text));
+    aiChips.appendChild(chip);
+  });
+}
