@@ -1,9 +1,27 @@
 (() => {
   const main = SF.shell("manager", "cfg", "Quản lý / Cấu hình", "Cấu hình vận hành");
   const F = [
-    ["warn", "Ngưỡng “Sắp hạn” (phút)", "Yêu cầu còn ít hơn số phút này được đánh dấu Sắp hạn.", 5, 120],
-    ["cap", "Công suất tối đa mỗi nhân viên (việc)", "Dùng để tính mức Khả dụng / Gần đầy / Quá tải.", 1, 10],
-    ["target", "Mục tiêu SLA toàn khách sạn (%)", "Biểu đồ SLA tô đỏ khi thấp hơn mục tiêu.", 50, 100],
+    [
+      "warn",
+      "Ngưỡng “Sắp hạn” (phút)",
+      "Yêu cầu còn ít hơn số phút này được đánh dấu Sắp hạn.",
+      5,
+      120,
+    ],
+    [
+      "cap",
+      "Công suất tối đa mỗi nhân viên (việc)",
+      "Dùng để tính mức Khả dụng / Gần đầy / Quá tải.",
+      1,
+      10,
+    ],
+    [
+      "target",
+      "Mục tiêu SLA toàn khách sạn (%)",
+      "Biểu đồ SLA tô đỏ khi thấp hơn mục tiêu.",
+      50,
+      100,
+    ],
   ];
   const $ = (id) => document.getElementById(id);
 
@@ -23,7 +41,7 @@
     $("f").onsubmit = (e) => {
       e.preventDefault();
 
-      const out = { ai: $("c-ai").checked };
+      const output = { ai: $("c-ai").checked };
       let first;
 
       F.forEach(([key, , , min, max]) => {
@@ -33,12 +51,12 @@
         $("e-" + key).textContent = valid ? "" : `Nhập số nguyên từ ${min} đến ${max}.`;
         $("c-" + key).setAttribute("aria-invalid", !valid);
         if (!valid) first = first || $("c-" + key);
-        out[key] = value;
+        output[key] = value;
       });
 
       if (first) return first.focus();
 
-      localStorage.setItem("sf_cfg", JSON.stringify(out));
+      localStorage.setItem("sf_cfg", JSON.stringify(output));
       SF.toast("Đã lưu cấu hình");
     };
   }

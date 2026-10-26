@@ -48,7 +48,9 @@
     const snapshot = JSON.stringify(db);
 
     if (on(staff) && count) {
-      return SF.toast(`${staff.name} còn ${count} việc đang xử lý. Hãy điều phối lại trước khi cho nghỉ.`);
+      return SF.toast(
+        `${staff.name} còn ${count} việc đang xử lý. Hãy điều phối lại trước khi cho nghỉ.`,
+      );
     }
 
     staff.status = on(staff) ? "Nghỉ" : "Đang trực";

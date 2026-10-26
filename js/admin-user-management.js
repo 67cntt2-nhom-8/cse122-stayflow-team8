@@ -77,12 +77,7 @@
     sync();
     panel.querySelector("#ok").onclick = () => {
       const newRole = panel.querySelector("#pr").value;
-
-      if (
-        user.role === "Admin" &&
-        newRole !== "Admin" &&
-        admins().length < 2
-      ) {
+      if (user.role === "Admin" && newRole !== "Admin" && admins().length < 2) {
         return SF.toast("Cần ít nhất một quản trị viên đang hoạt động.");
       }
 

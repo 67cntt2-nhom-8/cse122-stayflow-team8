@@ -99,11 +99,7 @@
           </thead>
           <tbody>
             ${stayList.slice(0, 8).map((stay) => {
-              const openReqs = db.requests.filter(
-                (request) =>
-                  request.stayId === stay.id &&
-                  !["Hoàn thành", "Đã hủy"].includes(request.status),
-              ).length;
+              const openReqs = db.requests.filter((r) => r.stayId === stay.id && !["Hoàn thành", "Đã hủy"].includes(r.status)).length;
               return `
                 <tr>
                   <td><strong>${SF.esc(stay.roomNumber)}</strong></td>

@@ -35,7 +35,7 @@
     const panel = SF.modal(`<h3>${isNew ? "Thêm" : "Chỉnh sửa"} loại dịch vụ</h3>${isNew ? "" : `<small class="muted">ID: ${service.id}</small>`}
     <div class="field"><label for="f-n">Tên dịch vụ</label><input id="f-n" value="${SF.esc(service.categoryName)}" aria-describedby="e-n"><span class="err" id="e-n" role="alert"></span></div>
     <div class="field"><label for="f-d">Mô tả</label><textarea id="f-d" rows="3" maxlength="200">${SF.esc(service.description)}</textarea></div>
-    <div class="field"><label for="f-g">Nhóm</label><input id="f-g" list="dl" value="${SF.esc(service.department)}"><datalist id="dl">${depts().map((dept) => `<option value="${SF.esc(dept)}">`).join("")}</datalist></div>
+    <div class="field"><label for="f-g">Nhóm</label><input id="f-g" list="dl" value="${SF.esc(service.department)}"><datalist id="dl">${depts().map((department) => `<option value="${SF.esc(department)}">`).join("")}</datalist></div>
     <div class="field"><label for="f-s">SLA chuẩn (phút)</label><input id="f-s" type="number" min="5" max="480" value="${service.expectedSLA}" aria-describedby="e-s"><span class="err" id="e-s" role="alert"></span><span class="hint">Từ 5 đến 480 phút.</span></div>
     <div class="field"><label for="f-p">Ưu tiên mặc định</label><select id="f-p">${PRI.map((priority) => `<option${priority === (service.priority || "Trung bình") ? " selected" : ""}>${priority}</option>`).join("")}</select></div>
     <div class="acts"><button class="btn" data-x>Hủy</button><button class="btn pri" id="ok">Lưu thay đổi</button></div>`, true);

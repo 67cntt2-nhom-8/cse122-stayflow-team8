@@ -1,11 +1,3 @@
-/* =========================================================================
- * about.css — Giao diện trang Giới thiệu khách sạn Aurora Grand (Đà Nẵng)
- * -------------------------------------------------------------------------
- * Một trang cuộn dọc gồm: header, hero (ảnh bìa), dải số liệu, câu chuyện,
- * phòng nghỉ, tiện ích, spa, khám phá thành phố, thư viện ảnh, thông tin
- * lưu trú, liên hệ và footer. Cuối file là hiệu ứng cuộn (reveal) + responsive.
- * ========================================================================= */
-
 /* --- 1. Font chữ dùng cho trang --- */
 @font-face { 
   font-family: "Instrument Sans:Regular"; 
@@ -219,11 +211,7 @@ footer { background: #0b1729; color: #8793a3; padding-bottom: 34px !important; p
 .footer-bottom { border-top: 1px solid #1c2c46; display: flex; font-size: 10px; justify-content: space-between; margin-top: 50px; padding-top: 24px; }
 .footer-bottom b { color: #b8914a; }
 
-/* --- 15. Hiệu ứng xuất hiện khi cuộn tới (JS thêm class .visible) --- */
-.reveal { opacity: 0; transform: translateY(24px); transition: opacity .75s ease, transform .75s cubic-bezier(.2,.7,.2,1); }
-.reveal.visible { opacity: 1; transform: none; }
-.image-reveal { clip-path: inset(0 0 100% 0); transition: clip-path 1s cubic-bezier(.4,0,.2,1); }
-.image-reveal.visible { clip-path: inset(0); }
+/* --- 15. Keyframes còn dùng (hiệu ứng vào trang đã tắt ở mục 17) --- */
 @keyframes hero-in { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
 
 /* --- 16. Responsive: điều chỉnh bố cục theo kích thước màn hình --- */
@@ -282,9 +270,4 @@ footer { background: #0b1729; color: #8793a3; padding-bottom: 34px !important; p
   .footer-bottom { align-items: flex-start; flex-direction: column; gap: 10px; }
 }
 
-/* --- 17. Tắt/giảm chuyển động khi người dùng bật "giảm hiệu ứng động" --- */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
-  .reveal { opacity: 1; transform: none; }
-  .image-reveal { clip-path: none; }
-}
+*, *::before, *::after { animation-delay: 0s !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-delay: 0s !important; transition-duration: .01ms !important; }

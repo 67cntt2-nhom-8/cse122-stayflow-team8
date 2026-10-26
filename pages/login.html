@@ -57,14 +57,14 @@
         <!-- Form đăng nhập. novalidate: để tự kiểm tra bằng JS (login.js) -->
         <form class="login-form" id="login-form" novalidate>
           <!-- Tiêu đề form -->
-          <div class="form-heading reveal-item">
+          <div class="form-heading">
             <p class="form-heading__kicker">STAYFLOW ACCESS</p>
             <h2>Chào mừng trở lại</h2>
             <p>Đăng nhập để tiếp tục hành trình cùng StayFlow.</p>
           </div>
 
           <!-- Ô 1: Email hoặc số điện thoại -->
-          <div class="field reveal-item">
+          <div class="field">
             <label for="identity">Email hoặc số điện thoại</label>
             <div class="input-shell" id="identity-shell">
               <img src="../assets/images/ebb71.svg" alt="" />
@@ -82,7 +82,7 @@
           </div>
 
           <!-- Ô 2: Mật khẩu (kèm link quên mật khẩu & nút ẩn/hiện) -->
-          <div class="field field--password reveal-item">
+          <div class="field field--password">
             <div class="field__label-row">
               <label for="password">Mật khẩu</label>
               <a href="forgot-password.html" id="forgot-password">Quên mật khẩu?</a>
@@ -115,7 +115,7 @@
           </div>
 
           <!-- Checkbox "Ghi nhớ đăng nhập" (ô vuông được vẽ lại bằng CSS) -->
-          <label class="remember reveal-item">
+          <label class="remember">
             <input type="checkbox" checked />
             <span class="remember__box">
               <img src="../assets/images/14f9c.svg" alt="" />
@@ -124,27 +124,27 @@
           </label>
 
           <!-- Nút đăng nhập (có 3 phần: chữ / vòng xoay loading / mũi tên) -->
-          <button class="submit-button reveal-item" type="submit">
+          <button class="submit-button" type="submit">
             <span class="submit-button__label">Đăng nhập</span>
             <span class="submit-button__loader" aria-hidden="true"></span>
             <span class="submit-button__arrow" aria-hidden="true">→</span>
           </button>
 
           <!-- Link chuyển sang trang tạo tài khoản -->
-          <p class="register-link reveal-item">
+          <p class="register-link">
             Chưa có tài khoản?
             <a href="sign-up.html">Tạo tài khoản</a>
           </p>
 
           <!-- Ghi chú trạng thái lỗi cuối form (mặc định ẩn) -->
-          <div class="ux-note reveal-item is-hidden" id="ux-note">
+          <div class="ux-note is-hidden" id="ux-note">
             <span></span>
             Trạng thái lỗi: email hoặc mật khẩu không hợp lệ!
           </div>
 
           <!-- Khối chọn vai trò: chỉ để nhấp chọn cho biết bạn là ai,
                không phải liên kết, không tham gia kiểm tra đăng nhập -->
-          <section class="role-picker reveal-item" aria-labelledby="role-title">
+          <section class="role-picker" aria-labelledby="role-title">
             <h3 class="role-picker__title" id="role-title">Bạn là ai?</h3>
             <div class="role-picker__options" role="radiogroup" aria-labelledby="role-title">
               <label class="role-pill role-pill--user">

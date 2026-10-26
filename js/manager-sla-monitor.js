@@ -13,12 +13,19 @@
   <div class="tools"><label>Dịch vụ <select id="fs"><option value="">Tất cả</option>${db.serviceTypes.map((service) => `<option value="${service.id}">${SF.esc(service.categoryName)}</option>`).join("")}</select></label><label>Trạng thái <select id="ft"><option value="">Tất cả</option><option>Quá hạn</option><option>Sắp hạn</option><option>Trong hạn</option><option>Đã đóng</option></select></label></div><div id="t" class="wrap"></div>`;
 
   const list = () => SF.rows(db)
-    .filter((r) =>
-      (!sv || r.serviceTypeId === sv) &&
-      (!st || S(r) === st) &&
-      SF.match(r.id + r.room + r.svc + (r.staff?.name || ""), SF.q),
+    .filter((request) =>
+      (!sv || request.serviceTypeId === sv) &&
+      (!st || S(request) === st) &&
+      SF.match(
+        request.id + request.room + request.svc + (request.staff?.name || ""),
+        SF.q,
+      ),
     )
-    .sort((a, b) => (S(a) === "Đã đóng") - (S(b) === "Đã đóng") || a.due - b.due);
+    .sort(
+      (a, b) =>
+        (S(a) === "Đã đóng") - (S(b) === "Đã đóng") ||
+        a.due - b.due,
+    );
 
   function draw() {
     const all = SF.rows(db).filter((r) => r.status !== "Đã hủy");
@@ -154,14 +161,14 @@
 
     if (button.id === "csv") {
       const quote = (value) => `"${String(value).replace(/"/g, '""')}"`;
-      const rows = list().map((r) =>
+      const rows = list().map((request) =>
         [
-          r.id,
-          r.svc,
-          r.room,
-          r.staff?.name || "Chưa phân công",
-          S(r) === "Đã đóng" ? "" : SF.fmt(SF.left(r)),
-          S(r),
+          request.id,
+          request.svc,
+          request.room,
+          request.staff?.name || "Chưa phân công",
+          S(request) === "Đã đóng" ? "" : SF.fmt(SF.left(request)),
+          S(request),
         ].map(quote).join(","),
       );
       const link = document.createElement("a");
@@ -178,18 +185,18 @@
       link.click();
       SF.toast(`Đã xuất ${rows.length} dòng`);
     } else if (button.dataset.n) {
-      const r = list().find((item) => item.id === button.dataset.n);
-      cool[r.id] = 1;
+      const request = list().find((item) => item.id === button.dataset.n);
+      cool[request.id] = 1;
       setTimeout(() => {
-        delete cool[r.id];
+        delete cool[request.id];
         draw();
       }, 30000);
-      SF.log(db, `Nhắc ${r.staff.name} xử lý ${r.id}`);
+      SF.log(db, `Nhắc ${request.staff.name} xử lý ${request.id}`);
       SF.save(db);
       draw();
-      SF.toast(`Đã nhắc ${r.staff.name} xử lý ${r.id}`);
+      SF.toast(`Đã nhắc ${request.staff.name} xử lý ${request.id}`);
     } else {
-      pickStaff(list().find((item) => item.id === button.dataset.r));
+      pickStaff(list().find((request) => request.id === button.dataset.r));
     }
   };
 

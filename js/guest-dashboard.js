@@ -111,7 +111,6 @@ STAYFLOW_REQUESTS_READY.then(() => {
     const processing = stayRequests.filter((request) => !["Hoàn thành", "Đã hủy"].includes(request.status)).length;
     const completed = stayRequests.filter((request) => request.status === "Hoàn thành").length;
     guestDashboardDataReady = true;
-    counterObserver.disconnect();
     processingCounter.dataset.target = String(processing);
     processingCounter.textContent = String(processing).padStart(2, "0");
     completedCounter.dataset.target = String(completed);
@@ -151,35 +150,9 @@ document.querySelector("#explore-offer").addEventListener("click", () => {
   showToast("Ưu đãi Spa đã được lưu cho phòng 1208.");
 });
 
-/* --- 7. Hiệu ứng đếm số cho 2 thẻ số liệu (chỉ chạy khi thẻ lọt vào màn hình) --- */
-const counterObserver = new IntersectionObserver(
-  (entries, observer) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) return;
-      if (!guestDashboardDataReady) return;
-      animateCounter(entry.target);
-      observer.unobserve(entry.target);
-    });
-  },
-  { threshold: 0.6 },
-);
-
+/* --- 7. Hai thẻ số liệu: ghi thẳng giá trị đích, không đếm dần ---
+ * ponytail: bỏ hiệu ứng đếm số theo yêu cầu giảm hiệu ứng; cần dựng lại thì
+ * xem lại bản IntersectionObserver + requestAnimationFrame trong git. */
 document.querySelectorAll(".counter").forEach((counter) => {
-  counterObserver.observe(counter);
+  counter.textContent = String(Number(counter.dataset.target)).padStart(2, "0");
 });
-
-/* Đếm từ 0 lên dataset.target trong 900ms, dùng easing bậc 3 cho mượt. */
-function animateCounter(counter) {
-  const target = Number(counter.dataset.target);
-  const start = performance.now();
-  const duration = 900;
-
-  function frame(time) {
-    const progress = Math.min((time - start) / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    counter.textContent = String(Math.round(target * eased)).padStart(2, "0");
-    if (progress < 1) requestAnimationFrame(frame);
-  }
-
-  requestAnimationFrame(frame);
-}
