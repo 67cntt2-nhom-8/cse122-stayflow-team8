@@ -5,6 +5,7 @@
   const active = rows.filter((request) => request.status !== "Đã hủy");
   const done = active.filter((request) => request.status === "Hoàn thành").length;
   const overdue = active.filter((request) => SF.state(request)[0] === "Quá hạn").length;
+  // Tính thống kê tổng quan và gom số yêu cầu theo dịch vụ/trạng thái.
   const average = db.feedback.length
     ? (
       db.feedback.reduce((total, feedback) => total + feedback.rating, 0) /
@@ -21,7 +22,6 @@
     byStatus[request.status] = (byStatus[request.status] || 0) + 1;
   });
   const max = Math.max(1, ...Object.values(byService));
-  const max = Math.max(1, ...Object.values(byService));
   const CL = {
     "Hoàn thành": "ok",
     "Đang thực hiện": "info",
@@ -30,6 +30,7 @@
   };
 
   function draw() {
+    // Lọc phản hồi theo từ khóa và kết xuất KPI, phân bố trạng thái cùng nhận xét khách hàng.
     const feedback = db.feedback.filter((item) =>
       SF.match(item.comment + (item.ai_summary || ""), SF.q),
     );
@@ -50,6 +51,7 @@
     <section class="card"><h3>Theo trạng thái</h3><p>${Object.entries(byStatus).map(([status, count]) => `<span class="chip ${CL[status] || ""}" style="margin:0 6px 8px 0">${status}: ${count}</span>`).join("")}</p></section></div>
     <section class="card"><h3>Phản hồi của khách</h3>${feedback.map((item) => `<div style="padding:10px 0;border-top:1px solid var(--line)"><strong aria-label="${item.rating} trên 5 sao">${"★".repeat(item.rating)}${"☆".repeat(5 - item.rating)}</strong> <small class="muted">${item.createdAt.slice(0, 10)}</small><p style="margin:4px 0">${SF.esc(item.comment)}</p>${item.ai_summary ? `<small class="muted">${SF.esc(item.ai_summary)}</small>` : ""}</div>`).join("") || SF.empty()}</section>`;
 
+    // Xuất bảng số yêu cầu theo dịch vụ thành CSV có BOM để ứng dụng bảng tính đọc Unicode.
     document.getElementById("csv").onclick = () => {
       const quote = (value) => `"${String(value).replace(/"/g, '""')}"`;
       const link = document.createElement("a");

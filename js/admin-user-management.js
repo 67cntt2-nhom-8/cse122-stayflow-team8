@@ -5,6 +5,7 @@
   let role = "";
   let sel = new Set();
 
+  // Cấu hình phân trang, nhãn quyền, màu vai trò và lý do khóa tài khoản.
   const PER = 6;
   const PERMS = [
     "Điều phối yêu cầu",
@@ -29,6 +30,7 @@
   main.innerHTML = `<div id="h"></div><div class="tools"><label>Vai trò <select id="fr"><option value="">Tất cả</option>${Object.keys(RC).map((item) => `<option>${item}</option>`).join("")}</select></label></div><div id="b"></div><div id="t" class="wrap"></div>`;
 
   const $ = (id) => document.getElementById(id);
+  // Các helper lọc danh sách, đếm quản trị viên còn hoạt động và khôi phục snapshot.
   const undo = (snapshot) => () => {
     db = JSON.parse(snapshot);
     SF.save(db);
@@ -41,6 +43,7 @@
   const admins = () => db.users.filter((user) => user.role === "Admin" && user.active);
 
   function draw() {
+    // Cập nhật phần đầu trang, thao tác hàng loạt và bảng tài khoản theo bộ lọc hiện tại.
     const users = list();
     page = Math.min(page, Math.max(0, Math.ceil(users.length / PER) - 1));
     const pageUsers = users.slice(page * PER, page * PER + PER);
@@ -56,10 +59,12 @@
   }
 
   function view(user) {
+    // Hộp thoại chỉ đọc thông tin tài khoản đã chọn.
     SF.modal(`<h3>${SF.esc(user.name)}</h3><dl><dt>Liên hệ</dt><dd>${SF.esc(user.contact)}</dd><dt>Vai trò</dt><dd>${user.role}</dd><dt>Phạm vi</dt><dd>${SF.esc(user.scope)}</dd><dt>Trạng thái</dt><dd>${user.active ? "Hoạt động" : "Đã khóa"}</dd></dl><div class="acts"><button class="btn pri" data-x>Đóng</button></div>`);
   }
 
   function perms(user) {
+    // Cho phép cập nhật vai trò/quyền; quyền quản lý người dùng chỉ bật với Admin.
     const panel = SF.modal(`<h3>Phân quyền tài khoản</h3><small class="muted">${SF.esc(user.name)} · ${user.role}</small>
     <div class="field"><label for="pr">Vai trò</label><select id="pr">${Object.keys(RC).map((item) => `<option${item === user.role ? " selected" : ""}>${item}</option>`).join("")}</select></div>
     <div class="field"><label for="ps">Phạm vi phụ trách</label><input id="ps" value="${SF.esc(user.scope)}" readonly></div>
@@ -77,6 +82,7 @@
     sync();
     panel.querySelector("#ok").onclick = () => {
       const newRole = panel.querySelector("#pr").value;
+      // Bảo đảm không thể hạ quyền Admin hoạt động cuối cùng khỏi hệ thống.
       if (user.role === "Admin" && newRole !== "Admin" && admins().length < 2) {
         return SF.toast("Cần ít nhất một quản trị viên đang hoạt động.");
       }
@@ -93,6 +99,7 @@
   }
 
   function lock(ids) {
+    // Khóa một hoặc nhiều tài khoản sau khi kiểm tra danh sách và bảo vệ Admin cuối cùng.
     const users = db.users.filter((user) => ids.includes(user.id));
     if (!users.length) return;
 
@@ -125,6 +132,7 @@
     };
   }
 
+  // Điều phối xem, phân quyền, đặt lại mật khẩu, khóa/kích hoạt và thao tác hàng loạt.
   main.onclick = (e) => {
     const button = e.target.closest("[data-v],[data-pm],[data-rp],[data-lk],[data-bulk],[data-clr],[data-p]");
     if (!button) return;
@@ -162,6 +170,7 @@
     }
   };
 
+  // Cập nhật bộ lọc vai trò hoặc các checkbox chọn tài khoản trên trang hiện tại.
   main.onchange = (e) => {
     const target = e.target;
 
