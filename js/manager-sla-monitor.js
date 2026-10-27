@@ -8,6 +8,7 @@
   const TARGET = SF.cfg().target;
   const S = (r) => SF.state(r)[0];
 
+  // Tạo các vùng KPI/biểu đồ/bộ lọc; danh sách chi tiết sẽ được render trong draw().
   main.innerHTML = `<div class="head"><div><span class="gold">Cập nhật trực tiếp</span><h1>Sức khỏe SLA hôm nay</h1><p class="muted">Mục tiêu toàn khách sạn: ≥ ${TARGET}% yêu cầu trong SLA.</p></div><div class="tools"><button class="btn" id="csv">Xuất báo cáo (CSV)</button><a class="btn pri" href="manager-dispatch-board.html">Điều phối lại</a></div></div>
   <div id="k" class="kpis"></div><section class="card" id="c" aria-label="Xu hướng SLA theo giờ"></section>
   <div class="tools"><label>Dịch vụ <select id="fs"><option value="">Tất cả</option>${db.serviceTypes.map((service) => `<option value="${service.id}">${SF.esc(service.categoryName)}</option>`).join("")}</select></label><label>Trạng thái <select id="ft"><option value="">Tất cả</option><option>Quá hạn</option><option>Sắp hạn</option><option>Trong hạn</option><option>Đã đóng</option></select></label></div><div id="t" class="wrap"></div>`;
@@ -28,6 +29,7 @@
     );
 
   function draw() {
+    // Tính số liệu SLA, phân bổ yêu cầu theo giờ Việt Nam và thời gian phản hồi trung bình.
     const all = SF.rows(db).filter((r) => r.status !== "Đã hủy");
     const over = all.filter((r) => S(r) === "Quá hạn").length;
     const soon = all.filter((r) => S(r) === "Sắp hạn").length;
@@ -77,6 +79,7 @@
       ? Math.round(responseTimes.reduce((a, b) => a + b) / responseTimes.length)
       : 0;
 
+    // Hiển thị KPI tổng hợp và biểu đồ tỷ lệ hoàn thành đúng hạn theo giờ nhận.
     document.getElementById("k").innerHTML = [
       [
         "SLA đạt",
@@ -110,6 +113,7 @@
   }
 
   function pickStaff(r) {
+    // Mở hộp thoại chọn nhân viên đang trực và lưu phân công sau khi xác nhận.
     const panel = SF.modal(`<h3>${r.staff ? "Điều phối lại" : "Phân công"} ${r.id}</h3><p class="muted">${SF.esc(r.svc)} · Phòng ${r.room}</p><div class="field"><label for="ns">Nhân viên đang trực</label><select id="ns">${db.staff.filter((staff) => staff.status === "Đang trực").map((staff) => `<option value="${staff.id}"${r.staff?.id === staff.id ? " selected" : ""}>${SF.esc(staff.name)} · ${staff.role}</option>`).join("")}</select></div><div class="acts"><button class="btn" data-x>Hủy</button><button class="btn pri" id="ok">Xác nhận</button></div>`);
 
     panel.querySelector("#ok").onclick = () => {
@@ -155,6 +159,7 @@
     };
   }
 
+  // Xử lý xuất CSV, nhắc nhân viên có cooldown hoặc mở hộp thoại điều phối.
   main.onclick = (e) => {
     const button = e.target.closest("[data-n],[data-r],#csv");
     if (!button) return;

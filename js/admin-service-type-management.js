@@ -5,6 +5,7 @@
 
   const PER = 5;
   const PRI = ["Thấp", "Trung bình", "Cao"];
+  // Các helper xác định trạng thái dịch vụ, nhóm duy nhất và cách hoàn tác thay đổi.
   const act = (service) => service.active !== false;
   const depts = () => [...new Set(db.serviceTypes.map((service) => service.department))];
   const undo = (snapshot) => () => {
@@ -14,6 +15,7 @@
   };
 
   function draw() {
+    // Lọc theo từ khóa, giới hạn trang hợp lệ rồi vẽ bảng dịch vụ và phân trang.
     const services = db.serviceTypes.filter((service) =>
       SF.match(`${service.categoryName} ${service.description} ${service.department}`, SF.q),
     );
@@ -24,6 +26,7 @@
   }
 
   function form(service0) {
+    // Dùng cùng một biểu mẫu cho thêm mới và chỉnh sửa; dữ liệu mặc định chỉ áp dụng khi tạo mới.
     const isNew = !service0;
     const service = service0 || {
       categoryName: "",
@@ -42,6 +45,7 @@
     const query = (selector) => panel.querySelector(selector);
 
     query("#ok").onclick = () => {
+      // Kiểm tra tên và SLA trước khi cập nhật để không lưu dữ liệu thiếu hoặc ngoài giới hạn.
       const name = query("#f-n").value.trim();
       const sla = +query("#f-s").value;
       const dept = query("#f-g").value.trim();
@@ -70,6 +74,7 @@
       });
 
       if (isNew) {
+        // Gán mã duy nhất theo số thứ tự và kích hoạt dịch vụ vừa tạo.
         service.id = "ST" + String(db.serviceTypes.length + 1).padStart(3, "0");
         service.active = true;
         db.serviceTypes.push(service);
@@ -84,6 +89,7 @@
   }
 
   function archive(service) {
+    // Xác nhận lưu trữ thay vì xóa để giữ nguyên dữ liệu lịch sử.
     const panel = SF.modal(`<h3>Lưu trữ loại dịch vụ?</h3><p class="muted"><strong>${SF.esc(service.categoryName)}</strong> sẽ không xuất hiện khi tạo yêu cầu mới. Dữ liệu lịch sử vẫn được giữ nguyên.</p><div class="acts"><button class="btn" data-x>Hủy</button><button class="btn danger" id="ok">Xác nhận lưu trữ</button></div>`);
 
     panel.querySelector("#ok").onclick = () => {
@@ -97,6 +103,7 @@
     };
   }
 
+  // Điều phối thao tác thêm, sửa, lưu trữ/kích hoạt và chuyển trang qua event delegation.
   main.onclick = (e) => {
     const button = e.target.closest("[data-new],[data-e],[data-a],[data-p]");
     if (!button) return;

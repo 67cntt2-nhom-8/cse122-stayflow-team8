@@ -1,5 +1,6 @@
 // StayFlow – phần dùng chung cho Quản lý + Quản trị (SV1): dữ liệu, khung trang, toast, hộp thoại.
 const SF = {
+  // Các mốc và cấu hình dùng chung giúp đồng hồ SLA và tìm kiếm nhất quán giữa các trang.
   NOW0: new Date("2026-10-06T20:30:00").getTime(),
   T0: Date.now(),
   q: "",
@@ -41,6 +42,7 @@ const SF = {
       : `${g}${p(Math.floor(a / 3600))}:${p(Math.floor((a % 3600) / 60))}:${p(a % 60)}`;
   },
   NAV: {
+    // Mỗi mục điều hướng gồm nhãn, đường dẫn, khóa trang hiện tại và biểu tượng.
     manager: [
       ["Điều phối", "manager-dispatch-board.html", "dispatch", "▦"],
       ["Theo dõi SLA", "manager-sla-monitor.html", "sla", "◷"],
@@ -56,6 +58,7 @@ const SF = {
       ["Nhật ký hệ thống", "admin-system-log.html", "log", "≡"],
     ],
   },
+  // Dựng khung trang theo vai trò, gắn điều khiển tìm kiếm/reset và trả về vùng nội dung.
   shell(role, page, crumb, title) {
     const admin = role === "admin";
     const who = admin ? "Quản trị viên" : "Quản lý";
@@ -78,6 +81,7 @@ const SF = {
     };
     return document.getElementById("main");
   },
+  // Chờ dữ liệu mock dùng chung sẵn sàng và hiển thị lỗi rõ ràng nếu khởi tạo thất bại.
   async load() {
     const showError = (message) => {
       document.getElementById("main").innerHTML = `<div class="card"><h3>Không tải được dữ liệu</h3><p class="muted">${SF.esc(message)}</p></div>`;
@@ -93,6 +97,7 @@ const SF = {
       showError(message);
       throw error;
     }
+    // Phần chuyển đổi localStorage cũ bên dưới được giữ lại để tương thích; luồng hiện tại kết thúc ở try/catch phía trên.
     let d;
     const saved = localStorage.getItem("sf_db");
     if (saved) {
@@ -178,6 +183,7 @@ const SF = {
         throw new Error(message);
       }
       const prioritySuggestions = source.aiMocks?.priorityAssistant || [];
+      // Chuẩn hóa dữ liệu JSON mock về cấu trúc mà các màn hình Manager/Admin sử dụng.
       d = {
         staff: mockStaff
           .filter((staff) => staff.role === "staff")
@@ -310,6 +316,7 @@ const SF = {
     if (d.clock) SF.setClock(d.clock);
     return d;
   },
+  // Lưu dữ liệu và thêm sự kiện vào đầu nhật ký kiểm toán.
   save: (d) => localStorage.setItem("sf_db", JSON.stringify(d)),
   log(d, msg) {
     d.audit.unshift({
@@ -319,6 +326,7 @@ const SF = {
     });
   },
   rows: (d) =>
+    // Ghép yêu cầu với lưu trú, loại dịch vụ và nhiệm vụ để các bảng có đủ dữ liệu hiển thị.
     d.requests.map((r) => {
       const st = d.stays.find((s) => s.id === r.stayId) || {};
       const sv = d.serviceTypes.find((s) => s.id === r.serviceTypeId) || {};
@@ -339,6 +347,7 @@ const SF = {
     }),
   left: (r) => Math.round((r.due - SF.now()) / 1000),
   state(r) {
+    // Dùng thời hạn và ngưỡng cấu hình để phân loại trạng thái SLA cũng như màu hiển thị.
     if (["Hoàn thành", "Đã hủy"].includes(r.status)) return ["Đã đóng", "info"];
     const remaining = SF.left(r);
     return remaining < 0
@@ -348,6 +357,7 @@ const SF = {
         : ["Trong hạn", "ok"];
   },
   toast(msg, undo) {
+    // Toast thông báo có thể kèm thao tác hoàn tác và tự ẩn sau một khoảng thời gian.
     const toast = document.getElementById("toast");
     clearTimeout(SF.tt);
     toast.innerHTML = `<span>${SF.esc(msg)}</span>${undo ? '<button type="button">Hoàn tác</button>' : ""}`;
@@ -361,6 +371,7 @@ const SF = {
     SF.tt = setTimeout(() => toast.classList.remove("show"), 6000);
   },
   modal(html, drawer) { // chỉ một lớp phủ tại một thời điểm, Esc / bấm nền để đóng
+    // Lưu focus hiện tại, dựng lớp phủ và đưa focus vào nội dung để hỗ trợ bàn phím.
     SF.close();
     SF.prev = document.activeElement;
     const overlay = document.createElement("div");
@@ -379,6 +390,7 @@ const SF = {
     return panel;
   },
   close() {
+    // Đóng lớp phủ đang mở và trả focus về phần tử trước khi mở hộp thoại.
     document.querySelector(".overlay")?.remove();
     SF.prev?.focus?.();
   },

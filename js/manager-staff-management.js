@@ -3,6 +3,7 @@
   let db = await SF.load();
   let role = "";
 
+  // Các helper xác định trực ca, số task đang mở và danh sách ca có thể chọn.
   const CAP = SF.cfg().cap;
   const OPEN = ["Chờ nhận", "Đang làm"];
   const on = (staff) => staff.status === "Đang trực";
@@ -25,6 +26,7 @@
   };
 
   function draw() {
+    // Lọc nhân sự rồi cập nhật bảng ca trực, khối lượng công việc và trạng thái.
     const staffList = db.staff.filter((staff) =>
       (!role || staff.role === role) &&
       SF.match(`${staff.name} ${staff.role} ${staff.email}`, SF.q),
@@ -39,6 +41,7 @@
     }).join("")}</tbody></table>${staffList.length ? "" : SF.empty()}`;
   }
 
+  // Không cho chuyển nhân viên sang nghỉ khi vẫn còn task đang xử lý.
   main.onclick = (e) => {
     const button = e.target.closest("[data-t]");
     if (!button) return;
@@ -58,9 +61,9 @@
     save(snapshot, `${staff.name}: ${staff.status}`);
   };
 
+  // Thay đổi bộ lọc phòng ban hoặc ca làm sẽ cập nhật trạng thái và ghi audit.
   main.onchange = (e) => {
     const target = e.target;
-
     if (target.id === "fr") {
       role = target.value;
       draw();

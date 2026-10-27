@@ -5,6 +5,7 @@
   let pick;
   let hide = !SF.cfg().ai;
 
+  // Thứ tự ưu tiên, công suất và các helper dùng để xếp hàng/chọn nhân viên.
   const PR = {
     Cao: ["bad", 0],
     "Trung bình": ["warn", 1],
@@ -35,6 +36,7 @@
   );
 
   function assign(r, s) {
+    // Cập nhật task có sẵn hoặc tạo task mới, sau đó đổi trạng thái request và ghi audit.
     const task = r.task;
 
     if (task) {
@@ -69,6 +71,7 @@
   }
 
   function run(assignments, message) {
+    // Lưu snapshot trước khi phân công để toast có thể khôi phục toàn bộ thay đổi.
     const snapshot = JSON.stringify(db);
     assignments.forEach(([request, staff]) => assign(request, staff));
     SF.save(db);
@@ -78,9 +81,10 @@
       SF.save(db);
       draw();
     });
-  }
+  } 
 
   function draw() {
+    // Đồng bộ lựa chọn với hàng đợi mới nhất và dựng các khu vực hàng đợi, tải, chi tiết.
     const rows = queue();
     const all = SF.rows(db);
     const request = rows.find((item) => item.id === sel) || rows[0];
@@ -105,6 +109,7 @@
     ${suggestions.length && !hide ? `<section class="card ai" aria-label="Gợi ý AI"><h3>AI Priority Assistant</h3><div class="sug">${suggestions.map((item, index) => `<div><strong>${index + 1}. ${item.id} → ${SF.esc((best(item) || {}).name || "—")}</strong><br><small class="muted">${SF.esc(item.ai_priority_reason)}</small></div>`).join("")}</div><div class="acts"><small class="muted">Gợi ý chưa tự động áp dụng</small><button class="btn" data-no>Từ chối</button><button class="btn pri" data-all>Chấp nhận tất cả</button></div></section>` : ""}`;
   }
 
+  // Một listener xử lý chọn request/nhân viên, phân công đơn hoặc áp dụng gợi ý AI.
   main.onclick = (e) => {
     const button = e.target.closest("[data-q],[data-s],[data-go],[data-all],[data-no]");
     if (!button) return;
