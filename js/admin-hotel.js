@@ -1,6 +1,7 @@
 (async () => {
   const main = SF.shell("admin", "hotel", "Quản trị / Khách sạn", "Quản lý khách sạn");
   const db = await SF.load();
+  // Tính chỉ số tình hình phòng, yêu cầu và nhân viên từ dữ liệu đã tải.
   const occupied = db.stays.filter(
     (stay) => stay.status === "Đang lưu trú",
   ).length;
@@ -16,6 +17,7 @@
     a.roomNumber.localeCompare(b.roomNumber, undefined, { numeric: true }),
   );
 
+  // Dữ liệu biểu đồ tuần và một số nội dung trạng thái là số liệu minh họa cố định.
   const chart = [
     { label: "1W", value: 62 },
     { label: "2W", value: 71 },
@@ -26,6 +28,7 @@
     { label: "7W", value: 88 },
   ];
 
+  // Dựng dashboard khách sạn gồm KPI, biểu đồ minh họa, trạng thái nhanh và danh sách lưu trú.
   main.innerHTML = `
     <div class="head">
       <div>
@@ -115,6 +118,7 @@
     </section>
   `;
 
+  // Nút làm mới hiện chỉ thông báo; dữ liệu mẫu không được tải lại từ máy chủ.
   main.onclick = (e) => {
     const button = e.target.closest("[data-refresh]");
     if (!button) return;

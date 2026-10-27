@@ -1,6 +1,7 @@
 (async () => {
   const main = SF.shell("admin", "home", "Quản trị / Tổng quan", "Tổng quan quản trị");
   const db = await SF.load();
+  // Tạo các số liệu tổng quan từ dữ liệu đã ghép và tài khoản hiện có.
   const rows = SF.rows(db);
   const active = (service) => service.active !== false;
   const users = db.users;
@@ -14,10 +15,12 @@
     roles[user.role] = (roles[user.role] || 0) + 1;
   });
 
+  // Chuẩn bị giá trị hiển thị và danh sách audit gần nhất trước khi dựng dashboard.
   const total = Math.max(1, users.length);
   const pad = (value) => String(value).padStart(2, "0");
   const recent = db.audit.slice(0, 5);
 
+  // Hiển thị KPI, phân bố tài khoản theo vai trò, lối tắt và hoạt động kiểm toán gần đây.
   main.innerHTML = `<div class="head"><div><span class="gold">AURORA GRAND · ĐÀ NẴNG</span> <span class="chip ${overdue ? "warn" : "ok"}">${overdue ? "Cần chú ý: có yêu cầu quá hạn" : "Hệ thống ổn định"}</span><h1>Bảng điều khiển quản trị</h1><p class="muted">Tổng quan tài khoản, dịch vụ và hoạt động gần đây từ dữ liệu mẫu.</p></div><a class="btn" href="admin-system-log.html">Xem nhật ký</a></div>
   <div class="kpis">${[
       [
