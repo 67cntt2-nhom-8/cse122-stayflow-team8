@@ -10,6 +10,8 @@
     <title>Yêu cầu của tôi · StayFlow</title>
     <!-- Khung dashboard dùng chung (sidebar, topbar, thẻ, modal, toast...) -->
     <link rel="stylesheet" href="../shared/dashboard.css" />
+    <!-- Áp giao diện đã lưu TRƯỚC khi vẽ trang, nếu không mỗi lần chuyển trang sẽ nháy nền sáng. -->
+    <script>try { document.documentElement.dataset.theme = localStorage.getItem("stayflow_theme") === "dark" ? "dark" : "light"; } catch (error) { /* trình duyệt chặn localStorage -> giữ giao diện sáng */ }</script>
     <!-- Chỉ phần riêng của trang Yêu cầu; nạp SAU để có thể ghi đè khối chung -->
     <link rel="stylesheet" href="../css/guest-service-requests.css" />
   </head>
@@ -102,7 +104,7 @@
         </header>
 
         <main class="content">
-          <section class="welcome reveal">
+          <section class="welcome">
             <div>
               <span class="eyebrow">PHÒNG 1208 · AURORA GRAND</span>
               <h1>Yêu cầu của bạn</h1>

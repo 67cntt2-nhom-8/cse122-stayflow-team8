@@ -27,7 +27,7 @@ assert.strictEqual(staff.length, 10, 'Dữ liệu mẫu phải có 10 nhân sự
 assert.strictEqual(api.shiftData.shifts.length, 3, 'Có 3 ca: sáng / chiều / đêm');
 assert.strictEqual(staff.filter((s) => s.status === 'Nghỉ').length, 1, 'Có đúng 1 nhân sự đang nghỉ');
 assert.deepStrictEqual(api.SHIFT_ORDER, ['morning', 'afternoon', 'night']);
-assert.deepStrictEqual(api.DEPARTMENTS, ['Lễ tân', 'Buồng phòng', 'Kỹ thuật']);
+assert.deepStrictEqual(api.DEPARTMENTS, ['Lễ tân', 'Buồng phòng', 'Kỹ thuật', 'Ẩm thực']);
 assert.strictEqual(api.shiftType('night').name, 'Ca đêm', 'Mã ca phải khớp shifts[].name trong data.js');
 
 /* --- 2. Tuần bắt đầu Thứ Hai; 16/10/2026 là Thứ Sáu --- */
@@ -175,7 +175,8 @@ const byId = {};
 html.replace(/id="([^"]+)"/g, (_, id) => { byId[id] = el('div'); return ''; });
 
 ['schedGrid', 'shiftRange', 'shiftSummary', 'prevBtn', 'nextBtn', 'todayBtn',
-    'shiftFilterForm', 'shiftSearch', 'filterDepartment', 'filterShiftType']
+    'shiftFilterForm', 'shiftSearch', 'filterDepartment', 'filterShiftType',
+    'shiftRosterGrid', 'rosterDate']
     .forEach((id) => assert.ok(byId[id], 'pages/staff-shift-view.html thiếu #' + id));
 
 /* Hai nút gạt Tuần/Tháng không có id, được tìm qua [data-mode] */
@@ -195,9 +196,9 @@ const document = {
 byId.filterDepartment.value = 'all';
 byId.filterShiftType.value = 'all';
 
-new Function('document', 'window', 'require', source)(
-    document, { StayFlowData: require('./data.js') }, require
-);
+const browserWindow = { StayFlowData: null };
+new Function('document', 'window', 'require', source)(document, browserWindow, null);
+browserWindow.StayFlowData = require('./data.js');
 document.ready();  // mô phỏng DOMContentLoaded
 
 const grid = byId.schedGrid;
@@ -215,6 +216,12 @@ assert.match(byId.shiftSummary.textContent, / 9 nhân sự$/, 'Cả 9 nhân sự
 assert.strictEqual(modeButtons[0].classes.has('is-active'), true, 'Nút Tuần được đánh dấu đang chọn');
 assert.strictEqual(modeButtons[0].attributes['aria-pressed'], 'true');
 assert.ok(!grid.innerHTML.includes('Phạm Thị Hương'), 'Nhân sự đang nghỉ không xuất hiện trên lịch');
+assert.strictEqual(count(byId.shiftRosterGrid.innerHTML, /class="shift-roster-card /g), 3,
+    'Bảng phân công hiển thị đủ ba ca trong ngày');
+assert.strictEqual(count(byId.shiftRosterGrid.innerHTML, /class="shift-roster-member"/g), 5,
+    'Bảng phân công hiển thị tên nhân sự của cả ba ca');
+assert.ok(html.includes('<option value="Ẩm thực">Ẩm thực</option>'),
+    'Bộ lọc bộ phận phải bao gồm mọi bộ phận có trong dữ liệu nhân viên');
 
 /* --- 8. Chuyển sang chế độ Tháng --- */
 modeButtons[1].handlers.click();
@@ -257,9 +264,13 @@ assert.match(byId.shiftRange.textContent, /^Tuần /, 'Nút Hôm nay đưa về 
 
 /* --- 11. Bộ lọc qua sự kiện thật của trang --- */
 const search = byId.shiftSearch;
+const maiAnhAssignments = (byId.shiftRosterGrid.innerHTML.match(/<li class="shift-roster-member">[\s\S]*?<\/li>/g) || [])
+    .filter((member) => member.toLowerCase().includes('mai anh')).length;
 search.handlers.input({ target: { value: 'mai anh' } });
 assert.match(byId.shiftSummary.textContent, / 1 nhân sự$/, 'Tìm "mai anh" chỉ còn 1 nhân sự');
 assert.match(byId.shiftSummary.textContent, /\/35 lượt trực/, 'Tổng số lượt không đổi khi lọc theo tên');
+assert.strictEqual(count(byId.shiftRosterGrid.innerHTML, /class="shift-roster-member"/g), maiAnhAssignments,
+    'Bảng phân công cũng áp dụng bộ lọc tên');
 search.handlers.input({ target: { value: '' } });
 
 const department = byId.filterDepartment;
@@ -267,6 +278,8 @@ department.value = 'Kỹ thuật';
 department.handlers.change({ target: department });
 assert.ok(/<small>Kỹ thuật/.test(grid.innerHTML), 'Có ca của bộ phận Kỹ thuật');
 assert.ok(!/<small>Lễ tân|<small>Buồng phòng/.test(grid.innerHTML), 'Chỉ còn nhân sự bộ phận Kỹ thuật');
+assert.ok(!/Lễ tân|Buồng phòng/.test(byId.shiftRosterGrid.innerHTML),
+    'Bảng phân công cũng áp dụng bộ lọc bộ phận');
 department.value = 'all';
 department.handlers.change({ target: department });
 
@@ -300,6 +313,9 @@ const shiftClasses = [
     'day-card__button', 'day-card__weekday', 'day-card__number', 'day-card__month',
     'day-card__coverage', 'day-card__shift', 'day-card__shift--morning',
     'day-card__shift--afternoon', 'day-card__shift--night',
+    'shift-roster-grid', 'shift-roster-card', 'shift-roster-card--morning',
+    'shift-roster-card--afternoon', 'shift-roster-card--night',
+    'shift-roster-card__heading', 'shift-roster-list', 'shift-roster-member',
     'slot', 'slot--morning', 'slot--afternoon', 'slot--night',
     'slot__head', 'slot__name', 'slot__time', 'slot__empty',
     'members', 'member', 'member__text', 'avatar',
@@ -307,7 +323,7 @@ const shiftClasses = [
     'mcell', 'mcell__head', 'mcell__dow', 'mcell__list',
     'pill', 'pill--morning', 'pill--afternoon', 'pill--night',
     // class trạng thái
-    'is-today', 'is-out', 'is-zero'
+    'is-today', 'is-selected', 'is-out', 'is-zero'
 ];
 
 const missing = shiftClasses.filter((name) => !css.includes('.' + name));

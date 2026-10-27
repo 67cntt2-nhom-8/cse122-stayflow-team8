@@ -1,23 +1,10 @@
-/* ============================================================================
- * profile.js — Riêng trang "Hồ sơ cá nhân"
- * ----------------------------------------------------------------------------
- * Phần khung dashboard (sidebar, dropdown, toast, Escape, hiệu ứng hiện dần,
- * tên người dùng trên topbar) nằm ở ../shared/dashboard.js.
- * File này chỉ xử lý hồ sơ:
- *   1. Đọc/ghi hồ sơ trong localStorage (khoá stayflow_profile).
- *   2. Điền sẵn biểu mẫu và danh thiếp khi mở trang.
- *   3. Lưu thay đổi -> cập nhật danh thiếp, topbar, dải xác nhận.
- *   4. Nút "Hủy" trả biểu mẫu về dữ liệu đã lưu.
- *   5. Nút "Đổi ảnh" chỉ xem trước ảnh trong phiên này.
- * ========================================================================= */
-
 /* --- 1. Tham chiếu phần tử riêng của trang --- */
 const profileForm = document.querySelector("#profile-form");
 const saveBanner = document.querySelector("#save-banner");
 const cardName = document.querySelector("#profile-card-name"); // tên in trên danh thiếp
 const avatarImage = document.querySelector("#profile-avatar");
 const avatarInput = document.querySelector("#avatar-input");
-const PROFILE_KEY = "stayflow_profile"; // cùng quy ước với stayflow_requests, stayflow_user_name
+const PROFILE_KEY = "stayflow_profile";
 
 /* Thứ tự khoá = thứ tự lấy giá trị từ form; dùng chung cho đọc và ghi. */
 const PROFILE_FIELDS = ["fullName", "phone", "email", "language", "timezone", "emergency"];
@@ -99,7 +86,7 @@ avatarInput.addEventListener("change", () => {
 fillProfile(readProfile());
 
 STAYFLOW_REQUESTS_READY.then(() => {
-  const stay = window.StayFlowMockData?.stays.find((item) => item.roomNumber === "1208");
+  const stay = window.StayFlowData?.stays.find((item) => item.id === GUEST_STAY_ID);
   if (!stay) return;
 
   try {

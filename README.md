@@ -45,28 +45,11 @@ cse122-stayflow-team8/
 │
 └── README.md
 
-```
-
-Chạy dự án qua một máy chủ HTTP cục bộ (ví dụ **Live Server** trong VS Code), sau đó
-mở `index.html`. Các trang dùng `fetch()` nên không thể đọc file JSON khi mở trực tiếp
-bằng `file://`.
-
-Dữ liệu mẫu dùng chung nằm trong `assets/data/stayflow.mock.json`. `js/data.js`
-chuyển đổi dữ liệu này sang cấu trúc mà các màn hình Nhân viên sử dụng;
-`js/manager-admin.js` chuyển đổi cho màn hình Quản lý/Quản trị; các trang Khách
-khởi tạo danh sách yêu cầu từ cùng dữ liệu JSON. Khi sửa dữ liệu, giữ nguyên các ID
-được tham chiếu giữa `stays`, `requests`, `tasks`, `staff` và `serviceTypes`.
-Hình ảnh dùng chung nằm trong `assets/images/`.
-Các màn hình quản lý và quản trị dùng chung `css/manager-admin.css` và
-`js/manager-admin.js`.
-
 ## Kiểm tra nhanh (không cần framework)
-
-```bash
 node js/selfcheck.js     # logic lọc/trạng thái thuần của main.js
 node js/domcheck.js      # render bảng nhiệm vụ trên DOM giả
 node js/detailcheck.js   # trang chi tiết nhiệm vụ: đổ dữ liệu, đổi trạng thái, ghi chú
-```
+node js/shiftcheck.js    # lịch ca trực và tương thích giao diện
 
 ## Ngữ cảnh
 Khách lưu trú phải gọi lễ tân cho nhiều yêu cầu nhỏ. Bộ phận vận hành lại thiếu trạng thái thống nhất để theo dõi xử lý và SLA.
@@ -118,7 +101,6 @@ Khám phá / đăng nhập → Thực hiện nghiệp vụ chính theo vai trò 
 
 ## Thành viên nhóm
 | STT | Họ và Tên | Vai Trò | Mã Sinh Viên | GitHub |
-| :---: | :--- | :---: | :---: | :--- |
 | 1 | **Nguyễn Ninh Hải** | SV1 | `[2551060609]` | `[https://github.com/hainguyenninh1-oss]` |
 | 2 | **Nguyễn Huy Thành** | SV2 | `[2551060690]` | `[https://github.com/Huythanh-07]` |
 | 3 | **Phùng Xuân Thành** | SV3 | `[2551060691]` | `[https://github.com/phungxthanh07-ux]` |

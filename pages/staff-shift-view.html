@@ -125,6 +125,7 @@
                                     <option value="Lễ tân">Lễ tân</option>
                                     <option value="Buồng phòng">Buồng phòng</option>
                                     <option value="Kỹ thuật">Kỹ thuật</option>
+                                    <option value="Ẩm thực">Ẩm thực</option>
                                 </select>
                             </p>
                             <p class="select">
@@ -144,6 +145,17 @@
                     <li class="legend__item legend__item--afternoon"><i class="dot" aria-hidden="true"></i>Chiều</li>
                     <li class="legend__item legend__item--night"><i class="dot" aria-hidden="true"></i>Đêm</li>
                 </ul>
+            </section>
+
+            <section class="shift-roster-panel shift-panel" aria-labelledby="rosterHeading">
+                <div class="shift-panel__heading">
+                    <div>
+                        <p class="shift-card-kicker">PHÂN CÔNG TRONG NGÀY</p>
+                        <h3 id="rosterHeading">Nhân sự theo ca</h3>
+                    </div>
+                    <span class="shift-date-pill" id="rosterDate"></span>
+                </div>
+                <div class="shift-roster-grid" id="shiftRosterGrid"></div>
             </section>
 
             <section class="shift-dashboard" aria-label="Thông tin ca làm việc">

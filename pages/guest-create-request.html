@@ -10,6 +10,8 @@
     <title>Tạo yêu cầu mới · StayFlow</title>
     <!-- Khung dashboard dùng chung (sidebar, topbar, thẻ, toast...) -->
     <link rel="stylesheet" href="../shared/dashboard.css" />
+    <!-- Áp giao diện đã lưu TRƯỚC khi vẽ trang, nếu không mỗi lần chuyển trang sẽ nháy nền sáng. -->
+    <script>try { document.documentElement.dataset.theme = localStorage.getItem("stayflow_theme") === "dark" ? "dark" : "light"; } catch (error) { /* trình duyệt chặn localStorage -> giữ giao diện sáng */ }</script>
     <!-- Chỉ phần riêng của trang Tạo yêu cầu; nạp SAU để có thể ghi đè khối chung -->
     <link rel="stylesheet" href="../css/guest-create-request.css" />
   </head>
@@ -102,7 +104,7 @@
         </header>
 
         <main class="content">
-          <section class="welcome reveal">
+          <section class="welcome">
             <div>
               <span class="eyebrow">PHÒNG 1208 · AURORA GRAND</span>
               <h1>Tạo yêu cầu mới</h1>
@@ -119,7 +121,7 @@
 
           <div class="create-grid">
             <!-- Cột trái: biểu mẫu. Chưa có backend nên JS tự xử lý khi submit. -->
-            <form class="card create-form reveal" id="create-request-form" novalidate>
+            <form class="card create-form" id="create-request-form" novalidate>
               <div class="form-block">
                 <div class="form-block__head">
                   <h2>1. Chọn dịch vụ</h2>
@@ -161,7 +163,7 @@
 
             <!-- Cột phải: xem trước đúng thẻ mà trang Yêu cầu sẽ dựng lại. -->
             <aside class="create-side">
-              <section class="card preview-card reveal">
+              <section class="card preview-card">
                 <h2>Xem trước yêu cầu</h2>
                 <div class="preview-card__head">
                   <span class="preview-card__icon"><img id="preview-icon" src="../assets/images/ccf51.svg" alt="" /></span>
@@ -179,7 +181,7 @@
                 </div>
               </section>
 
-              <section class="card tip-card reveal">
+              <section class="card tip-card">
                 <h2>Trước khi gửi</h2>
                 <ul>
                   <li>Mỗi yêu cầu chỉ nên gồm một việc để theo dõi tiến độ cho rõ ràng.</li>
@@ -197,60 +199,8 @@
       <span>✓</span><p></p>
     </div>
 
-    <!-- Trợ lý AI GIẢ LẬP: dữ liệu trả lời nằm nguyên trong khối JSON dưới đây.
-         Không fetch() vì mở trực tiếp file .html (file://) trình duyệt chặn fetch;
-         thẻ script application/json vẫn là JSON tách riêng, đổi câu trả lời chỉ cần
-         sửa JSON, không đụng logic JS. -->
-    <script type="application/json" id="assistant-data">
-    {
-      "assistant": {
-        "name": "Trợ lý StayFlow",
-        "greeting": "Chào Thu Hà 👋 Kể tôi nghe bạn cần gì — tôi sẽ chọn giúp dịch vụ, soạn ghi chú và gợi ý mức ưu tiên.",
-        "typing": "Đang soạn trả lời…",
-        "fallback": "Tôi chưa chắc dịch vụ nào phù hợp. Bạn thử nói rõ hơn (ví dụ: điều hoà, khăn, ăn uống, dọn phòng) hoặc tự chọn ở bước 1 nhé."
-      },
-      "quickPrompts": [
-        "Điều hoà phòng không mát",
-        "Thêm 2 khăn tắm",
-        "Đặt bữa sáng 7:00",
-        "Dọn phòng giúp tôi"
-      ],
-      "replies": [
-        {
-          "keywords": ["điều hoà", "điều hòa", "máy lạnh", "không mát", "nóng", "lạnh", "quạt", "đèn", "bóng đèn", "vòi", "nước nóng", "chảy", "rò rỉ", "hỏng", "không sáng", "không chạy", "cửa khoá", "thang máy", "ổ cắm", "điện"],
-          "service": "Báo sự cố",
-          "priority": "Cao",
-          "reason": "Thiết bị hỏng ảnh hưởng trực tiếp đến chỗ nghỉ nên cần kỹ thuật vào sớm.",
-          "answer": "Đây là sự cố thiết bị — tôi đã chọn “Báo sự cố”, Kỹ thuật toà nhà sẽ vào trong 15 phút.",
-          "note": "Phòng 1208 gặp sự cố thiết bị (điều hoà/đèn/vòi nước), nhờ kỹ thuật kiểm tra sớm."
-        },
-        {
-          "keywords": ["khăn", "gối", "ga giường", "chăn", "khăn tắm", "khăn mặt"],
-          "service": "Yêu cầu khăn",
-          "priority": "Bình thường",
-          "reason": "Vật phẩm tiêu hao, đội buồng phòng xử lý rất nhanh (dưới 10 phút).",
-          "answer": "Đã chọn “Yêu cầu khăn” — Đội buồng phòng mang lên trong 10 phút.",
-          "note": "Xin thêm 2 khăn tắm và 2 khăn mặt, để ở bàn cạnh cửa."
-        },
-        {
-          "keywords": ["ăn", "uống", "bữa", "sáng", "trưa", "tối", "cơm", "trà", "cà phê", "nước cam", "đồ ăn", "gọi món", "phở", "mì"],
-          "service": "Đặt bữa",
-          "priority": "Theo giờ hẹn",
-          "reason": "Có giờ hẹn cụ thể nên bếp chuẩn bị theo khung giờ bạn nêu.",
-          "answer": "Đã chọn “Đặt bữa” — Bếp Aurora xác nhận trong 40 phút.",
-          "note": "Đặt bữa sáng cho 2 người lúc 7:00."
-        },
-        {
-          "keywords": ["dọn phòng", "dọn", "rác", "thu gom", "vệ sinh", "lau"],
-          "service": "Gọi dọn phòng",
-          "priority": "Bình thường",
-          "reason": "Dọn phòng theo lượt thường lệ của đội buồng phòng.",
-          "answer": "Đã chọn “Gọi dọn phòng” — đội buồng phòng lên trong 20 phút.",
-          "note": "Nhờ dọn phòng và thay ga giường."
-        }
-      ]
-    }
-    </script>
+    <!-- Trợ lý AI GIẢ LẬP: dữ liệu trả lời đã chuyển sang assets/data/stayflow.mock.json
+         (aiMocks.guestAssistant) và được js/data.js nạp chung với dữ liệu trang. -->
 
     <!-- Giao diện trợ lý: bong bóng góc dưới phải, bấm để mở/đóng hộp thoại. -->
     <div class="ai-assistant">

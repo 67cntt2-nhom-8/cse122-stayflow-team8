@@ -1,16 +1,3 @@
-/* ============================================================================
-   StayFlow — notifications.css (chỉ còn phần RIÊNG của trang "Trung tâm thông báo")
-   ----------------------------------------------------------------------------
-   Khối dùng chung (font, biến màu, reset, sidebar, topbar, dropdown, lời chào
-   .welcome, chip lọc .filter-tab, thanh tìm/lọc .request-toolbar, nút, trạng thái
-   trống .empty-state, toast, responsive khung...) đã nằm ở
-   ../shared/dashboard.css và được nạp TRƯỚC file này.
-
-   File này chỉ giữ: danh sách thông báo (một thẻ, nhiều dòng), dòng chưa đọc,
-   nút trong dòng, dải trống kiểu mockup và responsive của danh sách.
-   ============================================================================ */
-
-
 /* --- 1. Danh sách: một thẻ duy nhất, các dòng ngăn bằng đường kẻ --- */
 .notice-list { background: var(--paper); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
 .notice-list:empty { display: none; } /* chưa có dòng nào thì không để lại khung rỗng */

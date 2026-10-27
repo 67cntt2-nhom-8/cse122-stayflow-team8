@@ -1,20 +1,3 @@
-/* ============================================================================
-   StayFlow — dashboard.css
-   ----------------------------------------------------------------------------
-   KHỐI DÙNG CHUNG cho mọi trang có khung dashboard:
-   guest-dashboard/guest-dashboard.html, service-requests/service-requests.html và profile/profile.html.
-
-   Thứ tự nạp trong HTML (quan trọng):
-     1. ../shared/dashboard.css   <- file này (khung + thành phần chung)
-     2. guest-dashboard.css / service-requests.css           <- chỉ phần riêng của từng trang
-
-   Nội dung: font, biến màu, reset, sidebar, topbar, dropdown, thẻ, nhãn trạng thái,
-   nút, modal gửi yêu cầu, toast, hiệu ứng và responsive của khung.
-
-   Sửa file này là cả 2 trang đổi theo -> không cần copy sang trang kia nữa.
-   ============================================================================ */
-
-
 /* --- 1. Font chữ (tải từ Figma, không cần asset cục bộ) --- */
 @font-face { font-family: "Instrument Sans:Regular"; src: url("https://static.figma.com/font/InstrumentSans_wdth_wght__1") format("woff2"); font-style: normal; font-weight: 400; }
 @font-face { font-family: "Instrument Serif:Regular"; src: url("https://static.figma.com/font/InstrumentSerif-Regular_1") format("woff2"); font-style: normal; font-weight: 400; }
@@ -40,6 +23,28 @@
   --green: #247a54;
   --orange: #b76a12;
   --shadow: 0 14px 40px rgba(37, 31, 22, .07);
+}
+
+/* --- 2b. Bảng màu TỐI: chỉ đổi biến, mọi thành phần dùng biến tự đổi theo ---
+ * Bật bằng thuộc tính data-theme="dark" trên <html> (shared/dashboard.js gắn vào).
+ * Lưu ý: --navy vừa là MÀU CHỮ vừa là NỀN TỐI (sidebar, nút chính, toast, chip
+ * đang chọn). Khi đảo --navy sang màu sáng thì những chỗ dùng nó làm nền được
+ * trả lại nền tối ở mục 14 — nhờ vậy không phải sửa ~30 luật "color: var(--navy)". */
+[data-theme="dark"] {
+  background: #12161d;
+  color: #e8e0d2;
+  color-scheme: dark; /* select, scrollbar, ô nhập của trình duyệt tối theo */
+  --navy: #e8e0d2;
+  --navy-soft: #232a35;
+  --gold: #d0a45e;
+  --cream: #12161d;
+  --paper: #1b212b;
+  --border: #2e3644;
+  --muted: #9aa5b4;
+  --blue: #6aa3e8;
+  --green: #5fc38f;
+  --orange: #e0a05f;
+  --shadow: 0 14px 40px rgba(0, 0, 0, .45);
 }
 
 * { box-sizing: border-box; }
@@ -271,11 +276,8 @@ img { display: block; }
 .secondary-button:hover { background: var(--navy); color: #fff; transform: translateY(-2px); }
 .secondary-button:disabled, .secondary-button:disabled:hover { background: var(--paper); color: var(--muted); cursor: not-allowed; opacity: .55; transform: none; }
 
-/* --- 9. Trạng thái lọc của ô tìm kiếm + hiệu ứng hiện dần khi cuộn --- */
+/* --- 9. Trạng thái lọc của ô tìm kiếm --- */
 .searchable.is-filtered { display: none; }
-
-.reveal { opacity: 0; transform: translateY(20px); }
-.reveal.visible { animation: reveal-card .65s cubic-bezier(.2,.75,.2,1) both; }
 
 /* --- 10. Modal gửi yêu cầu + toast thông báo --- */
 .modal-backdrop {
@@ -422,7 +424,6 @@ img { display: block; }
 /* --- 11. Keyframes dùng chung --- */
 @keyframes progress-fill { from { width: 0; } }
 @keyframes active-pulse { 50% { box-shadow: 0 0 0 7px rgba(36,122,84,.1); } }
-@keyframes reveal-card { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* --- 12. Responsive khung (màn <=860px và <=620px) --- */
@@ -463,8 +464,113 @@ img { display: block; }
   .toast { bottom: 16px; left: 16px; right: 16px; }
 }
 
-/* --- 13. Tôn trọng cài đặt "giảm hiệu ứng động" của hệ điều hành --- */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
-  .reveal { opacity: 1; transform: none; }
-}
+/* --- 13. Hiệu ứng: giảm tối đa, mọi thay đổi trạng thái diễn ra tức thì ---
+ * Luật cũ chỉ chạy khi hệ điều hành bật "giảm hiệu ứng động"; nay áp dụng luôn
+ * cho mọi người dùng theo yêu cầu.
+ * Dùng animation-duration .01ms chứ không phải `animation: none` để các phần tử
+ * khai báo `animation ... both` vẫn nhảy ngay tới khung hình cuối (nếu tắt hẳn
+ * bằng `none`, chúng sẽ kẹt ở opacity: 0 của khung `from` và biến mất).
+ * ponytail: đè toàn cục bằng !important; cần bật lại hiệu ứng cho một khối thì
+ * thêm luật riêng có độ ưu tiên cao hơn (xem ngoại lệ vòng xoay bên dưới). */
+*, *::before, *::after { animation-delay: 0s !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-delay: 0s !important; transition-duration: .01ms !important; }
+
+/* Ngoại lệ duy nhất: vòng xoay báo "đang xử lý" trong nút gửi form phải quay,
+ * nếu không người dùng không biết form đã được gửi. */
+.submit-button__loader, .modal__submit b, .primary-button b { animation-duration: .7s !important; animation-iteration-count: infinite !important; }
+
+/* --- 14a. Nút đổi giao diện: 38x38 cho cân với nút chuông bên cạnh --- */
+.theme-toggle { align-items: center; background: var(--cream); border: 1px solid var(--border); border-radius: 10px; color: var(--navy); display: flex; flex: 0 0 auto; height: 38px; justify-content: center; padding: 0; transition: background .2s ease, border-color .2s ease, transform .2s ease; width: 38px; }
+.theme-toggle:hover { border-color: var(--gold); transform: translateY(-1px); }
+.theme-toggle:focus-visible { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(184,145,74,.15); outline: 0; }
+.theme-toggle svg { height: 18px; width: 18px; }
+
+/* --- 14b. Chỗ dùng --navy làm NỀN: nền đã thành sáng nên chữ phải tối --- */
+[data-theme="dark"] .sidebar { background: #101d33; }
+[data-theme="dark"] .primary-button { color: #12161d; }
+/* Icon trắng trong nút chính -> tô đen để nổi trên nền sáng. */
+[data-theme="dark"] .primary-button img,
+[data-theme="dark"] .primary-button svg { filter: brightness(0); }
+[data-theme="dark"] .primary-button b { border-color: rgba(18,22,29,.3); border-top-color: #12161d; }
+[data-theme="dark"] .secondary-button:hover { color: #12161d; }
+[data-theme="dark"] .toast { color: #12161d; }
+[data-theme="dark"] .toast span { color: #101d33; }
+[data-theme="dark"] .nav-item.active { color: #101d33; }
+[data-theme="dark"] .filter-tab.is-active,
+[data-theme="dark"] .pager-button.is-active { color: #12161d; }
+[data-theme="dark"] .ai-bubble,
+[data-theme="dark"] .ai-msg--user,
+[data-theme="dark"] .avatar-edit:hover { color: #12161d; }
+
+/* --- 14c. Màu viết cứng trong khung chung --- */
+[data-theme="dark"] .topbar { background: rgba(27,33,43,.92); }
+[data-theme="dark"] .modal { border-color: var(--border); }
+[data-theme="dark"] .card:hover { border-color: #3d4a5e; }
+[data-theme="dark"] .dropdown button:hover,
+[data-theme="dark"] .dropdown a:hover { background: #232a35; }
+[data-theme="dark"] .dropdown__heading span { background: #3a2f20; }
+[data-theme="dark"] .timeline-step span { background: #2a313d; }
+/* Icon xám đậm (#607084) trên ô tìm đã tối -> đảo cho sáng lên. */
+[data-theme="dark"] .search-box img,
+[data-theme="dark"] .request-toolbar__search img { filter: invert(1); }
+
+/* Nhãn trạng thái: nền kem giữ nguyên nên chữ phải là bản ĐẬM, không dùng biến đã sáng lên. */
+[data-theme="dark"] .status--success { color: #1d6b47; }
+[data-theme="dark"] .status--warning { color: #8f5310; }
+[data-theme="dark"] .status--private { color: #101d33; }
+[data-theme="dark"] .status--muted { color: #607084; }
+[data-theme="dark"] .save-banner { color: #1d6b47; }
+
+/* Chữ đậm viết cứng #1b2535 ở các trang riêng -> dùng --navy (nay đã là màu sáng). */
+[data-theme="dark"] .profile-button b,
+[data-theme="dark"] .modal label,
+[data-theme="dark"] .stay-dates strong,
+[data-theme="dark"] .service-card h3,
+[data-theme="dark"] .preview-card__head strong,
+[data-theme="dark"] .preview-card__note,
+[data-theme="dark"] .preview-card__rows strong,
+[data-theme="dark"] .profile-meta strong,
+[data-theme="dark"] .field label,
+[data-theme="dark"] .request-item__title h3,
+[data-theme="dark"] .request-item__detail strong { color: var(--navy); }
+
+/* Viền #c9c0b1 và nền #fff viết cứng -> theo biến. */
+[data-theme="dark"] .secondary-button,
+[data-theme="dark"] .empty-state,
+[data-theme="dark"] .avatar-edit,
+[data-theme="dark"] .ai-chip,
+[data-theme="dark"] .suggest-chip,
+[data-theme="dark"] .timeline-step span { border-color: var(--border); }
+[data-theme="dark"] .modal select,
+[data-theme="dark"] .modal textarea,
+[data-theme="dark"] .field input,
+[data-theme="dark"] .field select,
+[data-theme="dark"] .field-input,
+[data-theme="dark"] .ai-panel__form input { background: var(--paper); border-color: var(--border); color: var(--navy); }
+
+/* Nền sáng viết cứng -> nền tối tương ứng. */
+[data-theme="dark"] .stay-progress { background: #2a313d; }
+[data-theme="dark"] .service-option.is-selected { background: #262019; }
+[data-theme="dark"] .suggest-chip:hover { background: #262019; }
+[data-theme="dark"] .notice-item.is-unread { background: #1e293f; }
+[data-theme="dark"] .notice-item.is-unread:hover { background: #25334d; }
+[data-theme="dark"] .notice-item:not(.is-unread):hover { background: #232a35; }
+[data-theme="dark"] .empty-state--bar { background: #2a2f38; }
+[data-theme="dark"] .service-option:hover,
+[data-theme="dark"] .filter-tab:hover,
+[data-theme="dark"] .pager-button:hover:not(:disabled):not(.is-active) { border-color: var(--gold); }
+
+/* Màu chữ phụ / báo lỗi viết cứng. */
+[data-theme="dark"] .page-context small,
+[data-theme="dark"] .notice-item__time,
+[data-theme="dark"] .search-box input::placeholder,
+[data-theme="dark"] .request-toolbar__search input::placeholder { color: var(--muted); }
+[data-theme="dark"] .field-error,
+[data-theme="dark"] .text-button--danger { color: #e8917f; }
+
+/* Icon SVG dùng currentColor trên chip kem (thông báo, trợ lý AI): biến đã sáng lên
+   nên phải trả về bản đậm, không thì icon vàng/xanh nhạt nằm trên nền kem gần như mất. */
+[data-theme="dark"] .notice-item__icon { color: #1d6b47; }
+[data-theme="dark"] .notice-item[data-kind="service"] .notice-item__icon { color: #8f5310; }
+[data-theme="dark"] .notice-item[data-kind="offer"] .notice-item__icon { color: #9c7838; }
+[data-theme="dark"] .notice-item[data-kind="system"] .notice-item__icon { color: #246bce; }
+[data-theme="dark"] .ai-panel__avatar { color: #9c7838; }
